@@ -1,6 +1,6 @@
 {
   "name": "framer-framer",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "create iframe from embed code (ex. facebook, instagram, etc...)",
   "main": "index.js",
   "directories": {
