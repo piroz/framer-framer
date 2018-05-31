@@ -20,9 +20,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:piroz:piroz/framer-framer.git"
+    "url": "git@github.com:piroz/framer-framer.git"
   },
   "author": "piroz",
   "license": "MIT",
-  "bugs": "https://github.com/piroz/framer-framer/issues"
+  "bugs": "https://github.com/piroz/framer-framer/issues",
+  "keywords": ["iframe", "facebook", "instagram"]
 }
