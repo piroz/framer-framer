@@ -23,6 +23,18 @@ function serve() {
                 });
             });
 
+            app.get("/instagram/:url/:version?", function (req, res) {
+
+                let url = req.params.url;
+
+                let version = req.params.version || 8;
+
+                res.render("instagram", {
+                    url: url,
+                    version: version
+                });
+            });
+
             let server = app.listen(listenPort, () => {
                 return resolve(server);
             });
