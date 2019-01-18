@@ -1,6 +1,6 @@
 {
   "name": "framer-framer",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "create iframe from embed code (ex. facebook, instagram, etc...)",
   "main": "index.js",
   "directories": {
@@ -25,5 +25,9 @@
   "author": "piroz",
   "license": "MIT",
   "bugs": "https://github.com/piroz/framer-framer/issues",
-  "keywords": ["iframe", "facebook", "instagram"]
+  "keywords": [
+    "iframe",
+    "facebook",
+    "instagram"
+  ]
 }

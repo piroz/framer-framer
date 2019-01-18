@@ -1,5 +1,13 @@
+let server;
+
 function serve() {
+
     return new Promise((resolve, reject) => {
+        
+        if (server != null) {
+            return resolve(server);
+        }
+
         try {
             const express = require("express");
             const app = express();
@@ -35,7 +43,7 @@ function serve() {
                 });
             });
 
-            let server = app.listen(listenPort, () => {
+            server = app.listen(listenPort, () => {
                 return resolve(server);
             });
         } catch (e) {
