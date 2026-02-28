@@ -1,0 +1,57 @@
+/** oEmbed content type */
+export type EmbedType = 'rich' | 'video' | 'photo' | 'link';
+
+/** Result returned from embed resolution */
+export interface EmbedResult {
+  /** Content type */
+  type: EmbedType;
+  /** Embed HTML (iframe, blockquote, etc.) */
+  html: string;
+  /** Provider name (e.g. 'youtube', 'twitter') */
+  provider: string;
+  /** Content title */
+  title?: string;
+  /** Author name */
+  author_name?: string;
+  /** Author URL */
+  author_url?: string;
+  /** Thumbnail image URL */
+  thumbnail_url?: string;
+  /** Thumbnail width */
+  thumbnail_width?: number;
+  /** Thumbnail height */
+  thumbnail_height?: number;
+  /** Embed width */
+  width?: number;
+  /** Embed height */
+  height?: number;
+  /** Original URL */
+  url: string;
+  /** Raw oEmbed response */
+  raw?: Record<string, unknown>;
+}
+
+/** Options for embed resolution */
+export interface EmbedOptions {
+  /** Meta (Facebook/Instagram) authentication */
+  meta?: {
+    /** Access token in 'APP_ID|CLIENT_TOKEN' format */
+    accessToken: string;
+  };
+  /** Max embed width */
+  maxWidth?: number;
+  /** Max embed height */
+  maxHeight?: number;
+  /** Enable OGP fallback for unrecognized URLs (default: true) */
+  fallback?: boolean;
+}
+
+/** Provider interface - implement this to add a new platform */
+export interface Provider {
+  /** Provider name */
+  name: string;
+  /** Check if this provider can handle the given URL */
+  match(url: string): boolean;
+  /** Resolve the URL and return embed data */
+  resolve(url: string, options?: EmbedOptions): Promise<EmbedResult>;
+}

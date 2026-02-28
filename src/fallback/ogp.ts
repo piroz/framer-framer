@@ -1,0 +1,118 @@
+import type { EmbedResult } from '../types.js';
+
+/** Simple regex-based OGP meta tag extraction */
+function extractMetaContent(html: string, property: string): string | undefined {
+  // Match both property="og:xxx" and name="og:xxx" variants
+  const regex = new RegExp(
+    `<meta[^>]+(?:property|name)=["']${escapeRegex(property)}["'][^>]+content=["']([^"']*)["']` +
+      `|<meta[^>]+content=["']([^"']*)["'][^>]+(?:property|name)=["']${escapeRegex(property)}["']`,
+    'i',
+  );
+  const match = regex.exec(html);
+  return match?.[1] ?? match?.[2] ?? undefined;
+}
+
+function escapeRegex(str: string): string {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+/**
+ * Resolve embed data from a URL using OGP meta tags.
+ * This is the fallback when no dedicated provider matches.
+ */
+export async function resolveWithOgp(url: string): Promise<EmbedResult> {
+  const response = await fetch(url, {
+    headers: {
+      'User-Agent': 'framer-framer/1.0 (OGP embed resolver)',
+      Accept: 'text/html',
+    },
+    redirect: 'follow',
+  });
+
+  if (!response.ok) {
+    throw new Error(
+      `OGP fallback: failed to fetch ${url}: ${response.status} ${response.statusText}`,
+    );
+  }
+
+  const html = await response.text();
+
+  const title =
+    extractMetaContent(html, 'og:title') ??
+    extractMetaContent(html, 'twitter:title');
+  const description =
+    extractMetaContent(html, 'og:description') ??
+    extractMetaContent(html, 'twitter:description');
+  const image =
+    extractMetaContent(html, 'og:image') ??
+    extractMetaContent(html, 'twitter:image');
+  const siteName = extractMetaContent(html, 'og:site_name');
+  const ogType = extractMetaContent(html, 'og:type');
+
+  // Check for og:video (some sites provide direct video embed URLs)
+  const videoUrl = extractMetaContent(html, 'og:video:url') ??
+    extractMetaContent(html, 'og:video');
+  const videoType = extractMetaContent(html, 'og:video:type');
+
+  let embedHtml: string;
+  let embedType: EmbedResult['type'];
+
+  if (videoUrl && videoType?.includes('text/html')) {
+    // Embeddable video player
+    embedType = 'video';
+    embedHtml =
+      `<iframe src="${videoUrl}" width="480" height="270" ` +
+      `frameborder="0" allowfullscreen title="${title ?? ''}"></iframe>`;
+  } else {
+    // Rich link card
+    embedType = 'link';
+    embedHtml = buildLinkCard({ url, title, description, image, siteName });
+  }
+
+  return {
+    type: embedType,
+    html: embedHtml,
+    provider: siteName ?? new URL(url).hostname,
+    title,
+    thumbnail_url: image,
+    url,
+    raw: {
+      og_type: ogType,
+      og_title: title,
+      og_description: description,
+      og_image: image,
+      og_site_name: siteName,
+      og_video: videoUrl,
+    },
+  };
+}
+
+/** Build a simple HTML link card from OGP data */
+function buildLinkCard(params: {
+  url: string;
+  title?: string;
+  description?: string;
+  image?: string;
+  siteName?: string;
+}): string {
+  const { url, title, description, image, siteName } = params;
+  const parts: string[] = ['<div class="framer-framer-card">'];
+
+  if (image) {
+    parts.push(`  <img src="${image}" alt="${title ?? ''}" />`);
+  }
+  parts.push('  <div class="framer-framer-card-body">');
+  if (title) {
+    parts.push(`    <a href="${url}" target="_blank" rel="noopener">${title}</a>`);
+  }
+  if (description) {
+    parts.push(`    <p>${description}</p>`);
+  }
+  if (siteName) {
+    parts.push(`    <span>${siteName}</span>`);
+  }
+  parts.push('  </div>');
+  parts.push('</div>');
+
+  return parts.join('\n');
+}
