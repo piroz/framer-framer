@@ -1,9 +1,9 @@
-import { OEmbedProvider } from './base.js';
+import { OEmbedProvider } from "./base.js";
 
 export class TikTokProvider extends OEmbedProvider {
-  name = 'tiktok';
+  name = "tiktok";
 
-  protected endpoint = 'https://www.tiktok.com/oembed';
+  protected endpoint = "https://www.tiktok.com/oembed";
 
   protected patterns = [
     /^https?:\/\/(www\.)?tiktok\.com\/@[\w.-]+\/video\//,

@@ -1,6 +1,6 @@
-import type { EmbedOptions, EmbedResult, Provider } from './types.js';
-import { resolveWithOgp } from './fallback/ogp.js';
-import { builtinProviders } from './providers/index.js';
+import { resolveWithOgp } from "./fallback/ogp.js";
+import { builtinProviders } from "./providers/index.js";
+import type { EmbedOptions, EmbedResult, Provider } from "./types.js";
 
 /** Registry of providers, checked in order */
 const providers: Provider[] = [...builtinProviders];
@@ -28,10 +28,7 @@ export function registerProvider(provider: Provider): void {
  * 2. If no provider matches and fallback is enabled, try OGP
  * 3. Throw if nothing works
  */
-export async function resolve(
-  url: string,
-  options?: EmbedOptions,
-): Promise<EmbedResult> {
+export async function resolve(url: string, options?: EmbedOptions): Promise<EmbedResult> {
   const provider = findProvider(url);
 
   if (provider) {
@@ -46,6 +43,6 @@ export async function resolve(
 
   throw new Error(
     `No provider found for URL: ${url}. ` +
-      'Set options.fallback = true to try OGP metadata extraction.',
+      "Set options.fallback = true to try OGP metadata extraction.",
   );
 }

@@ -1,5 +1,5 @@
 /** oEmbed content type */
-export type EmbedType = 'rich' | 'video' | 'photo' | 'link';
+export type EmbedType = "rich" | "video" | "photo" | "link";
 
 /** Result returned from embed resolution */
 export interface EmbedResult {

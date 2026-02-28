@@ -1,10 +1,10 @@
-import { MetaProvider } from './meta.js';
+import { MetaProvider } from "./meta.js";
 
 export class FacebookProvider extends MetaProvider {
-  name = 'facebook';
+  name = "facebook";
 
-  protected endpoint = 'https://graph.facebook.com/v22.0/oembed_post';
-  private videoEndpoint = 'https://graph.facebook.com/v22.0/oembed_video';
+  protected endpoint = "https://graph.facebook.com/v22.0/oembed_post";
+  private videoEndpoint = "https://graph.facebook.com/v22.0/oembed_video";
 
   protected patterns = [
     /^https?:\/\/(www\.)?facebook\.com\/[\w.-]+\/posts\//,
@@ -17,8 +17,6 @@ export class FacebookProvider extends MetaProvider {
   ];
 
   protected selectEndpoint(url: string): string {
-    return /\/(watch|videos)\/|fb\.watch/.test(url)
-      ? this.videoEndpoint
-      : this.endpoint;
+    return /\/(watch|videos)\/|fb\.watch/.test(url) ? this.videoEndpoint : this.endpoint;
   }
 }

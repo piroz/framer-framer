@@ -1,14 +1,14 @@
-import type { EmbedResult } from '../types.js';
-import { DEFAULT_TIMEOUT_MS } from '../constants.js';
+import { DEFAULT_TIMEOUT_MS } from "../constants.js";
+import type { EmbedResult } from "../types.js";
 
 /** Escape special HTML characters to prevent XSS */
 function escapeHtml(str: string): string {
   return str
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 }
 
 /** Simple regex-based OGP meta tag extraction */
@@ -17,14 +17,14 @@ function extractMetaContent(html: string, property: string): string | undefined 
   const regex = new RegExp(
     `<meta[^>]+(?:property|name)=["']${escapeRegex(property)}["'][^>]+content=["']([^"']*)["']` +
       `|<meta[^>]+content=["']([^"']*)["'][^>]+(?:property|name)=["']${escapeRegex(property)}["']`,
-    'i',
+    "i",
   );
   const match = regex.exec(html);
   return match?.[1] ?? match?.[2] ?? undefined;
 }
 
 function escapeRegex(str: string): string {
-  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 /**
@@ -34,10 +34,10 @@ function escapeRegex(str: string): string {
 export async function resolveWithOgp(url: string): Promise<EmbedResult> {
   const response = await fetch(url, {
     headers: {
-      'User-Agent': 'framer-framer/1.0 (OGP embed resolver)',
-      Accept: 'text/html',
+      "User-Agent": "framer-framer/1.0 (OGP embed resolver)",
+      Accept: "text/html",
     },
-    redirect: 'follow',
+    redirect: "follow",
     signal: AbortSignal.timeout(DEFAULT_TIMEOUT_MS),
   });
 
@@ -49,37 +49,31 @@ export async function resolveWithOgp(url: string): Promise<EmbedResult> {
 
   const html = await response.text();
 
-  const title =
-    extractMetaContent(html, 'og:title') ??
-    extractMetaContent(html, 'twitter:title');
+  const title = extractMetaContent(html, "og:title") ?? extractMetaContent(html, "twitter:title");
   const description =
-    extractMetaContent(html, 'og:description') ??
-    extractMetaContent(html, 'twitter:description');
-  const image =
-    extractMetaContent(html, 'og:image') ??
-    extractMetaContent(html, 'twitter:image');
-  const siteName = extractMetaContent(html, 'og:site_name');
-  const ogType = extractMetaContent(html, 'og:type');
+    extractMetaContent(html, "og:description") ?? extractMetaContent(html, "twitter:description");
+  const image = extractMetaContent(html, "og:image") ?? extractMetaContent(html, "twitter:image");
+  const siteName = extractMetaContent(html, "og:site_name");
+  const ogType = extractMetaContent(html, "og:type");
 
   // Check for og:video (some sites provide direct video embed URLs)
-  const videoUrl = extractMetaContent(html, 'og:video:url') ??
-    extractMetaContent(html, 'og:video');
-  const videoType = extractMetaContent(html, 'og:video:type');
+  const videoUrl = extractMetaContent(html, "og:video:url") ?? extractMetaContent(html, "og:video");
+  const videoType = extractMetaContent(html, "og:video:type");
 
   let embedHtml: string;
-  let embedType: EmbedResult['type'];
+  let embedType: EmbedResult["type"];
 
-  if (videoUrl && videoType?.includes('text/html')) {
+  if (videoUrl && videoType?.includes("text/html")) {
     // Embeddable video player
-    embedType = 'video';
+    embedType = "video";
     const safeVideoUrl = escapeHtml(videoUrl);
-    const safeTitle = escapeHtml(title ?? '');
+    const safeTitle = escapeHtml(title ?? "");
     embedHtml =
       `<iframe src="${safeVideoUrl}" width="480" height="270" ` +
       `frameborder="0" allowfullscreen title="${safeTitle}"></iframe>`;
   } else {
     // Rich link card
-    embedType = 'link';
+    embedType = "link";
     embedHtml = buildLinkCard({ url, title, description, image, siteName });
   }
 
@@ -113,11 +107,13 @@ function buildLinkCard(params: {
   const parts: string[] = ['<div class="framer-framer-card">'];
 
   if (image) {
-    parts.push(`  <img src="${escapeHtml(image)}" alt="${escapeHtml(title ?? '')}" />`);
+    parts.push(`  <img src="${escapeHtml(image)}" alt="${escapeHtml(title ?? "")}" />`);
   }
   parts.push('  <div class="framer-framer-card-body">');
   if (title) {
-    parts.push(`    <a href="${escapeHtml(url)}" target="_blank" rel="noopener">${escapeHtml(title)}</a>`);
+    parts.push(
+      `    <a href="${escapeHtml(url)}" target="_blank" rel="noopener">${escapeHtml(title)}</a>`,
+    );
   }
   if (description) {
     parts.push(`    <p>${escapeHtml(description)}</p>`);
@@ -125,8 +121,8 @@ function buildLinkCard(params: {
   if (siteName) {
     parts.push(`    <span>${escapeHtml(siteName)}</span>`);
   }
-  parts.push('  </div>');
-  parts.push('</div>');
+  parts.push("  </div>");
+  parts.push("</div>");
 
-  return parts.join('\n');
+  return parts.join("\n");
 }

@@ -1,5 +1,5 @@
-import { DEFAULT_TIMEOUT_MS } from '../constants.js';
-import type { EmbedOptions, EmbedResult, Provider } from '../types.js';
+import { DEFAULT_TIMEOUT_MS } from "../constants.js";
+import type { EmbedOptions, EmbedResult, Provider } from "../types.js";
 
 /** Base class for oEmbed-based providers */
 export abstract class OEmbedProvider implements Provider {
@@ -34,22 +34,19 @@ export abstract class OEmbedProvider implements Provider {
   /** Build the oEmbed API URL with query parameters */
   protected buildOEmbedUrl(url: string, options?: EmbedOptions): string {
     const params = new URLSearchParams();
-    params.set('url', url);
-    params.set('format', 'json');
-    if (options?.maxWidth != null) params.set('maxwidth', String(options.maxWidth));
-    if (options?.maxHeight != null) params.set('maxheight', String(options.maxHeight));
+    params.set("url", url);
+    params.set("format", "json");
+    if (options?.maxWidth != null) params.set("maxwidth", String(options.maxWidth));
+    if (options?.maxHeight != null) params.set("maxheight", String(options.maxHeight));
 
     return `${this.endpoint}?${params.toString()}`;
   }
 
   /** Convert raw oEmbed response to EmbedResult */
-  protected toEmbedResult(
-    url: string,
-    data: Record<string, unknown>,
-  ): EmbedResult {
+  protected toEmbedResult(url: string, data: Record<string, unknown>): EmbedResult {
     return {
-      type: (data.type as EmbedResult['type']) ?? 'rich',
-      html: (data.html as string) ?? '',
+      type: (data.type as EmbedResult["type"]) ?? "rich",
+      html: (data.html as string) ?? "",
       provider: this.name,
       title: data.title as string | undefined,
       author_name: data.author_name as string | undefined,

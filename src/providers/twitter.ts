@@ -1,9 +1,9 @@
-import { OEmbedProvider } from './base.js';
+import { OEmbedProvider } from "./base.js";
 
 export class TwitterProvider extends OEmbedProvider {
-  name = 'twitter';
+  name = "twitter";
 
-  protected endpoint = 'https://publish.twitter.com/oembed';
+  protected endpoint = "https://publish.twitter.com/oembed";
 
   protected patterns = [
     /^https?:\/\/(www\.)?twitter\.com\/\w+\/status\//,

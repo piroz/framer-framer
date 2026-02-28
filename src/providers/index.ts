@@ -1,9 +1,9 @@
-import type { Provider } from '../types.js';
-import { FacebookProvider } from './facebook.js';
-import { InstagramProvider } from './instagram.js';
-import { TikTokProvider } from './tiktok.js';
-import { TwitterProvider } from './twitter.js';
-import { YouTubeProvider } from './youtube.js';
+import type { Provider } from "../types.js";
+import { FacebookProvider } from "./facebook.js";
+import { InstagramProvider } from "./instagram.js";
+import { TikTokProvider } from "./tiktok.js";
+import { TwitterProvider } from "./twitter.js";
+import { YouTubeProvider } from "./youtube.js";
 
 /** Singleton provider instances shared across the library */
 export const youtubeProvider = new YouTubeProvider();
@@ -21,11 +21,5 @@ export const builtinProviders: Provider[] = [
   instagramProvider,
 ];
 
-export {
-  FacebookProvider,
-  InstagramProvider,
-  TikTokProvider,
-  TwitterProvider,
-  YouTubeProvider,
-};
-export { MetaProvider } from './meta.js';
+export { FacebookProvider, InstagramProvider, TikTokProvider, TwitterProvider, YouTubeProvider };
+export { MetaProvider } from "./meta.js";

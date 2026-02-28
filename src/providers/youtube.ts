@@ -1,9 +1,9 @@
-import { OEmbedProvider } from './base.js';
+import { OEmbedProvider } from "./base.js";
 
 export class YouTubeProvider extends OEmbedProvider {
-  name = 'youtube';
+  name = "youtube";
 
-  protected endpoint = 'https://www.youtube.com/oembed';
+  protected endpoint = "https://www.youtube.com/oembed";
 
   protected patterns = [
     /^https?:\/\/(www\.)?youtube\.com\/watch\?/,
