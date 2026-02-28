@@ -1,4 +1,15 @@
 import type { EmbedResult } from '../types.js';
+import { DEFAULT_TIMEOUT_MS } from '../constants.js';
+
+/** Escape special HTML characters to prevent XSS */
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
 
 /** Simple regex-based OGP meta tag extraction */
 function extractMetaContent(html: string, property: string): string | undefined {
@@ -27,6 +38,7 @@ export async function resolveWithOgp(url: string): Promise<EmbedResult> {
       Accept: 'text/html',
     },
     redirect: 'follow',
+    signal: AbortSignal.timeout(DEFAULT_TIMEOUT_MS),
   });
 
   if (!response.ok) {
@@ -60,9 +72,11 @@ export async function resolveWithOgp(url: string): Promise<EmbedResult> {
   if (videoUrl && videoType?.includes('text/html')) {
     // Embeddable video player
     embedType = 'video';
+    const safeVideoUrl = escapeHtml(videoUrl);
+    const safeTitle = escapeHtml(title ?? '');
     embedHtml =
-      `<iframe src="${videoUrl}" width="480" height="270" ` +
-      `frameborder="0" allowfullscreen title="${title ?? ''}"></iframe>`;
+      `<iframe src="${safeVideoUrl}" width="480" height="270" ` +
+      `frameborder="0" allowfullscreen title="${safeTitle}"></iframe>`;
   } else {
     // Rich link card
     embedType = 'link';
@@ -99,17 +113,17 @@ function buildLinkCard(params: {
   const parts: string[] = ['<div class="framer-framer-card">'];
 
   if (image) {
-    parts.push(`  <img src="${image}" alt="${title ?? ''}" />`);
+    parts.push(`  <img src="${escapeHtml(image)}" alt="${escapeHtml(title ?? '')}" />`);
   }
   parts.push('  <div class="framer-framer-card-body">');
   if (title) {
-    parts.push(`    <a href="${url}" target="_blank" rel="noopener">${title}</a>`);
+    parts.push(`    <a href="${escapeHtml(url)}" target="_blank" rel="noopener">${escapeHtml(title)}</a>`);
   }
   if (description) {
-    parts.push(`    <p>${description}</p>`);
+    parts.push(`    <p>${escapeHtml(description)}</p>`);
   }
   if (siteName) {
-    parts.push(`    <span>${siteName}</span>`);
+    parts.push(`    <span>${escapeHtml(siteName)}</span>`);
   }
   parts.push('  </div>');
   parts.push('</div>');

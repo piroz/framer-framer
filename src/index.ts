@@ -3,6 +3,7 @@ export { OEmbedProvider } from './providers/base.js';
 export {
   FacebookProvider,
   InstagramProvider,
+  MetaProvider,
   TikTokProvider,
   TwitterProvider,
   YouTubeProvider,
@@ -10,11 +11,13 @@ export {
 export { registerProvider } from './resolver.js';
 
 import type { EmbedOptions, EmbedResult } from './types.js';
-import { FacebookProvider } from './providers/facebook.js';
-import { InstagramProvider } from './providers/instagram.js';
-import { TikTokProvider } from './providers/tiktok.js';
-import { TwitterProvider } from './providers/twitter.js';
-import { YouTubeProvider } from './providers/youtube.js';
+import {
+  facebookProvider,
+  instagramProvider,
+  tiktokProvider,
+  twitterProvider,
+  youtubeProvider,
+} from './providers/index.js';
 import { resolve } from './resolver.js';
 
 /**
@@ -37,18 +40,12 @@ export async function embed(
 
 // Platform-specific convenience functions
 
-const _youtube = new YouTubeProvider();
-const _twitter = new TwitterProvider();
-const _tiktok = new TikTokProvider();
-const _facebook = new FacebookProvider();
-const _instagram = new InstagramProvider();
-
 /** Resolve a YouTube URL */
 export async function youtube(
   url: string,
   options?: EmbedOptions,
 ): Promise<EmbedResult> {
-  return _youtube.resolve(url, options);
+  return youtubeProvider.resolve(url, options);
 }
 
 /** Resolve an X/Twitter URL */
@@ -56,7 +53,7 @@ export async function twitter(
   url: string,
   options?: EmbedOptions,
 ): Promise<EmbedResult> {
-  return _twitter.resolve(url, options);
+  return twitterProvider.resolve(url, options);
 }
 
 /** Resolve a TikTok URL */
@@ -64,7 +61,7 @@ export async function tiktok(
   url: string,
   options?: EmbedOptions,
 ): Promise<EmbedResult> {
-  return _tiktok.resolve(url, options);
+  return tiktokProvider.resolve(url, options);
 }
 
 /** Resolve a Facebook URL (requires Meta access token) */
@@ -72,7 +69,7 @@ export async function facebook(
   url: string,
   options?: EmbedOptions,
 ): Promise<EmbedResult> {
-  return _facebook.resolve(url, options);
+  return facebookProvider.resolve(url, options);
 }
 
 /** Resolve an Instagram URL (requires Meta access token) */
@@ -80,5 +77,5 @@ export async function instagram(
   url: string,
   options?: EmbedOptions,
 ): Promise<EmbedResult> {
-  return _instagram.resolve(url, options);
+  return instagramProvider.resolve(url, options);
 }

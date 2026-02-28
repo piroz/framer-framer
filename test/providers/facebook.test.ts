@@ -26,7 +26,7 @@ describe('FacebookProvider', () => {
   it('throws without access token', async () => {
     await expect(
       provider.resolve('https://www.facebook.com/user/posts/123456'),
-    ).rejects.toThrow('Facebook oEmbed requires a Meta access token');
+    ).rejects.toThrow('facebook oEmbed requires a Meta access token');
   });
 
   it('resolves with access token', async () => {

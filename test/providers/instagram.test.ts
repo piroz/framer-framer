@@ -26,7 +26,7 @@ describe('InstagramProvider', () => {
   it('throws without access token', async () => {
     await expect(
       provider.resolve('https://www.instagram.com/p/abc123/'),
-    ).rejects.toThrow('Instagram oEmbed requires a Meta access token');
+    ).rejects.toThrow('instagram oEmbed requires a Meta access token');
   });
 
   it('resolves with access token', async () => {

@@ -1,13 +1,10 @@
-import type { EmbedOptions } from '../types.js';
-import { OEmbedProvider } from './base.js';
+import { MetaProvider } from './meta.js';
 
-export class FacebookProvider extends OEmbedProvider {
+export class FacebookProvider extends MetaProvider {
   name = 'facebook';
 
   protected endpoint = 'https://graph.facebook.com/v22.0/oembed_post';
-  protected videoEndpoint = 'https://graph.facebook.com/v22.0/oembed_video';
-
-  protected requiresAuth = true;
+  private videoEndpoint = 'https://graph.facebook.com/v22.0/oembed_video';
 
   protected patterns = [
     /^https?:\/\/(www\.)?facebook\.com\/[\w.-]+\/posts\//,
@@ -19,29 +16,9 @@ export class FacebookProvider extends OEmbedProvider {
     /^https?:\/\/(www\.)?facebook\.com\/share\//,
   ];
 
-  private isVideoUrl(url: string): boolean {
-    return /\/(watch|videos)\/|fb\.watch/.test(url);
-  }
-
-  protected buildOEmbedUrl(url: string, options?: EmbedOptions): string {
-    const accessToken = options?.meta?.accessToken;
-    if (!accessToken) {
-      throw new Error(
-        'Facebook oEmbed requires a Meta access token. ' +
-          'Pass it via options.meta.accessToken in "APP_ID|CLIENT_TOKEN" format.',
-      );
-    }
-
-    const endpoint = this.isVideoUrl(url)
+  protected selectEndpoint(url: string): string {
+    return /\/(watch|videos)\/|fb\.watch/.test(url)
       ? this.videoEndpoint
       : this.endpoint;
-
-    const params = new URLSearchParams();
-    params.set('url', url);
-    params.set('access_token', accessToken);
-    if (options?.maxWidth) params.set('maxwidth', String(options.maxWidth));
-    if (options?.maxHeight) params.set('maxheight', String(options.maxHeight));
-
-    return `${endpoint}?${params.toString()}`;
   }
 }

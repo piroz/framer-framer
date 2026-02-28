@@ -1,3 +1,4 @@
+import { DEFAULT_TIMEOUT_MS } from '../constants.js';
 import type { EmbedOptions, EmbedResult, Provider } from '../types.js';
 
 /** Base class for oEmbed-based providers */
@@ -10,16 +11,15 @@ export abstract class OEmbedProvider implements Provider {
   /** oEmbed endpoint URL */
   protected abstract endpoint: string;
 
-  /** Whether this provider requires authentication */
-  protected requiresAuth = false;
-
   match(url: string): boolean {
     return this.patterns.some((pattern) => pattern.test(url));
   }
 
   async resolve(url: string, options?: EmbedOptions): Promise<EmbedResult> {
     const oembedUrl = this.buildOEmbedUrl(url, options);
-    const response = await fetch(oembedUrl);
+    const response = await fetch(oembedUrl, {
+      signal: AbortSignal.timeout(DEFAULT_TIMEOUT_MS),
+    });
 
     if (!response.ok) {
       throw new Error(
@@ -36,8 +36,8 @@ export abstract class OEmbedProvider implements Provider {
     const params = new URLSearchParams();
     params.set('url', url);
     params.set('format', 'json');
-    if (options?.maxWidth) params.set('maxwidth', String(options.maxWidth));
-    if (options?.maxHeight) params.set('maxheight', String(options.maxHeight));
+    if (options?.maxWidth != null) params.set('maxwidth', String(options.maxWidth));
+    if (options?.maxHeight != null) params.set('maxheight', String(options.maxHeight));
 
     return `${this.endpoint}?${params.toString()}`;
   }
