@@ -3,8 +3,11 @@ export {
   FacebookProvider,
   InstagramProvider,
   MetaProvider,
+  SoundCloudProvider,
+  SpotifyProvider,
   TikTokProvider,
   TwitterProvider,
+  VimeoProvider,
   YouTubeProvider,
 } from "./providers/index.js";
 export { registerProvider } from "./resolver.js";
@@ -13,8 +16,11 @@ export type { EmbedOptions, EmbedResult, EmbedType, Provider } from "./types.js"
 import {
   facebookProvider,
   instagramProvider,
+  soundcloudProvider,
+  spotifyProvider,
   tiktokProvider,
   twitterProvider,
+  vimeoProvider,
   youtubeProvider,
 } from "./providers/index.js";
 import { resolve } from "./resolver.js";
@@ -60,4 +66,19 @@ export async function facebook(url: string, options?: EmbedOptions): Promise<Emb
 /** Resolve an Instagram URL (requires Meta access token) */
 export async function instagram(url: string, options?: EmbedOptions): Promise<EmbedResult> {
   return instagramProvider.resolve(url, options);
+}
+
+/** Resolve a Vimeo URL */
+export async function vimeo(url: string, options?: EmbedOptions): Promise<EmbedResult> {
+  return vimeoProvider.resolve(url, options);
+}
+
+/** Resolve a Spotify URL */
+export async function spotify(url: string, options?: EmbedOptions): Promise<EmbedResult> {
+  return spotifyProvider.resolve(url, options);
+}
+
+/** Resolve a SoundCloud URL */
+export async function soundcloud(url: string, options?: EmbedOptions): Promise<EmbedResult> {
+  return soundcloudProvider.resolve(url, options);
 }

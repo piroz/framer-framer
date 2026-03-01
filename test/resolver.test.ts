@@ -76,6 +76,62 @@ describe("findProvider - URL auto-detection", () => {
     });
   }
 
+  // Vimeo
+  const vimeoUrls = [
+    "https://vimeo.com/76979871",
+    "https://www.vimeo.com/76979871",
+    "https://vimeo.com/channels/staffpicks/76979871",
+    "https://player.vimeo.com/video/76979871",
+  ];
+
+  for (const url of vimeoUrls) {
+    it(`detects Vimeo: ${url}`, () => {
+      expect(findProvider(url)?.name).toBe("vimeo");
+    });
+  }
+
+  // Spotify
+  const spotifyUrls = [
+    "https://open.spotify.com/track/4PTG3Z6ehGkBFwjybzWkR8",
+    "https://open.spotify.com/album/1DFixLWuPkv3KT3TnV35m3",
+    "https://open.spotify.com/playlist/37i9dQZF1DXcBWIGoYBM5M",
+    "https://open.spotify.com/episode/512ojhOuo1ktJprKbVcKyQ",
+    "https://open.spotify.com/show/2MAi0BvDc6GTFvKFPXnkCL",
+  ];
+
+  for (const url of spotifyUrls) {
+    it(`detects Spotify: ${url}`, () => {
+      expect(findProvider(url)?.name).toBe("spotify");
+    });
+  }
+
+  // SoundCloud
+  const soundcloudUrls = [
+    "https://soundcloud.com/munchimusic/bbkkbkk",
+    "https://www.soundcloud.com/artist-name/track-name",
+  ];
+
+  for (const url of soundcloudUrls) {
+    it(`detects SoundCloud: ${url}`, () => {
+      expect(findProvider(url)?.name).toBe("soundcloud");
+    });
+  }
+
+  // SoundCloud negative cases (non-content pages should not match)
+  const soundcloudNonContentUrls = [
+    "https://soundcloud.com/discover/sets",
+    "https://soundcloud.com/settings/account",
+    "https://soundcloud.com/you/likes",
+    "https://soundcloud.com/upload/new",
+    "https://soundcloud.com/charts/top",
+  ];
+
+  for (const url of soundcloudNonContentUrls) {
+    it(`does not detect SoundCloud for non-content URL: ${url}`, () => {
+      expect(findProvider(url)?.name).not.toBe("soundcloud");
+    });
+  }
+
   // Unknown URLs
   it("returns undefined for unknown URLs", () => {
     expect(findProvider("https://example.com")).toBeUndefined();
