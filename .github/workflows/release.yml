@@ -31,6 +31,7 @@ jobs:
   publish-npm:
     needs: [create-release, ci]
     runs-on: ubuntu-latest
+    environment: npm-publish
     permissions:
       contents: read
       id-token: write
@@ -47,7 +48,7 @@ jobs:
         run: npm ci
 
       - name: Publish to npm
-        run: npm publish --provenance --access public
+        run: npm publish --access public
 
   publish-release:
     needs: [create-release, publish-npm]
