@@ -2,7 +2,7 @@
 
 Universal embed resolver for Node.js — extract embed HTML from any URL using oEmbed APIs.
 
-Supports YouTube, X/Twitter, TikTok, Facebook, Instagram out of the box, with OGP metadata fallback for any other URL. Zero runtime dependencies.
+Supports YouTube, X/Twitter, TikTok, Facebook, Instagram, Vimeo, Spotify, SoundCloud out of the box, with OGP metadata fallback for any other URL. Zero runtime dependencies.
 
 ## Install
 
@@ -27,11 +27,17 @@ console.log(result.provider); // "youtube"
 ### Platform-specific functions
 
 ```ts
-import { youtube, twitter, tiktok, facebook, instagram } from "framer-framer";
+import {
+  youtube, twitter, tiktok, facebook, instagram,
+  vimeo, spotify, soundcloud,
+} from "framer-framer";
 
 await youtube("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
 await twitter("https://x.com/user/status/123456789");
 await tiktok("https://www.tiktok.com/@user/video/123456789");
+await vimeo("https://vimeo.com/76979871");
+await spotify("https://open.spotify.com/track/4PTG3Z6ehGkBFwjybzWkR8");
+await soundcloud("https://soundcloud.com/artist/track");
 
 // Facebook / Instagram require a Meta access token
 await facebook("https://www.facebook.com/video/123", {
@@ -69,13 +75,13 @@ const result = await embed("https://example.com/article", { fallback: true });
 ```ts
 import { registerProvider, OEmbedProvider } from "framer-framer";
 
-class VimeoProvider extends OEmbedProvider {
-  name = "vimeo";
-  protected patterns = [/vimeo\.com\/\d+/];
-  protected endpoint = "https://vimeo.com/api/oembed.json";
+class DailymotionProvider extends OEmbedProvider {
+  name = "dailymotion";
+  protected patterns = [/dailymotion\.com\/video\//];
+  protected endpoint = "https://www.dailymotion.com/services/oembed";
 }
 
-registerProvider(new VimeoProvider());
+registerProvider(new DailymotionProvider());
 ```
 
 ## EmbedResult
