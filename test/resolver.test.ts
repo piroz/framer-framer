@@ -117,6 +117,21 @@ describe("findProvider - URL auto-detection", () => {
     });
   }
 
+  // SoundCloud negative cases (non-content pages should not match)
+  const soundcloudNonContentUrls = [
+    "https://soundcloud.com/discover/sets",
+    "https://soundcloud.com/settings/account",
+    "https://soundcloud.com/you/likes",
+    "https://soundcloud.com/upload/new",
+    "https://soundcloud.com/charts/top",
+  ];
+
+  for (const url of soundcloudNonContentUrls) {
+    it(`does not detect SoundCloud for non-content URL: ${url}`, () => {
+      expect(findProvider(url)?.name).not.toBe("soundcloud");
+    });
+  }
+
   // Unknown URLs
   it("returns undefined for unknown URLs", () => {
     expect(findProvider("https://example.com")).toBeUndefined();

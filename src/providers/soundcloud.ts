@@ -5,5 +5,7 @@ export class SoundCloudProvider extends OEmbedProvider {
 
   protected endpoint = "https://soundcloud.com/oembed";
 
-  protected patterns = [/^https?:\/\/(www\.)?soundcloud\.com\/[\w-]+\/[\w-]+/];
+  protected patterns = [
+    /^https?:\/\/(www\.)?soundcloud\.com\/(?!discover|settings|you|jobs|pages|charts|upload|logout|search|notifications|messages|stations)[\w-]+\/[\w-]+/,
+  ];
 }
