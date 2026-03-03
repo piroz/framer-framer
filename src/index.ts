@@ -21,16 +21,6 @@ export type {
   Provider,
 } from "./types.js";
 
-import {
-  facebookProvider,
-  instagramProvider,
-  soundcloudProvider,
-  spotifyProvider,
-  tiktokProvider,
-  twitterProvider,
-  vimeoProvider,
-  youtubeProvider,
-} from "./providers/index.js";
 import { resolve } from "./resolver.js";
 import type { EmbedOptions, EmbedResult } from "./types.js";
 
@@ -50,43 +40,44 @@ export async function embed(url: string, options?: EmbedOptions): Promise<EmbedR
 }
 
 // Platform-specific convenience functions
+// All go through resolve() so that registered hooks are always executed.
 
 /** Resolve a YouTube URL */
 export async function youtube(url: string, options?: EmbedOptions): Promise<EmbedResult> {
-  return youtubeProvider.resolve(url, options);
+  return resolve(url, options);
 }
 
 /** Resolve an X/Twitter URL */
 export async function twitter(url: string, options?: EmbedOptions): Promise<EmbedResult> {
-  return twitterProvider.resolve(url, options);
+  return resolve(url, options);
 }
 
 /** Resolve a TikTok URL */
 export async function tiktok(url: string, options?: EmbedOptions): Promise<EmbedResult> {
-  return tiktokProvider.resolve(url, options);
+  return resolve(url, options);
 }
 
 /** Resolve a Facebook URL (requires Meta access token) */
 export async function facebook(url: string, options?: EmbedOptions): Promise<EmbedResult> {
-  return facebookProvider.resolve(url, options);
+  return resolve(url, options);
 }
 
 /** Resolve an Instagram URL (requires Meta access token) */
 export async function instagram(url: string, options?: EmbedOptions): Promise<EmbedResult> {
-  return instagramProvider.resolve(url, options);
+  return resolve(url, options);
 }
 
 /** Resolve a Vimeo URL */
 export async function vimeo(url: string, options?: EmbedOptions): Promise<EmbedResult> {
-  return vimeoProvider.resolve(url, options);
+  return resolve(url, options);
 }
 
 /** Resolve a Spotify URL */
 export async function spotify(url: string, options?: EmbedOptions): Promise<EmbedResult> {
-  return spotifyProvider.resolve(url, options);
+  return resolve(url, options);
 }
 
 /** Resolve a SoundCloud URL */
 export async function soundcloud(url: string, options?: EmbedOptions): Promise<EmbedResult> {
-  return soundcloudProvider.resolve(url, options);
+  return resolve(url, options);
 }

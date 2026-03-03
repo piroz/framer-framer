@@ -36,17 +36,27 @@ export function registerProvider(provider: Provider): void {
 /**
  * Register a hook that runs before resolution.
  * Hooks run in the order they are registered.
+ * @returns A function that removes this hook when called.
  */
-export function onBeforeResolve(hook: BeforeResolveHook): void {
+export function onBeforeResolve(hook: BeforeResolveHook): () => void {
   beforeHooks.push(hook);
+  return () => {
+    const idx = beforeHooks.indexOf(hook);
+    if (idx >= 0) beforeHooks.splice(idx, 1);
+  };
 }
 
 /**
  * Register a hook that runs after resolution.
  * Hooks run in the order they are registered.
+ * @returns A function that removes this hook when called.
  */
-export function onAfterResolve(hook: AfterResolveHook): void {
+export function onAfterResolve(hook: AfterResolveHook): () => void {
   afterHooks.push(hook);
+  return () => {
+    const idx = afterHooks.indexOf(hook);
+    if (idx >= 0) afterHooks.splice(idx, 1);
+  };
 }
 
 /**
@@ -69,7 +79,7 @@ export function clearHooks(): void {
 export async function resolve(url: string, options?: EmbedOptions): Promise<EmbedResult> {
   const provider = findProvider(url);
 
-  const context: HookContext = { url, options, provider: provider ?? undefined };
+  const context: HookContext = { url, options, provider };
 
   // --- before hooks ---
   for (const hook of beforeHooks) {

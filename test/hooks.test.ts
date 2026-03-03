@@ -190,6 +190,71 @@ describe("hooks", () => {
     });
   });
 
+  describe("unsubscribe", () => {
+    it("onBeforeResolve returns a function that removes the hook", async () => {
+      const unsubscribe = onBeforeResolve(() => fakeResult({ html: "<cached/>" }));
+
+      unsubscribe();
+
+      vi.stubGlobal(
+        "fetch",
+        vi.fn().mockResolvedValue({
+          ok: true,
+          json: async () => ({ type: "video", html: "<from-api/>" }),
+        }),
+      );
+
+      const { resolve } = await import("../src/resolver.js");
+      const result = await resolve("https://www.youtube.com/watch?v=abc");
+
+      expect(result.html).toBe("<from-api/>");
+    });
+
+    it("onAfterResolve returns a function that removes the hook", async () => {
+      const unsubscribe = onAfterResolve((_ctx, result) => ({
+        ...result,
+        html: "<replaced/>",
+      }));
+
+      unsubscribe();
+
+      vi.stubGlobal(
+        "fetch",
+        vi.fn().mockResolvedValue({
+          ok: true,
+          json: async () => ({ type: "video", html: "<from-api/>" }),
+        }),
+      );
+
+      const { resolve } = await import("../src/resolver.js");
+      const result = await resolve("https://www.youtube.com/watch?v=abc");
+
+      expect(result.html).toBe("<from-api/>");
+    });
+
+    it("only removes the specific hook, not others", async () => {
+      const order: number[] = [];
+      onBeforeResolve(() => {
+        order.push(1);
+      });
+      const unsub2 = onBeforeResolve(() => {
+        order.push(2);
+      });
+      onBeforeResolve(() => {
+        order.push(3);
+        return fakeResult();
+      });
+
+      unsub2();
+
+      const { resolve } = await import("../src/resolver.js");
+      vi.stubGlobal("fetch", vi.fn());
+      await resolve("https://www.youtube.com/watch?v=abc");
+
+      expect(order).toEqual([1, 3]);
+    });
+  });
+
   describe("clearHooks", () => {
     it("removes all registered hooks", async () => {
       onBeforeResolve(() => fakeResult({ html: "<short-circuit/>" }));
