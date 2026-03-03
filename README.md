@@ -1,5 +1,7 @@
 # framer-framer
 
+[![CI](https://github.com/piroz/framer-framer/actions/workflows/ci.yml/badge.svg)](https://github.com/piroz/framer-framer/actions/workflows/ci.yml)
+
 Universal embed resolver for Node.js — extract embed HTML from any URL using oEmbed APIs.
 
 Supports YouTube, X/Twitter, TikTok, Facebook, Instagram, Vimeo, Spotify, SoundCloud out of the box, with OGP metadata fallback for any other URL. Zero runtime dependencies.
