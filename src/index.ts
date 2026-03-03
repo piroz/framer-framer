@@ -10,8 +10,16 @@ export {
   VimeoProvider,
   YouTubeProvider,
 } from "./providers/index.js";
-export { registerProvider } from "./resolver.js";
-export type { EmbedOptions, EmbedResult, EmbedType, Provider } from "./types.js";
+export { clearHooks, onAfterResolve, onBeforeResolve, registerProvider } from "./resolver.js";
+export type {
+  AfterResolveHook,
+  BeforeResolveHook,
+  EmbedOptions,
+  EmbedResult,
+  EmbedType,
+  HookContext,
+  Provider,
+} from "./types.js";
 
 import {
   facebookProvider,

@@ -55,3 +55,33 @@ export interface Provider {
   /** Resolve the URL and return embed data */
   resolve(url: string, options?: EmbedOptions): Promise<EmbedResult>;
 }
+
+/** Context passed to hooks */
+export interface HookContext {
+  /** The URL being resolved */
+  url: string;
+  /** Options passed to resolve() */
+  options?: EmbedOptions;
+  /** The matched provider (undefined if OGP fallback) */
+  provider?: Provider;
+}
+
+/**
+ * Called before resolution begins.
+ * - Return `void` / `undefined` to continue normally.
+ * - Return an `EmbedResult` to short-circuit (skip the provider entirely).
+ * - May mutate `context` to alter the URL or options for downstream processing.
+ */
+export type BeforeResolveHook = (
+  context: HookContext,
+) => undefined | EmbedResult | Promise<undefined | EmbedResult>;
+
+/**
+ * Called after resolution completes.
+ * - Return `void` / `undefined` to keep the original result.
+ * - Return an `EmbedResult` to replace it.
+ */
+export type AfterResolveHook = (
+  context: HookContext,
+  result: EmbedResult,
+) => undefined | EmbedResult | Promise<undefined | EmbedResult>;
