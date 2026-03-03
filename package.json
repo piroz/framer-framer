@@ -1,7 +1,7 @@
 {
   "name": "framer-framer",
   "version": "1.1.0",
-  "description": "Universal embed resolver - extract embed HTML from any URL (YouTube, X/Twitter, TikTok, Facebook, Instagram, and more)",
+  "description": "Universal embed resolver - extract embed HTML from any URL (YouTube, X/Twitter, TikTok, Facebook, Instagram, Vimeo, Spotify, SoundCloud, and more)",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
@@ -52,6 +52,9 @@
     "tiktok",
     "facebook",
     "instagram",
+    "vimeo",
+    "spotify",
+    "soundcloud",
     "ogp",
     "social-media"
   ]
