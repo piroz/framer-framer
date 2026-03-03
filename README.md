@@ -84,6 +84,58 @@ class DailymotionProvider extends OEmbedProvider {
 registerProvider(new DailymotionProvider());
 ```
 
+### Hooks
+
+Hooks let you intercept every `resolve()` call — useful for caching, analytics, HTML wrapping, and more. All resolution paths (`embed()`, `youtube()`, etc.) go through hooks.
+
+```ts
+import { onBeforeResolve, onAfterResolve, clearHooks } from "framer-framer";
+```
+
+#### `onBeforeResolve(hook)` — runs before resolution
+
+Return an `EmbedResult` to short-circuit (skip the provider call). Mutate `context.url` or `context.options` to alter downstream behavior.
+
+```ts
+// Cache example
+const unsubscribe = onBeforeResolve((context) => {
+  const cached = cache.get(context.url);
+  if (cached) return cached; // skip provider, return cached result
+});
+```
+
+#### `onAfterResolve(hook)` — runs after resolution
+
+Observe or transform the result. Return an `EmbedResult` to replace it.
+
+```ts
+// Analytics
+onAfterResolve((context, result) => {
+  trackEvent("embed_resolved", { url: context.url, provider: result.provider });
+});
+
+// Wrap HTML
+onAfterResolve((context, result) => ({
+  ...result,
+  html: `<div data-embed-url="${context.url}">${result.html}</div>`,
+}));
+```
+
+#### Unsubscribe
+
+Both functions return an unsubscribe function to remove the specific hook.
+
+```ts
+const unsubscribe = onAfterResolve((ctx, result) => { /* ... */ });
+unsubscribe(); // removes only this hook
+```
+
+#### `clearHooks()` — remove all hooks
+
+```ts
+clearHooks(); // removes all before and after hooks
+```
+
 ## EmbedResult
 
 | Field             | Type     | Description                       |
