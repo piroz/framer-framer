@@ -60,6 +60,10 @@ await embed(url, {
   meta: {                     // Required for Facebook/Instagram
     accessToken: "APP_ID|CLIENT_TOKEN",
   },
+  retry: {                    // Retry on transient failures (network errors, 5xx, 429)
+    maxRetries: 2,            // default: 2
+    baseDelay: 500,           // default: 500ms, exponential backoff: delay = baseDelay * 2^attempt
+  },
 });
 ```
 

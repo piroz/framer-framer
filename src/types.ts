@@ -44,6 +44,13 @@ export interface EmbedOptions {
   maxHeight?: number;
   /** Enable OGP fallback for unrecognized URLs (default: true) */
   fallback?: boolean;
+  /** Retry configuration for transient failures (network errors, 5xx, 429) */
+  retry?: {
+    /** Maximum number of retries (default: 2) */
+    maxRetries?: number;
+    /** Base delay in milliseconds for exponential backoff (default: 500) */
+    baseDelay?: number;
+  };
 }
 
 /** Provider interface - implement this to add a new platform */

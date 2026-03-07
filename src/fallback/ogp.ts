@@ -1,6 +1,7 @@
 import { DEFAULT_TIMEOUT_MS } from "../constants.js";
 import { EmbedError } from "../errors.js";
-import type { EmbedResult } from "../types.js";
+import type { EmbedOptions, EmbedResult } from "../types.js";
+import { withRetry } from "../utils/retry.js";
 
 /** Escape special HTML characters to prevent XSS */
 function escapeHtml(str: string): string {
@@ -32,24 +33,26 @@ function escapeRegex(str: string): string {
  * Resolve embed data from a URL using OGP meta tags.
  * This is the fallback when no dedicated provider matches.
  */
-export async function resolveWithOgp(url: string): Promise<EmbedResult> {
-  const response = await fetch(url, {
-    headers: {
-      "User-Agent": "framer-framer/1.0 (OGP embed resolver)",
-      Accept: "text/html",
-    },
-    redirect: "follow",
-    signal: AbortSignal.timeout(DEFAULT_TIMEOUT_MS),
-  });
+export async function resolveWithOgp(url: string, options?: EmbedOptions): Promise<EmbedResult> {
+  const html = await withRetry(async () => {
+    const response = await fetch(url, {
+      headers: {
+        "User-Agent": "framer-framer/1.0 (OGP embed resolver)",
+        Accept: "text/html",
+      },
+      redirect: "follow",
+      signal: AbortSignal.timeout(DEFAULT_TIMEOUT_MS),
+    });
 
-  if (!response.ok) {
-    throw new EmbedError(
-      "OGP_FETCH_FAILED",
-      `OGP fallback: failed to fetch ${url}: ${response.status} ${response.statusText}`,
-    );
-  }
+    if (!response.ok) {
+      throw new EmbedError(
+        "OGP_FETCH_FAILED",
+        `OGP fallback: failed to fetch ${url}: ${response.status} ${response.statusText}`,
+      );
+    }
 
-  const html = await response.text();
+    return await response.text();
+  }, options?.retry);
 
   const title = extractMetaContent(html, "og:title") ?? extractMetaContent(html, "twitter:title");
   const description =

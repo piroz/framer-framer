@@ -1,6 +1,7 @@
 import { DEFAULT_TIMEOUT_MS } from "../constants.js";
 import { EmbedError } from "../errors.js";
 import type { EmbedOptions, EmbedResult, Provider } from "../types.js";
+import { withRetry } from "../utils/retry.js";
 
 /** Base class for oEmbed-based providers */
 export abstract class OEmbedProvider implements Provider {
@@ -18,25 +19,31 @@ export abstract class OEmbedProvider implements Provider {
 
   async resolve(url: string, options?: EmbedOptions): Promise<EmbedResult> {
     const oembedUrl = this.buildOEmbedUrl(url, options);
-    const response = await fetch(oembedUrl, {
-      signal: AbortSignal.timeout(DEFAULT_TIMEOUT_MS),
-    });
+    const providerName = this.name;
 
-    if (!response.ok) {
-      throw new EmbedError(
-        "OEMBED_FETCH_FAILED",
-        `${this.name} oEmbed request failed: ${response.status} ${response.statusText}`,
-      );
-    }
-
-    let data: Record<string, unknown>;
-    try {
-      data = (await response.json()) as Record<string, unknown>;
-    } catch (cause) {
-      throw new EmbedError("OEMBED_PARSE_ERROR", `${this.name} oEmbed response is not valid JSON`, {
-        cause,
+    const data = await withRetry(async () => {
+      const response = await fetch(oembedUrl, {
+        signal: AbortSignal.timeout(DEFAULT_TIMEOUT_MS),
       });
-    }
+
+      if (!response.ok) {
+        throw new EmbedError(
+          "OEMBED_FETCH_FAILED",
+          `${providerName} oEmbed request failed: ${response.status} ${response.statusText}`,
+        );
+      }
+
+      try {
+        return (await response.json()) as Record<string, unknown>;
+      } catch (cause) {
+        throw new EmbedError(
+          "OEMBED_PARSE_ERROR",
+          `${providerName} oEmbed response is not valid JSON`,
+          { cause },
+        );
+      }
+    }, options?.retry);
+
     return this.toEmbedResult(url, data);
   }
 

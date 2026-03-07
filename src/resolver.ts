@@ -98,7 +98,7 @@ export async function resolve(url: string, options?: EmbedOptions): Promise<Embe
   } else {
     const useFallback = context.options?.fallback !== false;
     if (useFallback) {
-      result = await resolveWithOgp(context.url);
+      result = await resolveWithOgp(context.url, context.options);
     } else {
       throw new EmbedError(
         "PROVIDER_NOT_FOUND",
