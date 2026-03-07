@@ -1,0 +1,27 @@
+name: Mirror Sync
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "Branch to sync (e.g. master)"
+        required: true
+        default: "master"
+
+jobs:
+  mirror-sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.ref }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Push to mirror
+        env:
+          MIRROR_URL: https://x-access-token:${{ secrets.MIRROR_TOKEN }}@github.com/piroz/framer-framer.git
+        run: |
+          REF="${{ github.event.inputs.ref }}"
+          echo "Syncing ${REF} to mirror..."
+          git push "${MIRROR_URL}" "HEAD:refs/heads/${REF}"
