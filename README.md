@@ -178,6 +178,26 @@ For Facebook/Instagram, pass the Meta access token via the `Authorization` heade
 Authorization: Bearer APP_ID|CLIENT_TOKEN
 ```
 
+#### Error responses
+
+All error responses include a `code` field for programmatic error handling:
+
+```json
+{
+  "error": "oEmbed API returned 404",
+  "code": "OEMBED_FETCH_FAILED",
+  "details": { "status": 404 }
+}
+```
+
+| Status | Code | Description |
+| ------ | ---- | ----------- |
+| 400 | `VALIDATION_ERROR` | Missing or invalid `url` parameter |
+| 422 | `<EmbedErrorCode>` | Resolution failed (see [Error codes](#error-codes)) |
+| 422 | `UNKNOWN` | Unexpected error without a specific code |
+
+The `details` field is included only when the underlying error has a `cause`.
+
 #### ServerOptions
 
 ```ts

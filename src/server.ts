@@ -58,13 +58,16 @@ export function createApp(options?: ServerOptions): Hono {
   app.get("/embed", async (c) => {
     const url = c.req.query("url");
     if (!url) {
-      return c.json({ error: "Missing required query parameter: url" }, 400);
+      return c.json(
+        { error: "Missing required query parameter: url", code: "VALIDATION_ERROR" },
+        400,
+      );
     }
 
     try {
       new URL(url);
     } catch {
-      return c.json({ error: "Invalid URL" }, 400);
+      return c.json({ error: "Invalid URL", code: "VALIDATION_ERROR" }, 400);
     }
 
     const embedOptions: EmbedOptions = {
@@ -100,7 +103,8 @@ export function createApp(options?: ServerOptions): Hono {
     } catch (err) {
       const message = err instanceof Error ? err.message : "Unknown error";
       const code = err instanceof EmbedError ? err.code : "UNKNOWN";
-      return c.json({ error: message, code }, 422);
+      const details = err instanceof Error && err.cause ? err.cause : undefined;
+      return c.json({ error: message, code, ...(details !== undefined && { details }) }, 422);
     }
   });
 

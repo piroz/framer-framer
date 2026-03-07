@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { EmbedError } from "../src/errors.js";
 import type { EmbedResult } from "../src/types.js";
 
 function fakeResult(overrides?: Partial<EmbedResult>): EmbedResult {
@@ -41,20 +42,22 @@ describe("server", () => {
   });
 
   describe("GET /embed", () => {
-    it("returns 400 when url is missing", async () => {
+    it("returns 400 with VALIDATION_ERROR code when url is missing", async () => {
       const app = createApp();
       const res = await app.request("/embed");
       expect(res.status).toBe(400);
       const body = await res.json();
       expect(body.error).toMatch(/url/i);
+      expect(body.code).toBe("VALIDATION_ERROR");
     });
 
-    it("returns 400 for invalid URL", async () => {
+    it("returns 400 with VALIDATION_ERROR code for invalid URL", async () => {
       const app = createApp();
       const res = await app.request("/embed?url=not-a-url");
       expect(res.status).toBe(400);
       const body = await res.json();
       expect(body.error).toMatch(/invalid/i);
+      expect(body.code).toBe("VALIDATION_ERROR");
     });
 
     it("resolves a valid URL and returns embed result", async () => {
@@ -128,7 +131,7 @@ describe("server", () => {
       );
     });
 
-    it("returns 422 when resolve throws", async () => {
+    it("returns 422 with UNKNOWN code when resolve throws a plain Error", async () => {
       mockedResolve.mockRejectedValueOnce(new Error("No provider found"));
 
       const app = createApp();
@@ -137,6 +140,39 @@ describe("server", () => {
       expect(res.status).toBe(422);
       const body = await res.json();
       expect(body.error).toMatch(/No provider found/);
+      expect(body.code).toBe("UNKNOWN");
+      expect(body.details).toBeUndefined();
+    });
+
+    it("returns 422 with EmbedError code when resolve throws an EmbedError", async () => {
+      mockedResolve.mockRejectedValueOnce(
+        new EmbedError("OEMBED_FETCH_FAILED", "oEmbed API returned 404"),
+      );
+
+      const app = createApp();
+      const res = await app.request("/embed?url=https://example.com/video");
+
+      expect(res.status).toBe(422);
+      const body = await res.json();
+      expect(body.error).toBe("oEmbed API returned 404");
+      expect(body.code).toBe("OEMBED_FETCH_FAILED");
+      expect(body.details).toBeUndefined();
+    });
+
+    it("includes details when EmbedError has a cause", async () => {
+      const cause = { status: 404, statusText: "Not Found" };
+      mockedResolve.mockRejectedValueOnce(
+        new EmbedError("OEMBED_FETCH_FAILED", "oEmbed API returned 404", { cause }),
+      );
+
+      const app = createApp();
+      const res = await app.request("/embed?url=https://example.com/video");
+
+      expect(res.status).toBe(422);
+      const body = await res.json();
+      expect(body.error).toBe("oEmbed API returned 404");
+      expect(body.code).toBe("OEMBED_FETCH_FAILED");
+      expect(body.details).toEqual(cause);
     });
   });
 
