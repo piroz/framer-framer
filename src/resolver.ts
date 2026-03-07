@@ -1,3 +1,4 @@
+import { EmbedError } from "./errors.js";
 import { resolveWithOgp } from "./fallback/ogp.js";
 import { builtinProviders } from "./providers/index.js";
 import type {
@@ -99,7 +100,8 @@ export async function resolve(url: string, options?: EmbedOptions): Promise<Embe
     if (useFallback) {
       result = await resolveWithOgp(context.url);
     } else {
-      throw new Error(
+      throw new EmbedError(
+        "PROVIDER_NOT_FOUND",
         `No provider found for URL: ${context.url}. ` +
           "Set options.fallback = true to try OGP metadata extraction.",
       );

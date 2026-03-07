@@ -1,4 +1,5 @@
 import { DEFAULT_TIMEOUT_MS } from "../constants.js";
+import { EmbedError } from "../errors.js";
 import type { EmbedOptions, EmbedResult, Provider } from "../types.js";
 
 /** Base class for oEmbed-based providers */
@@ -22,12 +23,20 @@ export abstract class OEmbedProvider implements Provider {
     });
 
     if (!response.ok) {
-      throw new Error(
+      throw new EmbedError(
+        "OEMBED_FETCH_FAILED",
         `${this.name} oEmbed request failed: ${response.status} ${response.statusText}`,
       );
     }
 
-    const data = (await response.json()) as Record<string, unknown>;
+    let data: Record<string, unknown>;
+    try {
+      data = (await response.json()) as Record<string, unknown>;
+    } catch (cause) {
+      throw new EmbedError("OEMBED_PARSE_ERROR", `${this.name} oEmbed response is not valid JSON`, {
+        cause,
+      });
+    }
     return this.toEmbedResult(url, data);
   }
 

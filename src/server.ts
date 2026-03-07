@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import { EmbedError } from "./errors.js";
 import { resolve } from "./resolver.js";
 import type { EmbedOptions } from "./types.js";
 
@@ -98,7 +99,8 @@ export function createApp(options?: ServerOptions): Hono {
       return c.json(result);
     } catch (err) {
       const message = err instanceof Error ? err.message : "Unknown error";
-      return c.json({ error: message }, 422);
+      const code = err instanceof EmbedError ? err.code : "UNKNOWN";
+      return c.json({ error: message, code }, 422);
     }
   });
 

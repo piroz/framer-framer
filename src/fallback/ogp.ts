@@ -1,4 +1,5 @@
 import { DEFAULT_TIMEOUT_MS } from "../constants.js";
+import { EmbedError } from "../errors.js";
 import type { EmbedResult } from "../types.js";
 
 /** Escape special HTML characters to prevent XSS */
@@ -42,7 +43,8 @@ export async function resolveWithOgp(url: string): Promise<EmbedResult> {
   });
 
   if (!response.ok) {
-    throw new Error(
+    throw new EmbedError(
+      "OGP_FETCH_FAILED",
       `OGP fallback: failed to fetch ${url}: ${response.status} ${response.statusText}`,
     );
   }

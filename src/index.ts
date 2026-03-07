@@ -1,3 +1,5 @@
+export type { EmbedErrorCode } from "./errors.js";
+export { EmbedError } from "./errors.js";
 export { OEmbedProvider } from "./providers/base.js";
 export {
   FacebookProvider,

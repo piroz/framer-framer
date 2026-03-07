@@ -210,6 +210,43 @@ const app = createApp();
 app.use("*", cors({ origin: "https://example.com" }));
 ```
 
+## Error handling
+
+All errors thrown by framer-framer are instances of `EmbedError`, which extends `Error` with a `code` property for programmatic error handling.
+
+```ts
+import { embed, EmbedError } from "framer-framer";
+
+try {
+  await embed("https://example.com/video");
+} catch (err) {
+  if (err instanceof EmbedError) {
+    console.log(err.code);    // e.g. "OEMBED_FETCH_FAILED"
+    console.log(err.message); // human-readable description
+    console.log(err.cause);   // original error (if any)
+  }
+}
+```
+
+### Error codes
+
+| Code                  | Description                                      |
+| --------------------- | ------------------------------------------------ |
+| `PROVIDER_NOT_FOUND`  | No provider matched and fallback is disabled     |
+| `OEMBED_FETCH_FAILED` | oEmbed API returned a non-OK HTTP status         |
+| `OEMBED_PARSE_ERROR`  | oEmbed API response could not be parsed as JSON  |
+| `OGP_FETCH_FAILED`    | OGP fallback: page fetch returned a non-OK status |
+| `OGP_PARSE_ERROR`     | OGP fallback: metadata extraction failed         |
+| `VALIDATION_ERROR`    | Invalid input (e.g. missing Meta access token)   |
+| `TIMEOUT`             | Request timed out                                |
+
+`EmbedError` also supports `toJSON()` for structured logging:
+
+```ts
+console.log(JSON.stringify(err));
+// {"name":"EmbedError","code":"OEMBED_FETCH_FAILED","message":"..."}
+```
+
 ## EmbedResult
 
 | Field             | Type     | Description                       |

@@ -1,3 +1,4 @@
+import { EmbedError } from "../errors.js";
 import type { EmbedOptions } from "../types.js";
 import { OEmbedProvider } from "./base.js";
 
@@ -6,7 +7,8 @@ export abstract class MetaProvider extends OEmbedProvider {
   protected buildOEmbedUrl(url: string, options?: EmbedOptions): string {
     const accessToken = options?.meta?.accessToken;
     if (!accessToken) {
-      throw new Error(
+      throw new EmbedError(
+        "VALIDATION_ERROR",
         `${this.name} oEmbed requires a Meta access token. ` +
           'Pass it via options.meta.accessToken in "APP_ID|CLIENT_TOKEN" format.',
       );
