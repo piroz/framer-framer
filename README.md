@@ -12,7 +12,7 @@ Supports YouTube, X/Twitter, TikTok, Facebook, Instagram, Vimeo, Spotify, SoundC
 npm install framer-framer
 ```
 
-Requires Node.js 18+.
+Requires Node.js 22+.
 
 ## Usage
 
@@ -136,6 +136,78 @@ unsubscribe(); // removes only this hook
 
 ```ts
 clearHooks(); // removes all before and after hooks
+```
+
+### REST API server
+
+`framer-framer/server` exports a Hono-based REST API app. Requires `hono` as a peer dependency.
+
+```bash
+npm install hono
+```
+
+#### Basic usage
+
+```ts
+import { serve } from "@hono/node-server";
+import { createApp } from "framer-framer/server";
+
+const app = createApp();
+serve({ fetch: app.fetch, port: 3000 });
+```
+
+#### Endpoints
+
+| Method | Path      | Description                |
+| ------ | --------- | -------------------------- |
+| GET    | `/health` | Health check (`{ status: "ok" }`) |
+| GET    | `/embed`  | Resolve a URL to embed data |
+
+**`GET /embed` query parameters:**
+
+| Parameter   | Type     | Description                          |
+| ----------- | -------- | ------------------------------------ |
+| `url`       | `string` | **(required)** URL to resolve        |
+| `maxWidth`  | `number` | Max embed width                      |
+| `maxHeight` | `number` | Max embed height                     |
+| `fallback`  | `string` | Set to `"false"` to disable OGP fallback |
+
+For Facebook/Instagram, pass the Meta access token via the `Authorization` header:
+
+```
+Authorization: Bearer APP_ID|CLIENT_TOKEN
+```
+
+#### ServerOptions
+
+```ts
+createApp({
+  basePath: "/api/v1",           // prefix all routes
+  defaultOptions: {              // default EmbedOptions for every request
+    maxWidth: 640,
+    fallback: true,
+  },
+});
+```
+
+#### Using as a sub-app
+
+```ts
+import { Hono } from "hono";
+import { createApp } from "framer-framer/server";
+
+const main = new Hono();
+main.route("/oembed", createApp());
+```
+
+#### Enabling CORS
+
+```ts
+import { cors } from "hono/cors";
+import { createApp } from "framer-framer/server";
+
+const app = createApp();
+app.use("*", cors({ origin: "https://example.com" }));
 ```
 
 ## EmbedResult

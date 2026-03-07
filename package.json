@@ -1,7 +1,7 @@
 {
   "name": "framer-framer",
   "version": "1.2.0",
-  "description": "Universal embed resolver - extract embed HTML from any URL (YouTube, X/Twitter, TikTok, Facebook, Instagram, Vimeo, Spotify, SoundCloud, and more)",
+  "description": "Universal embed resolver and REST API server - extract embed HTML from any URL (YouTube, X/Twitter, TikTok, Facebook, Instagram, Vimeo, Spotify, SoundCloud, and more)",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
@@ -72,6 +72,7 @@
     "ogp",
     "social-media",
     "hono",
+    "rest",
     "api",
     "server"
   ]
