@@ -52,11 +52,30 @@ describe("server", () => {
     });
 
     it("returns 400 with VALIDATION_ERROR code for invalid URL", async () => {
+      mockedResolve.mockRejectedValueOnce(
+        new EmbedError("VALIDATION_ERROR", "Invalid URL: not-a-url"),
+      );
+
       const app = createApp();
       const res = await app.request("/embed?url=not-a-url");
       expect(res.status).toBe(400);
       const body = await res.json();
       expect(body.error).toMatch(/invalid/i);
+      expect(body.code).toBe("VALIDATION_ERROR");
+    });
+
+    it("returns 400 when resolve throws VALIDATION_ERROR for private IP", async () => {
+      mockedResolve.mockRejectedValueOnce(
+        new EmbedError(
+          "VALIDATION_ERROR",
+          "URLs pointing to private or loopback addresses are not allowed",
+        ),
+      );
+
+      const app = createApp();
+      const res = await app.request("/embed?url=http://127.0.0.1");
+      expect(res.status).toBe(400);
+      const body = await res.json();
       expect(body.code).toBe("VALIDATION_ERROR");
     });
 

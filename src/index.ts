@@ -22,6 +22,7 @@ export type {
   HookContext,
   Provider,
 } from "./types.js";
+export { validateUrl } from "./utils/url.js";
 
 import { resolve } from "./resolver.js";
 import type { EmbedOptions, EmbedResult } from "./types.js";

@@ -64,12 +64,6 @@ export function createApp(options?: ServerOptions): Hono {
       );
     }
 
-    try {
-      new URL(url);
-    } catch {
-      return c.json({ error: "Invalid URL", code: "VALIDATION_ERROR" }, 400);
-    }
-
     const embedOptions: EmbedOptions = {
       ...options?.defaultOptions,
     };
@@ -103,8 +97,9 @@ export function createApp(options?: ServerOptions): Hono {
     } catch (err) {
       const message = err instanceof Error ? err.message : "Unknown error";
       const code = err instanceof EmbedError ? err.code : "UNKNOWN";
+      const status = code === "VALIDATION_ERROR" ? 400 : 422;
       const details = err instanceof Error && err.cause ? err.cause : undefined;
-      return c.json({ error: message, code, ...(details !== undefined && { details }) }, 422);
+      return c.json({ error: message, code, ...(details !== undefined && { details }) }, status);
     }
   });
 

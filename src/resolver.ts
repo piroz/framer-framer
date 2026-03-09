@@ -9,6 +9,7 @@ import type {
   HookContext,
   Provider,
 } from "./types.js";
+import { validateUrl } from "./utils/url.js";
 
 /** Registry of providers, checked in order */
 const providers: Provider[] = [...builtinProviders];
@@ -78,6 +79,9 @@ export function clearHooks(): void {
  * 5. Throw if nothing works
  */
 export async function resolve(url: string, options?: EmbedOptions): Promise<EmbedResult> {
+  // --- URL validation (SSRF protection) ---
+  validateUrl(url);
+
   const provider = findProvider(url);
 
   const context: HookContext = { url, options, provider };

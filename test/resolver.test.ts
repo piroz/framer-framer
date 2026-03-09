@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { findProvider } from "../src/resolver.js";
+import { EmbedError } from "../src/errors.js";
+import { findProvider, resolve } from "../src/resolver.js";
 
 describe("findProvider - URL auto-detection", () => {
   // YouTube
@@ -136,5 +137,34 @@ describe("findProvider - URL auto-detection", () => {
   it("returns undefined for unknown URLs", () => {
     expect(findProvider("https://example.com")).toBeUndefined();
     expect(findProvider("https://github.com/piroz/repo")).toBeUndefined();
+  });
+});
+
+describe("resolve - URL validation integration", () => {
+  it("throws VALIDATION_ERROR for private IP addresses", async () => {
+    await expect(resolve("http://127.0.0.1")).rejects.toThrow(EmbedError);
+    try {
+      await resolve("http://127.0.0.1");
+    } catch (err) {
+      expect((err as EmbedError).code).toBe("VALIDATION_ERROR");
+    }
+  });
+
+  it("throws VALIDATION_ERROR for localhost", async () => {
+    await expect(resolve("http://localhost")).rejects.toThrow(EmbedError);
+    try {
+      await resolve("http://localhost");
+    } catch (err) {
+      expect((err as EmbedError).code).toBe("VALIDATION_ERROR");
+    }
+  });
+
+  it("throws VALIDATION_ERROR for unsupported protocol", async () => {
+    await expect(resolve("ftp://example.com")).rejects.toThrow(EmbedError);
+    try {
+      await resolve("ftp://example.com");
+    } catch (err) {
+      expect((err as EmbedError).code).toBe("VALIDATION_ERROR");
+    }
   });
 });

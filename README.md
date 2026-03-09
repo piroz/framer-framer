@@ -68,6 +68,31 @@ await embed(url, {
 });
 ```
 
+### URL validation
+
+All URLs are validated before resolution for security (SSRF protection). The following checks are applied automatically:
+
+- **Protocol**: Only `http` and `https` are allowed
+- **Private IPs**: `127.0.0.0/8`, `10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16`, `169.254.0.0/16`, `0.0.0.0`, `::1` are rejected
+- **IPv4-mapped IPv6**: `[::ffff:10.0.0.1]` etc. are also rejected
+- **Numeric IPs**: Decimal (`2130706433`), hex (`0x7f000001`), and octal (`0177.0.0.1`) representations are normalised and checked
+- **Localhost**: `localhost` is rejected
+- **URL length**: Maximum 2048 characters
+
+Invalid URLs throw an `EmbedError` with code `VALIDATION_ERROR`.
+
+> **Note:** URL validation operates on the URL string only and does not perform DNS resolution. Hostnames that resolve to private IPs at runtime (DNS rebinding) are not detected. For full SSRF protection in production, combine this with network-level controls such as egress firewall rules or a DNS-resolving proxy.
+
+You can also use the validation function directly:
+
+```ts
+import { validateUrl } from "framer-framer";
+
+validateUrl("https://example.com"); // ok
+validateUrl("http://127.0.0.1");    // throws EmbedError (VALIDATION_ERROR)
+validateUrl("http://2130706433");   // throws (decimal IP = 127.0.0.1)
+```
+
 ### OGP fallback
 
 URLs that don't match any built-in provider are resolved via OGP meta tags automatically. Disable with `fallback: false`.
@@ -262,7 +287,7 @@ try {
 | `OEMBED_PARSE_ERROR`  | oEmbed API response could not be parsed as JSON  |
 | `OGP_FETCH_FAILED`    | OGP fallback: page fetch returned a non-OK status |
 | `OGP_PARSE_ERROR`     | OGP fallback: metadata extraction failed         |
-| `VALIDATION_ERROR`    | Invalid input (e.g. missing Meta access token)   |
+| `VALIDATION_ERROR`    | Invalid input (e.g. missing Meta access token, unsafe URL) |
 | `TIMEOUT`             | Request timed out                                |
 
 `EmbedError` also supports `toJSON()` for structured logging:
