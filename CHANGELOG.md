@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.4.0](https://github.com/piroz/framer-framer/compare/v1.3.0...v1.4.0) (2026-03-09)
+
+
+### Features
+
+* add EmbedError class for structured error handling ([#5](https://github.com/piroz/framer-framer/issues/5)) ([564c13a](https://github.com/piroz/framer-framer/commit/564c13a6ab3b3e18e6a9d6f1d1202d067c65456d)), closes [#8](https://github.com/piroz/framer-framer/issues/8)
+* add retry mechanism with exponential backoff ([54322c8](https://github.com/piroz/framer-framer/commit/54322c8c56711c901435363a2626a18b238e7b9d)), closes [#9](https://github.com/piroz/framer-framer/issues/9)
+* improve REST API error responses with code and details fields ([#6](https://github.com/piroz/framer-framer/issues/6)) ([c3eb6a9](https://github.com/piroz/framer-framer/commit/c3eb6a9fc9e2ee6ad2ecc87bab1ab2f5eaba711c)), closes [#12](https://github.com/piroz/framer-framer/issues/12)
+
 ## [1.3.0](https://github.com/piroz/framer-framer/compare/v1.2.0...v1.3.0) (2026-03-07)
 
 
