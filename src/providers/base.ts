@@ -23,7 +23,7 @@ export abstract class OEmbedProvider implements Provider {
 
     const data = await withRetry(async () => {
       const response = await fetch(oembedUrl, {
-        signal: AbortSignal.timeout(DEFAULT_TIMEOUT_MS),
+        signal: AbortSignal.timeout(options?.timeout ?? DEFAULT_TIMEOUT_MS),
       });
 
       if (!response.ok) {

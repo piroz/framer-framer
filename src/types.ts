@@ -51,6 +51,8 @@ export interface EmbedOptions {
     /** Base delay in milliseconds for exponential backoff (default: 500) */
     baseDelay?: number;
   };
+  /** Request timeout in milliseconds (default: 10000) */
+  timeout?: number;
 }
 
 /** Provider interface - implement this to add a new platform */

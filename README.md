@@ -64,6 +64,7 @@ await embed(url, {
     maxRetries: 2,            // default: 2
     baseDelay: 500,           // default: 500ms, exponential backoff: delay = baseDelay * 2^attempt
   },
+  timeout: 5000,              // Request timeout in ms (default: 10000)
 });
 ```
 

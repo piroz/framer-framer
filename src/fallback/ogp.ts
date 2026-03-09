@@ -41,7 +41,7 @@ export async function resolveWithOgp(url: string, options?: EmbedOptions): Promi
         Accept: "text/html",
       },
       redirect: "follow",
-      signal: AbortSignal.timeout(DEFAULT_TIMEOUT_MS),
+      signal: AbortSignal.timeout(options?.timeout ?? DEFAULT_TIMEOUT_MS),
     });
 
     if (!response.ok) {
