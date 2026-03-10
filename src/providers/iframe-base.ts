@@ -23,6 +23,26 @@ export abstract class IframeProvider implements Provider {
   /** Default iframe height */
   protected defaultHeight = 450;
 
+  /**
+   * Sandbox flags applied to the generated iframe.
+   *
+   * **Security note:** The combination of `allow-same-origin` and `allow-scripts`
+   * allows a **same-origin** iframe to remove its own sandbox via
+   * `document.querySelector('iframe').removeAttribute('sandbox')`.
+   * All current subclasses embed **cross-origin** content, so this escape is
+   * not possible. If you add a same-origin provider, override this property
+   * to omit `allow-same-origin`.
+   */
+  protected sandboxFlags: string[] = [
+    "allow-forms",
+    "allow-popups",
+    "allow-same-origin",
+    "allow-scripts",
+  ];
+
+  /** Referrer policy applied to the generated iframe. */
+  protected referrerPolicy = "no-referrer";
+
   match(url: string): boolean {
     return this.patterns.some((pattern) => pattern.test(url));
   }
@@ -63,10 +83,14 @@ export abstract class IframeProvider implements Provider {
     const safeEmbedUrl = escapeHtml(embedUrl);
     const safeTitle = escapeHtml(title);
 
+    const safeSandbox = escapeHtml(this.sandboxFlags.join(" "));
+    const safeReferrerPolicy = escapeHtml(this.referrerPolicy);
+
     const html =
       `<iframe src="${safeEmbedUrl}" width="${width}" height="${height}" ` +
       `frameborder="0" allow="encrypted-media" ` +
-      `allowfullscreen sandbox="allow-forms allow-modals allow-popups allow-same-origin allow-scripts" ` +
+      `allowfullscreen sandbox="${safeSandbox}" ` +
+      `referrerpolicy="${safeReferrerPolicy}" ` +
       `title="${safeTitle}"></iframe>`;
 
     return {

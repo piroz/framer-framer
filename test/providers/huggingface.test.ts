@@ -47,6 +47,25 @@ describe("HuggingFaceProvider", () => {
       expect(result.html).toContain("huggingface.co/spaces/user/app/embed");
     });
 
+    it("has correct sandbox attributes", async () => {
+      const result = await provider.resolve(
+        "https://huggingface.co/spaces/stabilityai/stable-diffusion",
+      );
+
+      expect(result.html).toContain(
+        'sandbox="allow-forms allow-popups allow-same-origin allow-scripts"',
+      );
+      expect(result.html).not.toContain("allow-modals");
+    });
+
+    it('includes referrerpolicy="no-referrer"', async () => {
+      const result = await provider.resolve(
+        "https://huggingface.co/spaces/stabilityai/stable-diffusion",
+      );
+
+      expect(result.html).toContain('referrerpolicy="no-referrer"');
+    });
+
     it("respects maxWidth and maxHeight", async () => {
       const result = await provider.resolve("https://huggingface.co/spaces/gradio/chatbot", {
         maxWidth: 600,

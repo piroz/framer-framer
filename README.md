@@ -4,7 +4,7 @@
 
 Universal embed resolver for Node.js — extract embed HTML from any URL using oEmbed APIs.
 
-Supports YouTube, X/Twitter, TikTok, Facebook, Instagram, Vimeo, Spotify, SoundCloud, Hugging Face Spaces, v0.dev, Gradio out of the box, with OGP metadata fallback for any other URL. Zero runtime dependencies.
+Supports YouTube, X/Twitter, TikTok, Facebook, Instagram, Vimeo, Spotify, SoundCloud, Hugging Face Spaces, Gradio out of the box, with OGP metadata fallback for any other URL. Zero runtime dependencies.
 
 ## Install
 
@@ -31,7 +31,7 @@ console.log(result.provider); // "youtube"
 ```ts
 import {
   youtube, twitter, tiktok, facebook, instagram,
-  vimeo, spotify, soundcloud, huggingface, v0, gradio,
+  vimeo, spotify, soundcloud, huggingface, gradio,
 } from "framer-framer";
 
 await youtube("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
@@ -41,7 +41,6 @@ await vimeo("https://vimeo.com/76979871");
 await spotify("https://open.spotify.com/track/4PTG3Z6ehGkBFwjybzWkR8");
 await soundcloud("https://soundcloud.com/artist/track");
 await huggingface("https://huggingface.co/spaces/stabilityai/stable-diffusion");
-await v0("https://v0.dev/t/abc123");
 await gradio("https://user-app.hf.space");
 
 // Facebook / Instagram require a Meta access token
@@ -317,6 +316,24 @@ console.log(JSON.stringify(err));
 | `width`           | `number?` | Embed width                      |
 | `height`          | `number?` | Embed height                     |
 | `raw`             | `object?` | Raw oEmbed response              |
+
+## Development
+
+### Render check
+
+Visually verify that all providers render correctly in a browser:
+
+```bash
+node tools/render-check.mjs          # build, resolve all providers, serve on :8765
+node tools/render-check.mjs --port 3333
+node tools/render-check.mjs --no-serve  # generate HTML only
+```
+
+Facebook/Instagram require a Meta access token via env var:
+
+```bash
+META_ACCESS_TOKEN=APP_ID|CLIENT_TOKEN node tools/render-check.mjs
+```
 
 ## License
 

@@ -12,7 +12,6 @@ export {
   SpotifyProvider,
   TikTokProvider,
   TwitterProvider,
-  V0Provider,
   VimeoProvider,
   YouTubeProvider,
 } from "./providers/index.js";
@@ -91,11 +90,6 @@ export async function soundcloud(url: string, options?: EmbedOptions): Promise<E
 
 /** Resolve a Hugging Face Spaces URL */
 export async function huggingface(url: string, options?: EmbedOptions): Promise<EmbedResult> {
-  return resolve(url, options);
-}
-
-/** Resolve a v0.dev URL */
-export async function v0(url: string, options?: EmbedOptions): Promise<EmbedResult> {
   return resolve(url, options);
 }
 

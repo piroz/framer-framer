@@ -62,3 +62,6 @@ typings/
 
 # Build output
 dist/
+
+# Generated render-check page
+tools/.render-check.html

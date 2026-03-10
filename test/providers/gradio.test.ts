@@ -45,11 +45,19 @@ describe("GradioProvider", () => {
       expect(result.title).toBe("Gradio App (shared)");
     });
 
-    it("includes sandbox attribute for security", async () => {
+    it("has correct sandbox attributes", async () => {
       const result = await provider.resolve("https://stabilityai-stable-diffusion.hf.space");
 
-      expect(result.html).toContain("sandbox=");
-      expect(result.html).toContain("allow-scripts");
+      expect(result.html).toContain(
+        'sandbox="allow-forms allow-popups allow-same-origin allow-scripts"',
+      );
+      expect(result.html).not.toContain("allow-modals");
+    });
+
+    it('includes referrerpolicy="no-referrer"', async () => {
+      const result = await provider.resolve("https://stabilityai-stable-diffusion.hf.space");
+
+      expect(result.html).toContain('referrerpolicy="no-referrer"');
     });
 
     it("respects maxWidth and maxHeight", async () => {
