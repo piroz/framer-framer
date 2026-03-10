@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0](https://github.com/piroz/framer-framer/compare/v1.4.0...v1.5.0) (2026-03-10)
+
+
+### Features
+
+* add AI agent iframe providers (HuggingFace, v0.dev, Gradio)  ([9e7c8fb](https://github.com/piroz/framer-framer/commit/9e7c8fb214e33df67a6851ca5c33f0b49ef5d5b7))
+
 ## [1.4.0](https://github.com/piroz/framer-framer/compare/v1.3.0...v1.4.0) (2026-03-09)
 
 
