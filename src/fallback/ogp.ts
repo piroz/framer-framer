@@ -1,17 +1,8 @@
 import { DEFAULT_TIMEOUT_MS } from "../constants.js";
 import { EmbedError } from "../errors.js";
 import type { EmbedOptions, EmbedResult } from "../types.js";
+import { escapeHtml } from "../utils/html.js";
 import { withRetry } from "../utils/retry.js";
-
-/** Escape special HTML characters to prevent XSS */
-function escapeHtml(str: string): string {
-  return str
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
-}
 
 /** Simple regex-based OGP meta tag extraction */
 function extractMetaContent(html: string, property: string): string | undefined {

@@ -1,10 +1,13 @@
 import type { Provider } from "../types.js";
 import { FacebookProvider } from "./facebook.js";
+import { GradioProvider } from "./gradio.js";
+import { HuggingFaceProvider } from "./huggingface.js";
 import { InstagramProvider } from "./instagram.js";
 import { SoundCloudProvider } from "./soundcloud.js";
 import { SpotifyProvider } from "./spotify.js";
 import { TikTokProvider } from "./tiktok.js";
 import { TwitterProvider } from "./twitter.js";
+import { V0Provider } from "./v0.js";
 import { VimeoProvider } from "./vimeo.js";
 import { YouTubeProvider } from "./youtube.js";
 
@@ -17,6 +20,9 @@ export const instagramProvider = new InstagramProvider();
 export const vimeoProvider = new VimeoProvider();
 export const spotifyProvider = new SpotifyProvider();
 export const soundcloudProvider = new SoundCloudProvider();
+export const huggingfaceProvider = new HuggingFaceProvider();
+export const v0Provider = new V0Provider();
+export const gradioProvider = new GradioProvider();
 
 /** All built-in providers */
 export const builtinProviders: Provider[] = [
@@ -28,16 +34,23 @@ export const builtinProviders: Provider[] = [
   vimeoProvider,
   spotifyProvider,
   soundcloudProvider,
+  huggingfaceProvider,
+  v0Provider,
+  gradioProvider,
 ];
 
 export {
   FacebookProvider,
+  GradioProvider,
+  HuggingFaceProvider,
   InstagramProvider,
   SoundCloudProvider,
   SpotifyProvider,
   TikTokProvider,
   TwitterProvider,
+  V0Provider,
   VimeoProvider,
   YouTubeProvider,
 };
+export { IframeProvider } from "./iframe-base.js";
 export { MetaProvider } from "./meta.js";

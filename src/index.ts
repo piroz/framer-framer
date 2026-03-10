@@ -3,12 +3,16 @@ export { EmbedError } from "./errors.js";
 export { OEmbedProvider } from "./providers/base.js";
 export {
   FacebookProvider,
+  GradioProvider,
+  HuggingFaceProvider,
+  IframeProvider,
   InstagramProvider,
   MetaProvider,
   SoundCloudProvider,
   SpotifyProvider,
   TikTokProvider,
   TwitterProvider,
+  V0Provider,
   VimeoProvider,
   YouTubeProvider,
 } from "./providers/index.js";
@@ -82,5 +86,20 @@ export async function spotify(url: string, options?: EmbedOptions): Promise<Embe
 
 /** Resolve a SoundCloud URL */
 export async function soundcloud(url: string, options?: EmbedOptions): Promise<EmbedResult> {
+  return resolve(url, options);
+}
+
+/** Resolve a Hugging Face Spaces URL */
+export async function huggingface(url: string, options?: EmbedOptions): Promise<EmbedResult> {
+  return resolve(url, options);
+}
+
+/** Resolve a v0.dev URL */
+export async function v0(url: string, options?: EmbedOptions): Promise<EmbedResult> {
+  return resolve(url, options);
+}
+
+/** Resolve a Gradio app URL */
+export async function gradio(url: string, options?: EmbedOptions): Promise<EmbedResult> {
   return resolve(url, options);
 }
