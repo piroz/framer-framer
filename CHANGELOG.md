@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.0.0](https://github.com/piroz/framer-framer/compare/v1.5.0...v2.0.0) (2026-03-10)
+
+
+### ⚠ BREAKING CHANGES
+
+* **iframe:** `V0Provider`, `v0Provider`, and the `v0()` convenience function have been removed.
+
+### Bug Fixes
+
+* **iframe:** harden sandbox attributes, remove v0 provider ([5037369](https://github.com/piroz/framer-framer/commit/5037369fa6ed3d4d3833596bd52310059e03fc42))
+
 ## [1.5.0](https://github.com/piroz/framer-framer/compare/v1.4.0...v1.5.0) (2026-03-10)
 
 
