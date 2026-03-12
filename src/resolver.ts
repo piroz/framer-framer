@@ -1,3 +1,4 @@
+import type { EmbedCache } from "./cache.js";
 import { EmbedError } from "./errors.js";
 import { resolveWithOgp } from "./fallback/ogp.js";
 import { builtinProviders } from "./providers/index.js";
@@ -70,17 +71,31 @@ export function clearHooks(): void {
   afterHooks.length = 0;
 }
 
+/** Extract the cache instance from options (returns undefined when disabled). */
+function getCache(options?: EmbedOptions): EmbedCache | undefined {
+  if (!options?.cache) return undefined;
+  return options.cache;
+}
+
 /**
  * Resolve a URL to embed data.
- * 1. Run beforeResolve hooks (may short-circuit)
- * 2. Try matching providers in order
- * 3. If no provider matches and fallback is enabled, try OGP
- * 4. Run afterResolve hooks (may transform result)
- * 5. Throw if nothing works
+ * 1. Check cache for a previously resolved result
+ * 2. Run beforeResolve hooks (may short-circuit)
+ * 3. Try matching providers in order
+ * 4. If no provider matches and fallback is enabled, try OGP
+ * 5. Run afterResolve hooks (may transform result)
+ * 6. Store result in cache and return
  */
 export async function resolve(url: string, options?: EmbedOptions): Promise<EmbedResult> {
   // --- URL validation (SSRF protection) ---
   validateUrl(url);
+
+  // --- cache lookup ---
+  const cache = getCache(options);
+  if (cache) {
+    const cached = cache.get(url, options);
+    if (cached) return cached;
+  }
 
   const provider = findProvider(url);
 
@@ -90,7 +105,9 @@ export async function resolve(url: string, options?: EmbedOptions): Promise<Embe
   for (const hook of beforeHooks) {
     const shortCircuit = await hook(context);
     if (shortCircuit) {
-      return runAfterHooks(context, shortCircuit);
+      const final = await runAfterHooks(context, shortCircuit);
+      if (cache) cache.set(url, options, final);
+      return final;
     }
   }
 
@@ -113,7 +130,12 @@ export async function resolve(url: string, options?: EmbedOptions): Promise<Embe
   }
 
   // --- after hooks ---
-  return runAfterHooks(context, result);
+  const final = await runAfterHooks(context, result);
+
+  // --- cache store ---
+  if (cache) cache.set(url, options, final);
+
+  return final;
 }
 
 async function runAfterHooks(context: HookContext, result: EmbedResult): Promise<EmbedResult> {

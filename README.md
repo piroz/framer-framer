@@ -68,6 +68,7 @@ await embed(url, {
   },
   timeout: 5000,              // Request timeout in ms (default: 10000)
   sanitize: true,             // Sanitize oEmbed HTML to prevent XSS (default: true)
+  cache: myCache,             // EmbedCache instance (see Caching section)
 });
 ```
 
@@ -103,6 +104,35 @@ URLs that don't match any built-in provider are resolved via OGP meta tags autom
 ```ts
 const result = await embed("https://example.com/article", { fallback: true });
 // Returns link card HTML built from og:title, og:description, og:image
+```
+
+### Caching
+
+Built-in LRU cache eliminates redundant network calls for repeated URLs.
+
+```ts
+import { createCache, embed } from "framer-framer";
+
+const cache = createCache({ maxSize: 200, ttl: 60_000 }); // 200 entries, 1 min TTL
+
+const result = await embed("https://www.youtube.com/watch?v=abc", { cache });
+// Second call returns instantly from cache — no network request
+await embed("https://www.youtube.com/watch?v=abc", { cache });
+```
+
+`createCache()` options:
+
+| Option    | Type     | Default  | Description                      |
+| --------- | -------- | -------- | -------------------------------- |
+| `maxSize` | `number` | `100`    | Maximum number of cached entries |
+| `ttl`     | `number` | `300000` | Time-to-live in milliseconds     |
+
+The cache key includes the URL and dimension options (`maxWidth`, `maxHeight`), so different option combinations are cached separately.
+
+Set `cache: false` to explicitly disable caching for a single call when a cache is normally used.
+
+```ts
+cache.clear(); // remove all cached entries
 ```
 
 ### Custom providers

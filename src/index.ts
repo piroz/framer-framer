@@ -1,3 +1,5 @@
+export type { CacheOptions } from "./cache.js";
+export { createCache, EmbedCache } from "./cache.js";
 export type { EmbedErrorCode } from "./errors.js";
 export { EmbedError } from "./errors.js";
 export { OEmbedProvider } from "./providers/base.js";

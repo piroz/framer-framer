@@ -55,6 +55,12 @@ export interface EmbedOptions {
   timeout?: number;
   /** Sanitize HTML in oEmbed responses to prevent XSS (default: true) */
   sanitize?: boolean;
+  /**
+   * In-memory LRU cache for embed results.
+   * Pass an `EmbedCache` instance to enable caching, or `false` to explicitly disable.
+   * When omitted, no caching is performed.
+   */
+  cache?: import("./cache.js").EmbedCache | false;
 }
 
 /** Provider interface - implement this to add a new platform */
