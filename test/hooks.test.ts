@@ -151,25 +151,27 @@ describe("hooks", () => {
     it("chains multiple after hooks", async () => {
       onAfterResolve((_ctx, result) => ({
         ...result,
-        html: `<outer>${result.html}</outer>`,
+        html: `<div class="outer">${result.html}</div>`,
       }));
       onAfterResolve((_ctx, result) => ({
         ...result,
-        html: `<outermost>${result.html}</outermost>`,
+        html: `<div class="outermost">${result.html}</div>`,
       }));
 
       vi.stubGlobal(
         "fetch",
         vi.fn().mockResolvedValue({
           ok: true,
-          json: async () => ({ type: "video", html: "<inner/>" }),
+          json: async () => ({ type: "video", html: "<iframe></iframe>" }),
         }),
       );
 
       const { resolve } = await import("../src/resolver.js");
       const result = await resolve("https://www.youtube.com/watch?v=abc");
 
-      expect(result.html).toBe("<outermost><outer><inner/></outer></outermost>");
+      expect(result.html).toBe(
+        '<div class="outermost"><div class="outer"><iframe></iframe></div></div>',
+      );
     });
 
     it("also runs on short-circuited results from before hooks", async () => {
@@ -192,7 +194,7 @@ describe("hooks", () => {
 
   describe("unsubscribe", () => {
     it("onBeforeResolve returns a function that removes the hook", async () => {
-      const unsubscribe = onBeforeResolve(() => fakeResult({ html: "<cached/>" }));
+      const unsubscribe = onBeforeResolve(() => fakeResult({ html: "<div>cached</div>" }));
 
       unsubscribe();
 
@@ -200,20 +202,20 @@ describe("hooks", () => {
         "fetch",
         vi.fn().mockResolvedValue({
           ok: true,
-          json: async () => ({ type: "video", html: "<from-api/>" }),
+          json: async () => ({ type: "video", html: "<iframe>from-api</iframe>" }),
         }),
       );
 
       const { resolve } = await import("../src/resolver.js");
       const result = await resolve("https://www.youtube.com/watch?v=abc");
 
-      expect(result.html).toBe("<from-api/>");
+      expect(result.html).toBe("<iframe>from-api</iframe>");
     });
 
     it("onAfterResolve returns a function that removes the hook", async () => {
       const unsubscribe = onAfterResolve((_ctx, result) => ({
         ...result,
-        html: "<replaced/>",
+        html: "<div>replaced</div>",
       }));
 
       unsubscribe();
@@ -222,14 +224,14 @@ describe("hooks", () => {
         "fetch",
         vi.fn().mockResolvedValue({
           ok: true,
-          json: async () => ({ type: "video", html: "<from-api/>" }),
+          json: async () => ({ type: "video", html: "<iframe>from-api</iframe>" }),
         }),
       );
 
       const { resolve } = await import("../src/resolver.js");
       const result = await resolve("https://www.youtube.com/watch?v=abc");
 
-      expect(result.html).toBe("<from-api/>");
+      expect(result.html).toBe("<iframe>from-api</iframe>");
     });
 
     it("only removes the specific hook, not others", async () => {
@@ -257,8 +259,8 @@ describe("hooks", () => {
 
   describe("clearHooks", () => {
     it("removes all registered hooks", async () => {
-      onBeforeResolve(() => fakeResult({ html: "<short-circuit/>" }));
-      onAfterResolve((_ctx, result) => ({ ...result, html: "<replaced/>" }));
+      onBeforeResolve(() => fakeResult({ html: "<div>short-circuit</div>" }));
+      onAfterResolve((_ctx, result) => ({ ...result, html: "<div>replaced</div>" }));
 
       clearHooks();
 
@@ -266,7 +268,7 @@ describe("hooks", () => {
         "fetch",
         vi.fn().mockResolvedValue({
           ok: true,
-          json: async () => ({ type: "video", html: "<from-api/>" }),
+          json: async () => ({ type: "video", html: "<iframe>from-api</iframe>" }),
         }),
       );
 
@@ -274,7 +276,7 @@ describe("hooks", () => {
       const result = await resolve("https://www.youtube.com/watch?v=abc");
 
       // Neither hook should have run
-      expect(result.html).toBe("<from-api/>");
+      expect(result.html).toBe("<iframe>from-api</iframe>");
     });
   });
 });

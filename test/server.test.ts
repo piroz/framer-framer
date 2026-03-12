@@ -150,6 +150,18 @@ describe("server", () => {
       );
     });
 
+    it("disables sanitize when sanitize=false", async () => {
+      mockedResolve.mockResolvedValueOnce(fakeResult());
+
+      const app = createApp();
+      await app.request("/embed?url=https://example.com&sanitize=false");
+
+      expect(mockedResolve).toHaveBeenCalledWith(
+        "https://example.com",
+        expect.objectContaining({ sanitize: false }),
+      );
+    });
+
     it("returns 422 with UNKNOWN code when resolve throws a plain Error", async () => {
       mockedResolve.mockRejectedValueOnce(new Error("No provider found"));
 

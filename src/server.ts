@@ -91,6 +91,11 @@ export function createApp(options?: ServerOptions): Hono {
       embedOptions.fallback = false;
     }
 
+    const sanitize = c.req.query("sanitize");
+    if (sanitize === "false") {
+      embedOptions.sanitize = false;
+    }
+
     try {
       const result = await resolve(url, embedOptions);
       return c.json(result);

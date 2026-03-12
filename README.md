@@ -67,6 +67,7 @@ await embed(url, {
     baseDelay: 500,           // default: 500ms, exponential backoff: delay = baseDelay * 2^attempt
   },
   timeout: 5000,              // Request timeout in ms (default: 10000)
+  sanitize: true,             // Sanitize oEmbed HTML to prevent XSS (default: true)
 });
 ```
 
@@ -203,6 +204,7 @@ serve({ fetch: app.fetch, port: 3000 });
 | `maxWidth`  | `number` | Max embed width                      |
 | `maxHeight` | `number` | Max embed height                     |
 | `fallback`  | `string` | Set to `"false"` to disable OGP fallback |
+| `sanitize`  | `string` | Set to `"false"` to disable HTML sanitization |
 
 For Facebook/Instagram, pass the Meta access token via the `Authorization` header:
 

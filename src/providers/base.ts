@@ -2,6 +2,7 @@ import { DEFAULT_TIMEOUT_MS } from "../constants.js";
 import { EmbedError } from "../errors.js";
 import type { EmbedOptions, EmbedResult, Provider } from "../types.js";
 import { withRetry } from "../utils/retry.js";
+import { sanitizeHtml } from "../utils/sanitize.js";
 
 /** Base class for oEmbed-based providers */
 export abstract class OEmbedProvider implements Provider {
@@ -44,7 +45,11 @@ export abstract class OEmbedProvider implements Provider {
       }
     }, options?.retry);
 
-    return this.toEmbedResult(url, data);
+    const result = this.toEmbedResult(url, data);
+    if (options?.sanitize !== false) {
+      result.html = sanitizeHtml(result.html);
+    }
+    return result;
   }
 
   /** Build the oEmbed API URL with query parameters */

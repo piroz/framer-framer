@@ -53,6 +53,8 @@ export interface EmbedOptions {
   };
   /** Request timeout in milliseconds (default: 10000) */
   timeout?: number;
+  /** Sanitize HTML in oEmbed responses to prevent XSS (default: true) */
+  sanitize?: boolean;
 }
 
 /** Provider interface - implement this to add a new platform */
