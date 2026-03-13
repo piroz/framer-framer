@@ -3,6 +3,7 @@ import { FacebookProvider } from "./facebook.js";
 import { GradioProvider } from "./gradio.js";
 import { HuggingFaceProvider } from "./huggingface.js";
 import { InstagramProvider } from "./instagram.js";
+import { NiconicoProvider } from "./niconico.js";
 import { NoteProvider } from "./note.js";
 import { PinterestProvider } from "./pinterest.js";
 import { SoundCloudProvider } from "./soundcloud.js";
@@ -24,6 +25,7 @@ export const soundcloudProvider = new SoundCloudProvider();
 export const pinterestProvider = new PinterestProvider();
 export const huggingfaceProvider = new HuggingFaceProvider();
 export const gradioProvider = new GradioProvider();
+export const niconicoProvider = new NiconicoProvider();
 export const noteProvider = new NoteProvider();
 
 /** All built-in providers */
@@ -39,6 +41,7 @@ export const builtinProviders: Provider[] = [
   pinterestProvider,
   huggingfaceProvider,
   gradioProvider,
+  niconicoProvider,
   noteProvider,
 ];
 
@@ -47,6 +50,7 @@ export {
   GradioProvider,
   HuggingFaceProvider,
   InstagramProvider,
+  NiconicoProvider,
   NoteProvider,
   PinterestProvider,
   SoundCloudProvider,

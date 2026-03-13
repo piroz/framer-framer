@@ -11,6 +11,7 @@ export {
   IframeProvider,
   InstagramProvider,
   MetaProvider,
+  NiconicoProvider,
   NoteProvider,
   PinterestProvider,
   SoundCloudProvider,
@@ -106,6 +107,11 @@ export async function huggingface(url: string, options?: EmbedOptions): Promise<
 
 /** Resolve a Gradio app URL */
 export async function gradio(url: string, options?: EmbedOptions): Promise<EmbedResult> {
+  return resolve(url, options);
+}
+
+/** Resolve a Niconico URL */
+export async function niconico(url: string, options?: EmbedOptions): Promise<EmbedResult> {
   return resolve(url, options);
 }
 
