@@ -16,6 +16,7 @@ export {
   PinterestProvider,
   RedditProvider,
   SoundCloudProvider,
+  SpeakerDeckProvider,
   SpotifyProvider,
   TikTokProvider,
   TwitterProvider,
@@ -93,6 +94,11 @@ export async function spotify(url: string, options?: EmbedOptions): Promise<Embe
 
 /** Resolve a SoundCloud URL */
 export async function soundcloud(url: string, options?: EmbedOptions): Promise<EmbedResult> {
+  return resolve(url, options);
+}
+
+/** Resolve a Speaker Deck URL */
+export async function speakerdeck(url: string, options?: EmbedOptions): Promise<EmbedResult> {
   return resolve(url, options);
 }
 

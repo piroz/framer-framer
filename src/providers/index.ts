@@ -8,6 +8,7 @@ import { NoteProvider } from "./note.js";
 import { PinterestProvider } from "./pinterest.js";
 import { RedditProvider } from "./reddit.js";
 import { SoundCloudProvider } from "./soundcloud.js";
+import { SpeakerDeckProvider } from "./speakerdeck.js";
 import { SpotifyProvider } from "./spotify.js";
 import { TikTokProvider } from "./tiktok.js";
 import { TwitterProvider } from "./twitter.js";
@@ -23,6 +24,7 @@ export const instagramProvider = new InstagramProvider();
 export const vimeoProvider = new VimeoProvider();
 export const spotifyProvider = new SpotifyProvider();
 export const soundcloudProvider = new SoundCloudProvider();
+export const speakerdeckProvider = new SpeakerDeckProvider();
 export const pinterestProvider = new PinterestProvider();
 export const redditProvider = new RedditProvider();
 export const huggingfaceProvider = new HuggingFaceProvider();
@@ -40,6 +42,7 @@ export const builtinProviders: Provider[] = [
   vimeoProvider,
   spotifyProvider,
   soundcloudProvider,
+  speakerdeckProvider,
   pinterestProvider,
   redditProvider,
   huggingfaceProvider,
@@ -58,6 +61,7 @@ export {
   PinterestProvider,
   RedditProvider,
   SoundCloudProvider,
+  SpeakerDeckProvider,
   SpotifyProvider,
   TikTokProvider,
   TwitterProvider,
