@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.1.0](https://github.com/piroz/framer-framer/compare/v2.0.0...v2.1.0) (2026-03-13)
+
+
+### Features
+
+* add built-in LRU cache for embed results ([b7c356a](https://github.com/piroz/framer-framer/commit/b7c356a69a1bc2cd61e3d4ff7b05c222be8cf377))
+* add HTML sanitization for oEmbed responses  ([3b967d4](https://github.com/piroz/framer-framer/commit/3b967d4e608a963ffe154318912e79f23c0ceddd))
+* add oEmbed auto-discovery for unrecognized URLs ([958d405](https://github.com/piroz/framer-framer/commit/958d40517c3bebce23c6dcc15e436af37b2ac164))
+
 ## [2.0.0](https://github.com/piroz/framer-framer/compare/v1.5.0...v2.0.0) (2026-03-10)
 
 
