@@ -8,6 +8,7 @@ import { NiconicoProvider } from "./niconico.js";
 import { NoteProvider } from "./note.js";
 import { PinterestProvider } from "./pinterest.js";
 import { RedditProvider } from "./reddit.js";
+import { SlideShareProvider } from "./slideshare.js";
 import { SoundCloudProvider } from "./soundcloud.js";
 import { SpeakerDeckProvider } from "./speakerdeck.js";
 import { SpotifyProvider } from "./spotify.js";
@@ -25,6 +26,7 @@ export const flickrProvider = new FlickrProvider();
 export const instagramProvider = new InstagramProvider();
 export const vimeoProvider = new VimeoProvider();
 export const spotifyProvider = new SpotifyProvider();
+export const slideshareProvider = new SlideShareProvider();
 export const soundcloudProvider = new SoundCloudProvider();
 export const speakerdeckProvider = new SpeakerDeckProvider();
 export const pinterestProvider = new PinterestProvider();
@@ -44,6 +46,7 @@ export const builtinProviders: Provider[] = [
   instagramProvider,
   vimeoProvider,
   spotifyProvider,
+  slideshareProvider,
   soundcloudProvider,
   speakerdeckProvider,
   pinterestProvider,
@@ -64,6 +67,7 @@ export {
   NoteProvider,
   PinterestProvider,
   RedditProvider,
+  SlideShareProvider,
   SoundCloudProvider,
   SpeakerDeckProvider,
   SpotifyProvider,

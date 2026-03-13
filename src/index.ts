@@ -16,6 +16,7 @@ export {
   NoteProvider,
   PinterestProvider,
   RedditProvider,
+  SlideShareProvider,
   SoundCloudProvider,
   SpeakerDeckProvider,
   SpotifyProvider,
@@ -95,6 +96,11 @@ export async function vimeo(url: string, options?: EmbedOptions): Promise<EmbedR
 
 /** Resolve a Spotify URL */
 export async function spotify(url: string, options?: EmbedOptions): Promise<EmbedResult> {
+  return resolve(url, options);
+}
+
+/** Resolve a SlideShare URL */
+export async function slideshare(url: string, options?: EmbedOptions): Promise<EmbedResult> {
   return resolve(url, options);
 }
 
