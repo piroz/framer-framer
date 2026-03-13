@@ -4,7 +4,7 @@
 
 Universal embed resolver for Node.js — extract embed HTML from any URL using oEmbed APIs.
 
-Supports YouTube, X/Twitter, TikTok, Facebook, Instagram, Vimeo, Spotify, SoundCloud, Speaker Deck, Pinterest, Reddit, Niconico, Hugging Face Spaces, Gradio, note out of the box, with oEmbed auto-discovery and OGP metadata fallback for any other URL. Zero runtime dependencies.
+Supports YouTube, X/Twitter, TikTok, Flickr, Facebook, Instagram, Vimeo, Spotify, SoundCloud, Speaker Deck, Pinterest, Reddit, Niconico, Hugging Face Spaces, Gradio, note out of the box, with oEmbed auto-discovery and OGP metadata fallback for any other URL. Zero runtime dependencies.
 
 ## Install
 
@@ -30,13 +30,14 @@ console.log(result.provider); // "youtube"
 
 ```ts
 import {
-  youtube, twitter, tiktok, facebook, instagram,
+  youtube, twitter, tiktok, flickr, facebook, instagram,
   vimeo, spotify, soundcloud, speakerdeck, pinterest, reddit, niconico, huggingface, gradio, note,
 } from "framer-framer";
 
 await youtube("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
 await twitter("https://x.com/user/status/123456789");
 await tiktok("https://www.tiktok.com/@user/video/123456789");
+await flickr("https://www.flickr.com/photos/username/12345678901");
 await vimeo("https://vimeo.com/76979871");
 await spotify("https://open.spotify.com/track/4PTG3Z6ehGkBFwjybzWkR8");
 await soundcloud("https://soundcloud.com/artist/track");

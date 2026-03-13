@@ -6,6 +6,7 @@ export { EmbedError } from "./errors.js";
 export { OEmbedProvider } from "./providers/base.js";
 export {
   FacebookProvider,
+  FlickrProvider,
   GradioProvider,
   HuggingFaceProvider,
   IframeProvider,
@@ -69,6 +70,11 @@ export async function twitter(url: string, options?: EmbedOptions): Promise<Embe
 
 /** Resolve a TikTok URL */
 export async function tiktok(url: string, options?: EmbedOptions): Promise<EmbedResult> {
+  return resolve(url, options);
+}
+
+/** Resolve a Flickr URL */
+export async function flickr(url: string, options?: EmbedOptions): Promise<EmbedResult> {
   return resolve(url, options);
 }
 

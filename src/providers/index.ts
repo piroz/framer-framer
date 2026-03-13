@@ -1,5 +1,6 @@
 import type { Provider } from "../types.js";
 import { FacebookProvider } from "./facebook.js";
+import { FlickrProvider } from "./flickr.js";
 import { GradioProvider } from "./gradio.js";
 import { HuggingFaceProvider } from "./huggingface.js";
 import { InstagramProvider } from "./instagram.js";
@@ -20,6 +21,7 @@ export const youtubeProvider = new YouTubeProvider();
 export const twitterProvider = new TwitterProvider();
 export const tiktokProvider = new TikTokProvider();
 export const facebookProvider = new FacebookProvider();
+export const flickrProvider = new FlickrProvider();
 export const instagramProvider = new InstagramProvider();
 export const vimeoProvider = new VimeoProvider();
 export const spotifyProvider = new SpotifyProvider();
@@ -38,6 +40,7 @@ export const builtinProviders: Provider[] = [
   twitterProvider,
   tiktokProvider,
   facebookProvider,
+  flickrProvider,
   instagramProvider,
   vimeoProvider,
   spotifyProvider,
@@ -53,6 +56,7 @@ export const builtinProviders: Provider[] = [
 
 export {
   FacebookProvider,
+  FlickrProvider,
   GradioProvider,
   HuggingFaceProvider,
   InstagramProvider,
