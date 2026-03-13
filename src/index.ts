@@ -11,6 +11,7 @@ export {
   IframeProvider,
   InstagramProvider,
   MetaProvider,
+  NoteProvider,
   SoundCloudProvider,
   SpotifyProvider,
   TikTokProvider,
@@ -99,5 +100,10 @@ export async function huggingface(url: string, options?: EmbedOptions): Promise<
 
 /** Resolve a Gradio app URL */
 export async function gradio(url: string, options?: EmbedOptions): Promise<EmbedResult> {
+  return resolve(url, options);
+}
+
+/** Resolve a note URL */
+export async function note(url: string, options?: EmbedOptions): Promise<EmbedResult> {
   return resolve(url, options);
 }

@@ -3,6 +3,7 @@ import { FacebookProvider } from "./facebook.js";
 import { GradioProvider } from "./gradio.js";
 import { HuggingFaceProvider } from "./huggingface.js";
 import { InstagramProvider } from "./instagram.js";
+import { NoteProvider } from "./note.js";
 import { SoundCloudProvider } from "./soundcloud.js";
 import { SpotifyProvider } from "./spotify.js";
 import { TikTokProvider } from "./tiktok.js";
@@ -21,6 +22,7 @@ export const spotifyProvider = new SpotifyProvider();
 export const soundcloudProvider = new SoundCloudProvider();
 export const huggingfaceProvider = new HuggingFaceProvider();
 export const gradioProvider = new GradioProvider();
+export const noteProvider = new NoteProvider();
 
 /** All built-in providers */
 export const builtinProviders: Provider[] = [
@@ -34,6 +36,7 @@ export const builtinProviders: Provider[] = [
   soundcloudProvider,
   huggingfaceProvider,
   gradioProvider,
+  noteProvider,
 ];
 
 export {
@@ -41,6 +44,7 @@ export {
   GradioProvider,
   HuggingFaceProvider,
   InstagramProvider,
+  NoteProvider,
   SoundCloudProvider,
   SpotifyProvider,
   TikTokProvider,
