@@ -62,6 +62,41 @@ const testCases = [
     url: "https://black-forest-labs-flux-1-schnell.hf.space",
     note: "iframe (direct hf.space)",
   },
+  {
+    provider: "flickr",
+    url: "https://www.flickr.com/photos/beautyofnz/52748122015",
+    note: "oEmbed",
+  },
+  {
+    provider: "slideshare",
+    url: "https://www.slideshare.net/slideshow/introduction-to-artificial-intelligence-ai/265837368",
+    note: "oEmbed",
+  },
+  {
+    provider: "speakerdeck",
+    url: "https://speakerdeck.com/rstudio/building-effective-data-science-teams",
+    note: "oEmbed",
+  },
+  {
+    provider: "pinterest",
+    url: "https://www.pinterest.com/pin/786159678709919863/",
+    note: "oEmbed",
+  },
+  {
+    provider: "reddit",
+    url: "https://www.reddit.com/r/programming/comments/1a2b3c/hello_world/",
+    note: "oEmbed",
+  },
+  {
+    provider: "niconico",
+    url: "https://www.nicovideo.jp/watch/sm9",
+    note: "oEmbed",
+  },
+  {
+    provider: "note",
+    url: "https://note.com/because_and/n/nc0b6348a16f5",
+    note: "oEmbed",
+  },
   // Facebook / Instagram are skipped — they require a Meta access token.
   // Uncomment and set META_ACCESS_TOKEN env var to test:
   // {
@@ -194,7 +229,7 @@ const page = `<!DOCTYPE html>
 
 <div class="legend">
   <dl>
-    <dt>oEmbed</dt><dd>HTML fetched from provider API — YouTube, Vimeo, Spotify etc.</dd>
+    <dt>oEmbed</dt><dd>HTML fetched from provider API — YouTube, Vimeo, Spotify, Flickr, SlideShare, SpeakerDeck, Pinterest, Reddit, Niconico, Note etc.</dd>
     <dt>iframe</dt><dd>HTML generated locally — HuggingFace, Gradio (check sandbox attrs)</dd>
     <dt>Facebook/IG</dt><dd>Skipped unless META_ACCESS_TOKEN is set</dd>
   </dl>
