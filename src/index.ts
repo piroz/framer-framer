@@ -14,6 +14,7 @@ export {
   NiconicoProvider,
   NoteProvider,
   PinterestProvider,
+  RedditProvider,
   SoundCloudProvider,
   SpotifyProvider,
   TikTokProvider,
@@ -97,6 +98,11 @@ export async function soundcloud(url: string, options?: EmbedOptions): Promise<E
 
 /** Resolve a Pinterest URL */
 export async function pinterest(url: string, options?: EmbedOptions): Promise<EmbedResult> {
+  return resolve(url, options);
+}
+
+/** Resolve a Reddit URL */
+export async function reddit(url: string, options?: EmbedOptions): Promise<EmbedResult> {
   return resolve(url, options);
 }
 
