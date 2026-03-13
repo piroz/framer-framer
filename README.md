@@ -4,7 +4,7 @@
 
 Universal embed resolver for Node.js — extract embed HTML from any URL using oEmbed APIs.
 
-Supports YouTube, X/Twitter, TikTok, Facebook, Instagram, Vimeo, Spotify, SoundCloud, Hugging Face Spaces, Gradio out of the box, with OGP metadata fallback for any other URL. Zero runtime dependencies.
+Supports YouTube, X/Twitter, TikTok, Facebook, Instagram, Vimeo, Spotify, SoundCloud, Hugging Face Spaces, Gradio out of the box, with oEmbed auto-discovery and OGP metadata fallback for any other URL. Zero runtime dependencies.
 
 ## Install
 
@@ -68,6 +68,7 @@ await embed(url, {
   },
   timeout: 5000,              // Request timeout in ms (default: 10000)
   sanitize: true,             // Sanitize oEmbed HTML to prevent XSS (default: true)
+  discovery: true,            // oEmbed auto-discovery for unknown URLs (default: true)
   cache: myCache,             // EmbedCache instance (see Caching section)
 });
 ```
@@ -97,9 +98,33 @@ validateUrl("http://127.0.0.1");    // throws EmbedError (VALIDATION_ERROR)
 validateUrl("http://2130706433");   // throws (decimal IP = 127.0.0.1)
 ```
 
+### oEmbed auto-discovery
+
+For URLs that don't match any built-in provider, framer-framer automatically looks for `<link rel="alternate" type="application/json+oembed">` tags in the page HTML. If found, the oEmbed endpoint is used to resolve the embed — no provider registration required.
+
+Resolution order: **Provider match → oEmbed discovery → OGP fallback**
+
+Disable with `discovery: false`:
+
+```ts
+await embed("https://unknown-site.com/post/123", { discovery: false });
+```
+
+You can also use the discovery functions directly:
+
+```ts
+import { discoverOEmbedUrl, resolveWithDiscovery } from "framer-framer";
+
+// Just find the oEmbed endpoint URL
+const oembedUrl = await discoverOEmbedUrl("https://example.com/post");
+
+// Full resolve via discovery (returns undefined if no oEmbed link found)
+const result = await resolveWithDiscovery("https://example.com/post");
+```
+
 ### OGP fallback
 
-URLs that don't match any built-in provider are resolved via OGP meta tags automatically. Disable with `fallback: false`.
+URLs that don't match any built-in provider and have no oEmbed discovery link are resolved via OGP meta tags automatically. Disable with `fallback: false`.
 
 ```ts
 const result = await embed("https://example.com/article", { fallback: true });
@@ -235,6 +260,7 @@ serve({ fetch: app.fetch, port: 3000 });
 | `maxHeight` | `number` | Max embed height                     |
 | `fallback`  | `string` | Set to `"false"` to disable OGP fallback |
 | `sanitize`  | `string` | Set to `"false"` to disable HTML sanitization |
+| `discovery` | `string` | Set to `"false"` to disable oEmbed auto-discovery |
 
 For Facebook/Instagram, pass the Meta access token via the `Authorization` header:
 

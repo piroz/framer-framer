@@ -1,4 +1,5 @@
 import type { EmbedCache } from "./cache.js";
+import { resolveWithDiscovery } from "./discovery.js";
 import { EmbedError } from "./errors.js";
 import { resolveWithOgp } from "./fallback/ogp.js";
 import { builtinProviders } from "./providers/index.js";
@@ -82,7 +83,8 @@ function getCache(options?: EmbedOptions): EmbedCache | undefined {
  * 1. Check cache for a previously resolved result
  * 2. Run beforeResolve hooks (may short-circuit)
  * 3. Try matching providers in order
- * 4. If no provider matches and fallback is enabled, try OGP
+ * 4. If no provider matches, try oEmbed auto-discovery
+ * 5. If discovery fails and fallback is enabled, try OGP
  * 5. Run afterResolve hooks (may transform result)
  * 6. Store result in cache and return
  */
@@ -112,20 +114,27 @@ export async function resolve(url: string, options?: EmbedOptions): Promise<Embe
   }
 
   // --- resolve ---
-  let result: EmbedResult;
+  let result: EmbedResult | undefined;
 
   if (provider) {
     result = await provider.resolve(context.url, context.options);
   } else {
-    const useFallback = context.options?.fallback !== false;
-    if (useFallback) {
-      result = await resolveWithOgp(context.url, context.options);
-    } else {
-      throw new EmbedError(
-        "PROVIDER_NOT_FOUND",
-        `No provider found for URL: ${context.url}. ` +
-          "Set options.fallback = true to try OGP metadata extraction.",
-      );
+    // Try oEmbed auto-discovery before OGP fallback
+    if (context.options?.discovery !== false) {
+      result = (await resolveWithDiscovery(context.url, context.options)) ?? undefined;
+    }
+
+    if (!result) {
+      const useFallback = context.options?.fallback !== false;
+      if (useFallback) {
+        result = await resolveWithOgp(context.url, context.options);
+      } else {
+        throw new EmbedError(
+          "PROVIDER_NOT_FOUND",
+          `No provider found for URL: ${context.url}. ` +
+            "Set options.fallback = true to try OGP metadata extraction.",
+        );
+      }
     }
   }
 

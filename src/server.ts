@@ -96,6 +96,11 @@ export function createApp(options?: ServerOptions): Hono {
       embedOptions.sanitize = false;
     }
 
+    const discovery = c.req.query("discovery");
+    if (discovery === "false") {
+      embedOptions.discovery = false;
+    }
+
     try {
       const result = await resolve(url, embedOptions);
       return c.json(result);

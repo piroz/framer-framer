@@ -53,6 +53,8 @@ export interface EmbedOptions {
   };
   /** Request timeout in milliseconds (default: 10000) */
   timeout?: number;
+  /** Enable oEmbed auto-discovery for unrecognized URLs (default: true) */
+  discovery?: boolean;
   /** Sanitize HTML in oEmbed responses to prevent XSS (default: true) */
   sanitize?: boolean;
   /**

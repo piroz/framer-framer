@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { EmbedError } from "../src/errors.js";
 import { findProvider, resolve } from "../src/resolver.js";
 
@@ -166,5 +166,98 @@ describe("resolve - URL validation integration", () => {
     } catch (err) {
       expect((err as EmbedError).code).toBe("VALIDATION_ERROR");
     }
+  });
+});
+
+describe("resolve - oEmbed discovery integration", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  const discoveryHtml = `
+    <html><head>
+      <link rel="alternate" type="application/json+oembed"
+            href="https://unknown-site.com/oembed?url=https://unknown-site.com/post/1&format=json" />
+    </head><body></body></html>
+  `;
+
+  const oembedResponse = {
+    type: "rich",
+    html: '<iframe src="https://unknown-site.com/embed/1"></iframe>',
+    provider_name: "UnknownSite",
+    title: "A Post",
+  };
+
+  it("uses discovery for unrecognized URLs before OGP fallback", async () => {
+    const fetchMock = vi.fn();
+    // Discovery: fetch HTML page
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      text: () => Promise.resolve(discoveryHtml),
+    });
+    // Discovery: fetch oEmbed endpoint
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      json: () => Promise.resolve(oembedResponse),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    const result = await resolve("https://unknown-site.com/post/1");
+
+    expect(result.provider).toBe("UnknownSite");
+    expect(result.title).toBe("A Post");
+    expect(result.html).toContain("iframe");
+    // OGP fallback should NOT be called
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+
+  it("falls back to OGP when discovery finds no oEmbed link", async () => {
+    const plainHtml = `
+      <html><head>
+        <meta property="og:title" content="OGP Title" />
+        <meta property="og:description" content="OGP Description" />
+        <meta property="og:site_name" content="PlainSite" />
+      </head><body></body></html>
+    `;
+
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        text: () => Promise.resolve(plainHtml),
+      }),
+    );
+
+    const result = await resolve("https://plain-site.com/page");
+
+    expect(result.provider).toBe("PlainSite");
+    expect(result.type).toBe("link");
+    expect(result.html).toContain("framer-framer-card");
+  });
+
+  it("skips discovery when discovery option is false", async () => {
+    const plainHtml = `
+      <html><head>
+        <link rel="alternate" type="application/json+oembed"
+              href="https://site.com/oembed?url=https://site.com/post" />
+        <meta property="og:title" content="OGP Title" />
+        <meta property="og:site_name" content="SiteWithBoth" />
+      </head><body></body></html>
+    `;
+
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        text: () => Promise.resolve(plainHtml),
+      }),
+    );
+
+    const result = await resolve("https://site.com/post", { discovery: false });
+
+    // Should use OGP fallback, not discovery
+    expect(result.provider).toBe("SiteWithBoth");
+    expect(result.type).toBe("link");
+    expect(result.html).toContain("framer-framer-card");
   });
 });
