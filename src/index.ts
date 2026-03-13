@@ -12,6 +12,7 @@ export {
   InstagramProvider,
   MetaProvider,
   NoteProvider,
+  PinterestProvider,
   SoundCloudProvider,
   SpotifyProvider,
   TikTokProvider,
@@ -90,6 +91,11 @@ export async function spotify(url: string, options?: EmbedOptions): Promise<Embe
 
 /** Resolve a SoundCloud URL */
 export async function soundcloud(url: string, options?: EmbedOptions): Promise<EmbedResult> {
+  return resolve(url, options);
+}
+
+/** Resolve a Pinterest URL */
+export async function pinterest(url: string, options?: EmbedOptions): Promise<EmbedResult> {
   return resolve(url, options);
 }
 

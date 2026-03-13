@@ -4,7 +4,7 @@
 
 Universal embed resolver for Node.js — extract embed HTML from any URL using oEmbed APIs.
 
-Supports YouTube, X/Twitter, TikTok, Facebook, Instagram, Vimeo, Spotify, SoundCloud, Hugging Face Spaces, Gradio, note out of the box, with oEmbed auto-discovery and OGP metadata fallback for any other URL. Zero runtime dependencies.
+Supports YouTube, X/Twitter, TikTok, Facebook, Instagram, Vimeo, Spotify, SoundCloud, Pinterest, Hugging Face Spaces, Gradio, note out of the box, with oEmbed auto-discovery and OGP metadata fallback for any other URL. Zero runtime dependencies.
 
 ## Install
 
@@ -31,7 +31,7 @@ console.log(result.provider); // "youtube"
 ```ts
 import {
   youtube, twitter, tiktok, facebook, instagram,
-  vimeo, spotify, soundcloud, huggingface, gradio, note,
+  vimeo, spotify, soundcloud, pinterest, huggingface, gradio, note,
 } from "framer-framer";
 
 await youtube("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
@@ -40,6 +40,7 @@ await tiktok("https://www.tiktok.com/@user/video/123456789");
 await vimeo("https://vimeo.com/76979871");
 await spotify("https://open.spotify.com/track/4PTG3Z6ehGkBFwjybzWkR8");
 await soundcloud("https://soundcloud.com/artist/track");
+await pinterest("https://www.pinterest.com/pin/123456789/");
 await huggingface("https://huggingface.co/spaces/stabilityai/stable-diffusion");
 await gradio("https://user-app.hf.space");
 await note("https://note.com/username/n/abc123");
