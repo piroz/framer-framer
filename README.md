@@ -286,6 +286,7 @@ serve({ fetch: app.fetch, port: 3000 });
 | GET    | `/health`      | Health check (`{ status: "ok" }`)    |
 | GET    | `/embed`       | Resolve a URL to embed data          |
 | POST   | `/embed/batch` | Resolve multiple URLs in one request |
+| GET    | `/metrics`     | Prometheus-format metrics (requires `metrics: true`) |
 
 **`GET /embed` query parameters:**
 
@@ -376,8 +377,21 @@ createApp({
     windowMs: 60_000,            // time window in ms (default: 60000)
     max: 100,                    // max requests per window per IP (default: 100)
   },
+  metrics: true,                 // enable GET /metrics endpoint (default: false)
 });
 ```
+
+#### Metrics
+
+When `metrics: true` is set, a `GET /metrics` endpoint is exposed with Prometheus text exposition format (`Content-Type: text/plain; version=0.0.4; charset=utf-8`).
+
+Available metrics:
+
+| Metric                    | Type    | Labels                       | Description                           |
+| ------------------------- | ------- | ---------------------------- | ------------------------------------- |
+| `embed_requests_total`    | counter | `method`, `path`, `status`   | Total number of embed requests        |
+| `embed_errors_total`      | counter | `code`                       | Total number of embed errors          |
+| `embed_duration_seconds`  | summary | —                            | Duration of embed resolution          |
 
 When rate limiting is enabled, all responses include the following headers:
 

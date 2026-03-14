@@ -539,6 +539,102 @@ describe("server", () => {
     });
   });
 
+  describe("GET /metrics", () => {
+    it("returns 404 when metrics is not enabled", async () => {
+      const app = createApp();
+      const res = await app.request("/metrics");
+      expect(res.status).toBe(404);
+    });
+
+    it("returns Prometheus-format text with correct content type", async () => {
+      const app = createApp({ metrics: true });
+      const res = await app.request("/metrics");
+      expect(res.status).toBe(200);
+      expect(res.headers.get("Content-Type")).toContain("text/plain; version=0.0.4; charset=utf-8");
+      const body = await res.text();
+      expect(body).toContain("# HELP embed_requests_total");
+      expect(body).toContain("# TYPE embed_requests_total counter");
+      expect(body).toContain("# HELP embed_errors_total");
+      expect(body).toContain("# TYPE embed_errors_total counter");
+      expect(body).toContain("# HELP embed_duration_seconds");
+      expect(body).toContain("# TYPE embed_duration_seconds summary");
+      expect(body).toContain("embed_duration_seconds_sum 0");
+      expect(body).toContain("embed_duration_seconds_count 0");
+    });
+
+    it("tracks successful embed requests", async () => {
+      mockedResolve.mockResolvedValue(fakeResult());
+
+      const app = createApp({ metrics: true });
+      await app.request("/embed?url=https://www.youtube.com/watch?v=abc");
+      await app.request("/embed?url=https://www.youtube.com/watch?v=def");
+
+      const res = await app.request("/metrics");
+      const body = await res.text();
+      expect(body).toContain('embed_requests_total{method="GET",path="/embed",status="200"} 2');
+      expect(body).toContain("embed_duration_seconds_count 2");
+    });
+
+    it("tracks failed embed requests and errors", async () => {
+      mockedResolve.mockRejectedValueOnce(
+        new EmbedError("OEMBED_FETCH_FAILED", "oEmbed API returned 404"),
+      );
+
+      const app = createApp({ metrics: true });
+      await app.request("/embed?url=https://example.com/fail");
+
+      const res = await app.request("/metrics");
+      const body = await res.text();
+      expect(body).toContain('embed_requests_total{method="GET",path="/embed",status="422"} 1');
+      expect(body).toContain('embed_errors_total{code="OEMBED_FETCH_FAILED"} 1');
+    });
+
+    it("tracks batch requests and per-item errors", async () => {
+      mockedResolveBatch.mockResolvedValueOnce([
+        fakeResult(),
+        new EmbedError("OEMBED_FETCH_FAILED", "fail"),
+      ]);
+
+      const app = createApp({ metrics: true });
+      await app.request("/embed/batch", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          urls: ["https://www.youtube.com/watch?v=1", "https://fail.example.com"],
+        }),
+      });
+
+      const res = await app.request("/metrics");
+      const body = await res.text();
+      expect(body).toContain(
+        'embed_requests_total{method="POST",path="/embed/batch",status="200"} 1',
+      );
+      expect(body).toContain('embed_errors_total{code="OEMBED_FETCH_FAILED"} 1');
+      expect(body).toContain("embed_duration_seconds_count 1");
+    });
+
+    it("works with basePath option", async () => {
+      const app = createApp({ basePath: "/api/v1", metrics: true });
+      const res = await app.request("/api/v1/metrics");
+      expect(res.status).toBe(200);
+      expect(await res.text()).toContain("# HELP embed_requests_total");
+    });
+
+    it("accumulates duration across requests", async () => {
+      mockedResolve.mockResolvedValue(fakeResult());
+
+      const app = createApp({ metrics: true });
+      await app.request("/embed?url=https://www.youtube.com/watch?v=abc");
+
+      const res = await app.request("/metrics");
+      const body = await res.text();
+      const match = body.match(/embed_duration_seconds_sum (\S+)/);
+      expect(match).toBeTruthy();
+      const sum = Number(match?.[1]);
+      expect(sum).toBeGreaterThanOrEqual(0);
+    });
+  });
+
   describe("defaultOptions", () => {
     it("merges default options with request params", async () => {
       mockedResolve.mockResolvedValueOnce(fakeResult());

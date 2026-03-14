@@ -14,6 +14,52 @@ interface RateLimitEntry {
   resetTime: number;
 }
 
+/** Internal metrics collector for Prometheus exposition */
+interface ServerMetrics {
+  requestsTotal: Map<string, number>;
+  errorsTotal: Map<string, number>;
+  durationSum: number;
+  durationCount: number;
+}
+
+function createMetrics(): ServerMetrics {
+  return {
+    requestsTotal: new Map(),
+    errorsTotal: new Map(),
+    durationSum: 0,
+    durationCount: 0,
+  };
+}
+
+function incrementCounter(map: Map<string, number>, key: string): void {
+  map.set(key, (map.get(key) ?? 0) + 1);
+}
+
+const PROMETHEUS_CONTENT_TYPE = "text/plain; version=0.0.4; charset=utf-8";
+
+function formatPrometheus(metrics: ServerMetrics): string {
+  const lines: string[] = [];
+
+  lines.push("# HELP embed_requests_total Total number of embed requests");
+  lines.push("# TYPE embed_requests_total counter");
+  for (const [labels, count] of metrics.requestsTotal) {
+    lines.push(`embed_requests_total{${labels}} ${count}`);
+  }
+
+  lines.push("# HELP embed_errors_total Total number of embed errors");
+  lines.push("# TYPE embed_errors_total counter");
+  for (const [labels, count] of metrics.errorsTotal) {
+    lines.push(`embed_errors_total{${labels}} ${count}`);
+  }
+
+  lines.push("# HELP embed_duration_seconds Duration of embed resolution in seconds");
+  lines.push("# TYPE embed_duration_seconds summary");
+  lines.push(`embed_duration_seconds_sum ${metrics.durationSum}`);
+  lines.push(`embed_duration_seconds_count ${metrics.durationCount}`);
+
+  return `${lines.join("\n")}\n`;
+}
+
 const PROBLEM_JSON = "application/problem+json";
 
 function problemResponse(
@@ -41,6 +87,8 @@ export interface ServerOptions {
   defaultOptions?: EmbedOptions;
   /** Rate limiting configuration. Omit to disable rate limiting. */
   rateLimit?: RateLimitOptions;
+  /** Enable GET /metrics endpoint with Prometheus-format metrics (default: false) */
+  metrics?: boolean;
 }
 
 /**
@@ -139,9 +187,19 @@ export function createApp(options?: ServerOptions): Hono {
     });
   }
 
+  const metrics = options?.metrics ? createMetrics() : undefined;
+
   app.get("/health", (c) => {
     return c.json({ status: "ok" });
   });
+
+  if (metrics) {
+    app.get("/metrics", (c) => {
+      return c.text(formatPrometheus(metrics), 200, {
+        "Content-Type": PROMETHEUS_CONTENT_TYPE,
+      });
+    });
+  }
 
   app.get("/embed", async (c) => {
     const url = c.req.query("url");
@@ -192,13 +250,27 @@ export function createApp(options?: ServerOptions): Hono {
       embedOptions.discovery = false;
     }
 
+    const startTime = metrics ? Date.now() : 0;
     try {
       const result = await resolve(url, embedOptions);
+      if (metrics) {
+        const durationSec = (Date.now() - startTime) / 1000;
+        metrics.durationSum += durationSec;
+        metrics.durationCount++;
+        incrementCounter(metrics.requestsTotal, `method="GET",path="/embed",status="200"`);
+      }
       return c.json(result);
     } catch (err) {
       const message = err instanceof Error ? err.message : "Unknown error";
       const code = err instanceof EmbedError ? err.code : "UNKNOWN";
       const status = code === "VALIDATION_ERROR" ? 400 : 422;
+      if (metrics) {
+        const durationSec = (Date.now() - startTime) / 1000;
+        metrics.durationSum += durationSec;
+        metrics.durationCount++;
+        incrementCounter(metrics.requestsTotal, `method="GET",path="/embed",status="${status}"`);
+        incrementCounter(metrics.errorsTotal, `code="${code}"`);
+      }
       return problemResponse(c, status, code, message, c.req.path);
     }
   });
@@ -270,7 +342,20 @@ export function createApp(options?: ServerOptions): Hono {
       embedOptions.meta = { accessToken: authHeader.slice(7) };
     }
 
+    const startTime = metrics ? Date.now() : 0;
     const batchResults = await resolveBatch(urls, embedOptions);
+
+    if (metrics) {
+      const durationSec = (Date.now() - startTime) / 1000;
+      metrics.durationSum += durationSec;
+      metrics.durationCount++;
+      incrementCounter(metrics.requestsTotal, `method="POST",path="/embed/batch",status="200"`);
+      for (const r of batchResults) {
+        if (r instanceof EmbedError) {
+          incrementCounter(metrics.errorsTotal, `code="${r.code}"`);
+        }
+      }
+    }
 
     const results = batchResults.map((r) => {
       if (r instanceof EmbedError) {
