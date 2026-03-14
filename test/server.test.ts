@@ -44,13 +44,20 @@ describe("server", () => {
   });
 
   describe("GET /embed", () => {
-    it("returns 400 with VALIDATION_ERROR code when url is missing", async () => {
+    it("returns 400 with RFC 7807 Problem Details when url is missing", async () => {
       const app = createApp();
       const res = await app.request("/embed");
       expect(res.status).toBe(400);
+      expect(res.headers.get("Content-Type")).toContain("application/problem+json");
       const body = await res.json();
-      expect(body.error).toMatch(/url/i);
-      expect(body.code).toBe("VALIDATION_ERROR");
+      expect(body).toMatchObject({
+        type: "about:blank",
+        title: expect.stringMatching(/url/i),
+        status: 400,
+        detail: expect.stringMatching(/url/i),
+        code: "VALIDATION_ERROR",
+        instance: "/embed",
+      });
     });
 
     it("returns 400 with VALIDATION_ERROR code for invalid URL", async () => {
@@ -61,9 +68,14 @@ describe("server", () => {
       const app = createApp();
       const res = await app.request("/embed?url=not-a-url");
       expect(res.status).toBe(400);
+      expect(res.headers.get("Content-Type")).toContain("application/problem+json");
       const body = await res.json();
-      expect(body.error).toMatch(/invalid/i);
-      expect(body.code).toBe("VALIDATION_ERROR");
+      expect(body).toMatchObject({
+        type: "about:blank",
+        status: 400,
+        detail: expect.stringMatching(/invalid/i),
+        code: "VALIDATION_ERROR",
+      });
     });
 
     it("returns 400 when resolve throws VALIDATION_ERROR for private IP", async () => {
@@ -79,6 +91,8 @@ describe("server", () => {
       expect(res.status).toBe(400);
       const body = await res.json();
       expect(body.code).toBe("VALIDATION_ERROR");
+      expect(body.type).toBe("about:blank");
+      expect(body.status).toBe(400);
     });
 
     it("resolves a valid URL and returns embed result", async () => {
@@ -171,10 +185,15 @@ describe("server", () => {
       const res = await app.request("/embed?url=https://unknown.example.com");
 
       expect(res.status).toBe(422);
+      expect(res.headers.get("Content-Type")).toContain("application/problem+json");
       const body = await res.json();
-      expect(body.error).toMatch(/No provider found/);
-      expect(body.code).toBe("UNKNOWN");
-      expect(body.details).toBeUndefined();
+      expect(body).toMatchObject({
+        type: "about:blank",
+        title: "No provider found",
+        status: 422,
+        detail: "No provider found",
+        code: "UNKNOWN",
+      });
     });
 
     it("returns 422 with EmbedError code when resolve throws an EmbedError", async () => {
@@ -186,16 +205,20 @@ describe("server", () => {
       const res = await app.request("/embed?url=https://example.com/video");
 
       expect(res.status).toBe(422);
+      expect(res.headers.get("Content-Type")).toContain("application/problem+json");
       const body = await res.json();
-      expect(body.error).toBe("oEmbed API returned 404");
-      expect(body.code).toBe("OEMBED_FETCH_FAILED");
-      expect(body.details).toBeUndefined();
+      expect(body).toMatchObject({
+        type: "about:blank",
+        title: "oEmbed API returned 404",
+        status: 422,
+        detail: "oEmbed API returned 404",
+        code: "OEMBED_FETCH_FAILED",
+      });
     });
 
-    it("includes details when EmbedError has a cause", async () => {
-      const cause = { status: 404, statusText: "Not Found" };
+    it("includes instance field with request path", async () => {
       mockedResolve.mockRejectedValueOnce(
-        new EmbedError("OEMBED_FETCH_FAILED", "oEmbed API returned 404", { cause }),
+        new EmbedError("OEMBED_FETCH_FAILED", "oEmbed API returned 404"),
       );
 
       const app = createApp();
@@ -203,9 +226,7 @@ describe("server", () => {
 
       expect(res.status).toBe(422);
       const body = await res.json();
-      expect(body.error).toBe("oEmbed API returned 404");
-      expect(body.code).toBe("OEMBED_FETCH_FAILED");
-      expect(body.details).toEqual(cause);
+      expect(body.instance).toBe("/embed");
     });
   });
 
@@ -230,8 +251,13 @@ describe("server", () => {
         body: "not-json",
       });
       expect(res.status).toBe(400);
+      expect(res.headers.get("Content-Type")).toContain("application/problem+json");
       const body = await res.json();
-      expect(body.code).toBe("VALIDATION_ERROR");
+      expect(body).toMatchObject({
+        type: "about:blank",
+        status: 400,
+        code: "VALIDATION_ERROR",
+      });
     });
 
     it("returns 400 when urls field is missing", async () => {
@@ -239,8 +265,9 @@ describe("server", () => {
       const res = await postBatch(app, {});
       expect(res.status).toBe(400);
       const body = await res.json();
-      expect(body.error).toMatch(/urls/);
+      expect(body.detail).toMatch(/urls/);
       expect(body.code).toBe("VALIDATION_ERROR");
+      expect(body.type).toBe("about:blank");
     });
 
     it("returns 400 when urls is an empty array", async () => {
@@ -249,6 +276,7 @@ describe("server", () => {
       expect(res.status).toBe(400);
       const body = await res.json();
       expect(body.code).toBe("VALIDATION_ERROR");
+      expect(body.type).toBe("about:blank");
     });
 
     it("returns 400 when urls exceeds maximum limit", async () => {
@@ -257,7 +285,7 @@ describe("server", () => {
       const res = await postBatch(app, { urls });
       expect(res.status).toBe(400);
       const body = await res.json();
-      expect(body.error).toMatch(/maximum/i);
+      expect(body.detail).toMatch(/maximum/i);
       expect(body.code).toBe("VALIDATION_ERROR");
     });
 
@@ -286,7 +314,7 @@ describe("server", () => {
       expect(body.results[1].url).toBe("https://www.youtube.com/watch?v=2");
     });
 
-    it("returns error objects for failed URLs alongside successful results", async () => {
+    it("returns RFC 7807 error objects for failed URLs alongside successful results", async () => {
       mockedResolveBatch.mockResolvedValueOnce([
         fakeResult(),
         new EmbedError("OEMBED_FETCH_FAILED", "oEmbed API returned 404"),
@@ -302,7 +330,10 @@ describe("server", () => {
       expect(body.results).toHaveLength(2);
       expect(body.results[0].html).toBe("<iframe></iframe>");
       expect(body.results[1]).toEqual({
-        error: "oEmbed API returned 404",
+        type: "about:blank",
+        title: "oEmbed API returned 404",
+        status: 422,
+        detail: "oEmbed API returned 404",
         code: "OEMBED_FETCH_FAILED",
       });
     });
@@ -429,9 +460,14 @@ describe("server", () => {
         }),
       );
       expect(res.status).toBe(429);
+      expect(res.headers.get("Content-Type")).toContain("application/problem+json");
       const body = await res.json();
-      expect(body.error).toMatch(/too many requests/i);
-      expect(body.code).toBe("RATE_LIMITED");
+      expect(body).toMatchObject({
+        type: "about:blank",
+        status: 429,
+        detail: expect.stringMatching(/too many requests/i),
+        code: "RATE_LIMITED",
+      });
       expect(res.headers.get("Retry-After")).toBeTruthy();
       expect(res.headers.get("X-RateLimit-Remaining")).toBe("0");
     });

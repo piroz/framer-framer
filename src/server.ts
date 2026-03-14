@@ -1,9 +1,9 @@
 import { Hono } from "hono";
 import { EmbedError } from "./errors.js";
 import { resolve, resolveBatch } from "./resolver.js";
-import type { EmbedOptions, RateLimitOptions } from "./types.js";
+import type { EmbedOptions, ProblemDetails, RateLimitOptions } from "./types.js";
 
-export type { EmbedOptions, RateLimitOptions } from "./types.js";
+export type { EmbedOptions, ProblemDetails, RateLimitOptions } from "./types.js";
 
 const DEFAULT_MAX_URLS = 20;
 const DEFAULT_RATE_LIMIT_WINDOW_MS = 60_000;
@@ -12,6 +12,26 @@ const DEFAULT_RATE_LIMIT_MAX = 100;
 interface RateLimitEntry {
   count: number;
   resetTime: number;
+}
+
+const PROBLEM_JSON = "application/problem+json";
+
+function problemResponse(
+  c: { json: (data: unknown, status: number, headers?: Record<string, string>) => Response },
+  status: number,
+  code: string,
+  detail: string,
+  instance?: string,
+): Response {
+  const body: ProblemDetails = {
+    type: "about:blank",
+    title: detail,
+    status,
+    detail,
+    code,
+    ...(instance !== undefined && { instance }),
+  };
+  return c.json(body, status, { "Content-Type": PROBLEM_JSON });
 }
 
 export interface ServerOptions {
@@ -106,9 +126,12 @@ export function createApp(options?: ServerOptions): Hono {
       if (entry.count > max) {
         const retryAfter = Math.ceil((entry.resetTime - now) / 1000);
         c.header("Retry-After", String(retryAfter));
-        return c.json(
-          { error: "Too many requests, please try again later", code: "RATE_LIMITED" },
+        return problemResponse(
+          c,
           429,
+          "RATE_LIMITED",
+          "Too many requests, please try again later",
+          c.req.path,
         );
       }
 
@@ -123,9 +146,12 @@ export function createApp(options?: ServerOptions): Hono {
   app.get("/embed", async (c) => {
     const url = c.req.query("url");
     if (!url) {
-      return c.json(
-        { error: "Missing required query parameter: url", code: "VALIDATION_ERROR" },
+      return problemResponse(
+        c,
         400,
+        "VALIDATION_ERROR",
+        "Missing required query parameter: url",
+        c.req.path,
       );
     }
 
@@ -173,8 +199,7 @@ export function createApp(options?: ServerOptions): Hono {
       const message = err instanceof Error ? err.message : "Unknown error";
       const code = err instanceof EmbedError ? err.code : "UNKNOWN";
       const status = code === "VALIDATION_ERROR" ? 400 : 422;
-      const details = err instanceof Error && err.cause ? err.cause : undefined;
-      return c.json({ error: message, code, ...(details !== undefined && { details }) }, status);
+      return problemResponse(c, status, code, message, c.req.path);
     }
   });
 
@@ -183,31 +208,49 @@ export function createApp(options?: ServerOptions): Hono {
     try {
       body = await c.req.json();
     } catch {
-      return c.json({ error: "Invalid JSON body", code: "VALIDATION_ERROR" }, 400);
+      return problemResponse(c, 400, "VALIDATION_ERROR", "Invalid JSON body", c.req.path);
     }
 
     if (!body || typeof body !== "object" || !("urls" in body)) {
-      return c.json({ error: "Missing required field: urls", code: "VALIDATION_ERROR" }, 400);
+      return problemResponse(
+        c,
+        400,
+        "VALIDATION_ERROR",
+        "Missing required field: urls",
+        c.req.path,
+      );
     }
 
     const { urls, maxWidth, maxHeight } = body as Record<string, unknown>;
 
     if (!Array.isArray(urls) || urls.length === 0) {
-      return c.json({ error: "urls must be a non-empty array", code: "VALIDATION_ERROR" }, 400);
+      return problemResponse(
+        c,
+        400,
+        "VALIDATION_ERROR",
+        "urls must be a non-empty array",
+        c.req.path,
+      );
     }
 
     if (urls.length > DEFAULT_MAX_URLS) {
-      return c.json(
-        {
-          error: `Too many URLs: maximum is ${DEFAULT_MAX_URLS}`,
-          code: "VALIDATION_ERROR",
-        },
+      return problemResponse(
+        c,
         400,
+        "VALIDATION_ERROR",
+        `Too many URLs: maximum is ${DEFAULT_MAX_URLS}`,
+        c.req.path,
       );
     }
 
     if (!urls.every((u): u is string => typeof u === "string")) {
-      return c.json({ error: "All items in urls must be strings", code: "VALIDATION_ERROR" }, 400);
+      return problemResponse(
+        c,
+        400,
+        "VALIDATION_ERROR",
+        "All items in urls must be strings",
+        c.req.path,
+      );
     }
 
     const embedOptions: EmbedOptions = {
@@ -231,7 +274,13 @@ export function createApp(options?: ServerOptions): Hono {
 
     const results = batchResults.map((r) => {
       if (r instanceof EmbedError) {
-        return { error: r.message, code: r.code };
+        return {
+          type: "about:blank",
+          title: r.message,
+          status: 422,
+          detail: r.message,
+          code: r.code,
+        } satisfies ProblemDetails;
       }
       return r;
     });

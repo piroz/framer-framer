@@ -110,6 +110,26 @@ export type BeforeResolveHook = (
 ) => undefined | EmbedResult | Promise<undefined | EmbedResult>;
 
 /**
+ * RFC 7807 Problem Details for HTTP APIs.
+ *
+ * @see https://datatracker.ietf.org/doc/html/rfc7807
+ */
+export interface ProblemDetails {
+  /** URI reference identifying the problem type (default: "about:blank") */
+  type: string;
+  /** Short human-readable summary */
+  title: string;
+  /** HTTP status code */
+  status: number;
+  /** Human-readable explanation specific to this occurrence */
+  detail: string;
+  /** Application-specific error code */
+  code: string;
+  /** URI reference identifying the specific occurrence */
+  instance?: string;
+}
+
+/**
  * Called after resolution completes.
  * - Return `void` / `undefined` to keep the original result.
  * - Return an `EmbedResult` to replace it.

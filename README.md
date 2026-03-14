@@ -326,32 +326,42 @@ Authorization: Bearer APP_ID|CLIENT_TOKEN
 {
   "results": [
     { "type": "video", "html": "<iframe ...>", "provider": "youtube", "url": "..." },
-    { "error": "oEmbed API returned 404", "code": "OEMBED_FETCH_FAILED" }
+    { "type": "about:blank", "title": "oEmbed API returned 404", "status": 422, "detail": "oEmbed API returned 404", "code": "OEMBED_FETCH_FAILED" }
   ]
 }
 ```
 
-Each item in `results` is either an `EmbedResult` on success or `{ error, code }` on failure. The array order matches the input `urls` order. Partial failures do not affect other results.
+Each item in `results` is either an `EmbedResult` on success or a [RFC 7807 Problem Details](https://datatracker.ietf.org/doc/html/rfc7807) object on failure. The array order matches the input `urls` order. Partial failures do not affect other results.
 
 #### Error responses
 
-All error responses include a `code` field for programmatic error handling:
+All error responses use the [RFC 7807 Problem Details](https://datatracker.ietf.org/doc/html/rfc7807) format with `Content-Type: application/problem+json`:
 
 ```json
 {
-  "error": "oEmbed API returned 404",
+  "type": "about:blank",
+  "title": "oEmbed API returned 404",
+  "status": 422,
+  "detail": "oEmbed API returned 404",
   "code": "OEMBED_FETCH_FAILED",
-  "details": { "status": 404 }
+  "instance": "/embed"
 }
 ```
+
+| Field | Type | Description |
+| ----- | ---- | ----------- |
+| `type` | `string` | Problem type URI (always `"about:blank"`) |
+| `title` | `string` | Short human-readable summary |
+| `status` | `number` | HTTP status code |
+| `detail` | `string` | Human-readable explanation |
+| `code` | `string` | Application-specific error code (see [Error codes](#error-codes)) |
+| `instance` | `string?` | Request path that caused the error |
 
 | Status | Code | Description |
 | ------ | ---- | ----------- |
 | 400 | `VALIDATION_ERROR` | Missing or invalid `url` parameter |
 | 422 | `<EmbedErrorCode>` | Resolution failed (see [Error codes](#error-codes)) |
 | 422 | `UNKNOWN` | Unexpected error without a specific code |
-
-The `details` field is included only when the underlying error has a `cause`.
 
 #### ServerOptions
 

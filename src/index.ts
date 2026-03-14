@@ -34,6 +34,7 @@ export type {
   EmbedResult,
   EmbedType,
   HookContext,
+  ProblemDetails,
   Provider,
   RateLimitOptions,
 } from "./types.js";
