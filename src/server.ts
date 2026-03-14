@@ -1,9 +1,11 @@
 import { Hono } from "hono";
 import { EmbedError } from "./errors.js";
-import { resolve } from "./resolver.js";
+import { resolve, resolveBatch } from "./resolver.js";
 import type { EmbedOptions } from "./types.js";
 
 export type { EmbedOptions } from "./types.js";
+
+const DEFAULT_MAX_URLS = 20;
 
 export interface ServerOptions {
   /** Base path prefix for all routes (e.g. "/api/v1") */
@@ -111,6 +113,67 @@ export function createApp(options?: ServerOptions): Hono {
       const details = err instanceof Error && err.cause ? err.cause : undefined;
       return c.json({ error: message, code, ...(details !== undefined && { details }) }, status);
     }
+  });
+
+  app.post("/embed/batch", async (c) => {
+    let body: unknown;
+    try {
+      body = await c.req.json();
+    } catch {
+      return c.json({ error: "Invalid JSON body", code: "VALIDATION_ERROR" }, 400);
+    }
+
+    if (!body || typeof body !== "object" || !("urls" in body)) {
+      return c.json({ error: "Missing required field: urls", code: "VALIDATION_ERROR" }, 400);
+    }
+
+    const { urls, maxWidth, maxHeight } = body as Record<string, unknown>;
+
+    if (!Array.isArray(urls) || urls.length === 0) {
+      return c.json({ error: "urls must be a non-empty array", code: "VALIDATION_ERROR" }, 400);
+    }
+
+    if (urls.length > DEFAULT_MAX_URLS) {
+      return c.json(
+        {
+          error: `Too many URLs: maximum is ${DEFAULT_MAX_URLS}`,
+          code: "VALIDATION_ERROR",
+        },
+        400,
+      );
+    }
+
+    if (!urls.every((u): u is string => typeof u === "string")) {
+      return c.json({ error: "All items in urls must be strings", code: "VALIDATION_ERROR" }, 400);
+    }
+
+    const embedOptions: EmbedOptions = {
+      ...options?.defaultOptions,
+    };
+
+    if (typeof maxWidth === "number" && Number.isFinite(maxWidth) && maxWidth > 0) {
+      embedOptions.maxWidth = maxWidth;
+    }
+
+    if (typeof maxHeight === "number" && Number.isFinite(maxHeight) && maxHeight > 0) {
+      embedOptions.maxHeight = maxHeight;
+    }
+
+    const authHeader = c.req.header("Authorization");
+    if (authHeader?.startsWith("Bearer ")) {
+      embedOptions.meta = { accessToken: authHeader.slice(7) };
+    }
+
+    const batchResults = await resolveBatch(urls, embedOptions);
+
+    const results = batchResults.map((r) => {
+      if (r instanceof EmbedError) {
+        return { error: r.message, code: r.code };
+      }
+      return r;
+    });
+
+    return c.json({ results });
   });
 
   return app;

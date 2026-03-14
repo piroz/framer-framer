@@ -19,13 +19,15 @@ vi.mock("../src/resolver.js", async (importOriginal) => {
   return {
     ...original,
     resolve: vi.fn(),
+    resolveBatch: vi.fn(),
   };
 });
 
-import { resolve } from "../src/resolver.js";
+import { resolve, resolveBatch } from "../src/resolver.js";
 import { createApp } from "../src/server.js";
 
 const mockedResolve = vi.mocked(resolve);
+const mockedResolveBatch = vi.mocked(resolveBatch);
 
 describe("server", () => {
   afterEach(() => {
@@ -204,6 +206,162 @@ describe("server", () => {
       expect(body.error).toBe("oEmbed API returned 404");
       expect(body.code).toBe("OEMBED_FETCH_FAILED");
       expect(body.details).toEqual(cause);
+    });
+  });
+
+  describe("POST /embed/batch", () => {
+    function postBatch(
+      app: ReturnType<typeof createApp>,
+      body: unknown,
+      headers?: Record<string, string>,
+    ) {
+      return app.request("/embed/batch", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", ...headers },
+        body: JSON.stringify(body),
+      });
+    }
+
+    it("returns 400 when body is not valid JSON", async () => {
+      const app = createApp();
+      const res = await app.request("/embed/batch", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: "not-json",
+      });
+      expect(res.status).toBe(400);
+      const body = await res.json();
+      expect(body.code).toBe("VALIDATION_ERROR");
+    });
+
+    it("returns 400 when urls field is missing", async () => {
+      const app = createApp();
+      const res = await postBatch(app, {});
+      expect(res.status).toBe(400);
+      const body = await res.json();
+      expect(body.error).toMatch(/urls/);
+      expect(body.code).toBe("VALIDATION_ERROR");
+    });
+
+    it("returns 400 when urls is an empty array", async () => {
+      const app = createApp();
+      const res = await postBatch(app, { urls: [] });
+      expect(res.status).toBe(400);
+      const body = await res.json();
+      expect(body.code).toBe("VALIDATION_ERROR");
+    });
+
+    it("returns 400 when urls exceeds maximum limit", async () => {
+      const app = createApp();
+      const urls = Array.from({ length: 21 }, (_, i) => `https://example.com/${i}`);
+      const res = await postBatch(app, { urls });
+      expect(res.status).toBe(400);
+      const body = await res.json();
+      expect(body.error).toMatch(/maximum/i);
+      expect(body.code).toBe("VALIDATION_ERROR");
+    });
+
+    it("returns 400 when urls contains non-string items", async () => {
+      const app = createApp();
+      const res = await postBatch(app, { urls: ["https://example.com", 123] });
+      expect(res.status).toBe(400);
+      const body = await res.json();
+      expect(body.code).toBe("VALIDATION_ERROR");
+    });
+
+    it("resolves multiple URLs and returns results array", async () => {
+      const result1 = fakeResult({ url: "https://www.youtube.com/watch?v=1" });
+      const result2 = fakeResult({ url: "https://www.youtube.com/watch?v=2" });
+      mockedResolveBatch.mockResolvedValueOnce([result1, result2]);
+
+      const app = createApp();
+      const res = await postBatch(app, {
+        urls: ["https://www.youtube.com/watch?v=1", "https://www.youtube.com/watch?v=2"],
+      });
+
+      expect(res.status).toBe(200);
+      const body = await res.json();
+      expect(body.results).toHaveLength(2);
+      expect(body.results[0].url).toBe("https://www.youtube.com/watch?v=1");
+      expect(body.results[1].url).toBe("https://www.youtube.com/watch?v=2");
+    });
+
+    it("returns error objects for failed URLs alongside successful results", async () => {
+      mockedResolveBatch.mockResolvedValueOnce([
+        fakeResult(),
+        new EmbedError("OEMBED_FETCH_FAILED", "oEmbed API returned 404"),
+      ]);
+
+      const app = createApp();
+      const res = await postBatch(app, {
+        urls: ["https://www.youtube.com/watch?v=1", "https://example.com/fail"],
+      });
+
+      expect(res.status).toBe(200);
+      const body = await res.json();
+      expect(body.results).toHaveLength(2);
+      expect(body.results[0].html).toBe("<iframe></iframe>");
+      expect(body.results[1]).toEqual({
+        error: "oEmbed API returned 404",
+        code: "OEMBED_FETCH_FAILED",
+      });
+    });
+
+    it("passes maxWidth and maxHeight from request body", async () => {
+      mockedResolveBatch.mockResolvedValueOnce([fakeResult()]);
+
+      const app = createApp();
+      await postBatch(app, {
+        urls: ["https://example.com"],
+        maxWidth: 640,
+        maxHeight: 480,
+      });
+
+      expect(mockedResolveBatch).toHaveBeenCalledWith(
+        ["https://example.com"],
+        expect.objectContaining({ maxWidth: 640, maxHeight: 480 }),
+      );
+    });
+
+    it("passes accessToken from Authorization header", async () => {
+      mockedResolveBatch.mockResolvedValueOnce([fakeResult()]);
+
+      const app = createApp();
+      await postBatch(
+        app,
+        { urls: ["https://facebook.com/post/1"] },
+        { Authorization: "Bearer APP|TOKEN" },
+      );
+
+      expect(mockedResolveBatch).toHaveBeenCalledWith(
+        ["https://facebook.com/post/1"],
+        expect.objectContaining({ meta: { accessToken: "APP|TOKEN" } }),
+      );
+    });
+
+    it("applies defaultOptions from ServerOptions", async () => {
+      mockedResolveBatch.mockResolvedValueOnce([fakeResult()]);
+
+      const app = createApp({ defaultOptions: { maxWidth: 800 } });
+      await postBatch(app, { urls: ["https://example.com"] });
+
+      expect(mockedResolveBatch).toHaveBeenCalledWith(
+        ["https://example.com"],
+        expect.objectContaining({ maxWidth: 800 }),
+      );
+    });
+
+    it("works with basePath option", async () => {
+      mockedResolveBatch.mockResolvedValueOnce([fakeResult()]);
+
+      const app = createApp({ basePath: "/api/v1" });
+      const res = await app.request("/api/v1/embed/batch", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ urls: ["https://example.com"] }),
+      });
+
+      expect(res.status).toBe(200);
     });
   });
 

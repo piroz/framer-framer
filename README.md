@@ -281,10 +281,11 @@ serve({ fetch: app.fetch, port: 3000 });
 
 #### Endpoints
 
-| Method | Path      | Description                |
-| ------ | --------- | -------------------------- |
-| GET    | `/health` | Health check (`{ status: "ok" }`) |
-| GET    | `/embed`  | Resolve a URL to embed data |
+| Method | Path           | Description                          |
+| ------ | -------------- | ------------------------------------ |
+| GET    | `/health`      | Health check (`{ status: "ok" }`)    |
+| GET    | `/embed`       | Resolve a URL to embed data          |
+| POST   | `/embed/batch` | Resolve multiple URLs in one request |
 
 **`GET /embed` query parameters:**
 
@@ -302,6 +303,35 @@ For Facebook/Instagram, pass the Meta access token via the `Authorization` heade
 ```
 Authorization: Bearer APP_ID|CLIENT_TOKEN
 ```
+
+**`POST /embed/batch` request body:**
+
+```json
+{
+  "urls": ["https://www.youtube.com/watch?v=dQw4w9WgXcQ", "https://x.com/user/status/123"],
+  "maxWidth": 640,
+  "maxHeight": 480
+}
+```
+
+| Field       | Type       | Description                           |
+| ----------- | ---------- | ------------------------------------- |
+| `urls`      | `string[]` | **(required)** URLs to resolve (max 20) |
+| `maxWidth`  | `number`   | Max embed width                       |
+| `maxHeight` | `number`   | Max embed height                      |
+
+**Response:**
+
+```json
+{
+  "results": [
+    { "type": "video", "html": "<iframe ...>", "provider": "youtube", "url": "..." },
+    { "error": "oEmbed API returned 404", "code": "OEMBED_FETCH_FAILED" }
+  ]
+}
+```
+
+Each item in `results` is either an `EmbedResult` on success or `{ error, code }` on failure. The array order matches the input `urls` order. Partial failures do not affect other results.
 
 #### Error responses
 
