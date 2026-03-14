@@ -1,5 +1,15 @@
 # Changelog
 
+## [2.3.0](https://github.com/piroz/framer-framer/compare/v2.2.0...v2.3.0) (2026-03-14)
+
+
+### Features
+
+* add embedBatch() for parallel multi-URL resolution ([#33](https://github.com/piroz/framer-framer/issues/33)) ([4a5c6d3](https://github.com/piroz/framer-framer/commit/4a5c6d30c7c1a4d345dbed389d6973a3559d4513))
+* **server:** add POST /embed/batch endpoint ([#34](https://github.com/piroz/framer-framer/issues/34)) ([e1d4463](https://github.com/piroz/framer-framer/commit/e1d4463f485a5578fe35ac6bc3fd00fcb2cf19ee))
+* **server:** add rate limiting middleware ([#37](https://github.com/piroz/framer-framer/issues/37)) ([0466ee5](https://github.com/piroz/framer-framer/commit/0466ee5a2748380ee8e53847421197e2666aa43d))
+* **server:** standardize error responses to RFC 7807 Problem Details ([#36](https://github.com/piroz/framer-framer/issues/36)) ([6ae7ba7](https://github.com/piroz/framer-framer/commit/6ae7ba7531644cb92e3cd376901e81597900ed15))
+
 ## [2.2.0](https://github.com/piroz/framer-framer/compare/v2.1.0...v2.2.0) (2026-03-14)
 
 
