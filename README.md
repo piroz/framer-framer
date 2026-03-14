@@ -261,6 +261,43 @@ unsubscribe(); // removes only this hook
 clearHooks(); // removes all before and after hooks
 ```
 
+### Metrics
+
+Monitor resolution performance with the `onMetrics()` hook. Each resolution emits a `MetricsEvent` with provider name, duration, success/failure, cache hit status, and error code.
+
+```ts
+import { onMetrics, clearMetrics } from "framer-framer";
+```
+
+#### `onMetrics(callback)` — observe resolution metrics
+
+```ts
+const unsubscribe = onMetrics((event) => {
+  console.log(`${event.provider}: ${event.duration}ms (${event.success ? "ok" : event.errorCode})`);
+});
+
+// MetricsEvent fields:
+// - url: string           — resolved URL
+// - provider: string      — provider name ('youtube', 'ogp', 'discovery', etc.)
+// - duration: number      — resolution time in ms (0 for cache hits)
+// - success: boolean      — whether resolution succeeded
+// - cacheHit: boolean     — whether result was served from cache
+// - errorCode?: string    — error code if resolution failed
+```
+
+#### Unsubscribe
+
+```ts
+const unsubscribe = onMetrics((event) => { /* ... */ });
+unsubscribe(); // removes only this callback
+```
+
+#### `clearMetrics()` — remove all metrics callbacks
+
+```ts
+clearMetrics();
+```
+
 ### REST API server
 
 `framer-framer/server` exports a Hono-based REST API app. Requires `hono` as a peer dependency.

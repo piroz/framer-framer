@@ -10,8 +10,10 @@ import type {
   EmbedOptions,
   EmbedResult,
   HookContext,
+  MetricsEvent,
   Provider,
 } from "./types.js";
+import { getMetricsCallbacks } from "./utils/metrics.js";
 import { validateUrl } from "./utils/url.js";
 
 /** Registry of providers, checked in order */
@@ -97,12 +99,16 @@ export async function resolve(url: string, options?: EmbedOptions): Promise<Embe
   const cache = getCache(options);
   if (cache) {
     const cached = cache.get(url, options);
-    if (cached) return cached;
+    if (cached) {
+      emitMetrics({ url, provider: cached.provider, duration: 0, success: true, cacheHit: true });
+      return cached;
+    }
   }
 
   const provider = findProvider(url);
 
   const context: HookContext = { url, options, provider };
+  const startTime = Date.now();
 
   // --- before hooks ---
   for (const hook of beforeHooks) {
@@ -110,33 +116,56 @@ export async function resolve(url: string, options?: EmbedOptions): Promise<Embe
     if (shortCircuit) {
       const final = await runAfterHooks(context, shortCircuit);
       if (cache) cache.set(url, options, final);
+      emitMetrics({
+        url,
+        provider: final.provider,
+        duration: Date.now() - startTime,
+        success: true,
+        cacheHit: false,
+      });
       return final;
     }
   }
 
   // --- resolve ---
   let result: EmbedResult | undefined;
+  let resolvedProvider = provider?.name ?? "unknown";
 
-  if (provider) {
-    result = await provider.resolve(context.url, context.options);
-  } else {
-    // Try oEmbed auto-discovery before OGP fallback
-    if (context.options?.discovery !== false) {
-      result = (await resolveWithDiscovery(context.url, context.options)) ?? undefined;
-    }
+  try {
+    if (provider) {
+      result = await provider.resolve(context.url, context.options);
+    } else {
+      // Try oEmbed auto-discovery before OGP fallback
+      if (context.options?.discovery !== false) {
+        result = (await resolveWithDiscovery(context.url, context.options)) ?? undefined;
+        if (result) resolvedProvider = "discovery";
+      }
 
-    if (!result) {
-      const useFallback = context.options?.fallback !== false;
-      if (useFallback) {
-        result = await resolveWithOgp(context.url, context.options);
-      } else {
-        throw new EmbedError(
-          "PROVIDER_NOT_FOUND",
-          `No provider found for URL: ${context.url}. ` +
-            "Set options.fallback = true to try OGP metadata extraction.",
-        );
+      if (!result) {
+        const useFallback = context.options?.fallback !== false;
+        if (useFallback) {
+          result = await resolveWithOgp(context.url, context.options);
+          resolvedProvider = "ogp";
+        } else {
+          throw new EmbedError(
+            "PROVIDER_NOT_FOUND",
+            `No provider found for URL: ${context.url}. ` +
+              "Set options.fallback = true to try OGP metadata extraction.",
+          );
+        }
       }
     }
+  } catch (err) {
+    const errorCode = err instanceof EmbedError ? err.code : "OEMBED_FETCH_FAILED";
+    emitMetrics({
+      url,
+      provider: resolvedProvider,
+      duration: Date.now() - startTime,
+      success: false,
+      cacheHit: false,
+      errorCode,
+    });
+    throw err;
   }
 
   // --- after hooks ---
@@ -144,6 +173,14 @@ export async function resolve(url: string, options?: EmbedOptions): Promise<Embe
 
   // --- cache store ---
   if (cache) cache.set(url, options, final);
+
+  emitMetrics({
+    url,
+    provider: final.provider,
+    duration: Date.now() - startTime,
+    success: true,
+    cacheHit: false,
+  });
 
   return final;
 }
@@ -193,6 +230,13 @@ export async function resolveBatch(
   await Promise.all(Array.from({ length: workerCount }, () => worker()));
 
   return results;
+}
+
+/** Emit a metrics event to all registered callbacks */
+function emitMetrics(event: MetricsEvent): void {
+  for (const callback of getMetricsCallbacks()) {
+    callback(event);
+  }
 }
 
 async function runAfterHooks(context: HookContext, result: EmbedResult): Promise<EmbedResult> {

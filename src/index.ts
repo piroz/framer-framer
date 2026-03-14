@@ -34,10 +34,13 @@ export type {
   EmbedResult,
   EmbedType,
   HookContext,
+  MetricsCallback,
+  MetricsEvent,
   ProblemDetails,
   Provider,
   RateLimitOptions,
 } from "./types.js";
+export { clearMetrics, onMetrics } from "./utils/metrics.js";
 export { sanitizeHtml } from "./utils/sanitize.js";
 export { validateUrl } from "./utils/url.js";
 

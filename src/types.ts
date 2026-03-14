@@ -138,3 +138,22 @@ export type AfterResolveHook = (
   context: HookContext,
   result: EmbedResult,
 ) => undefined | EmbedResult | Promise<undefined | EmbedResult>;
+
+/** Metrics event emitted after each resolution attempt */
+export interface MetricsEvent {
+  /** The URL that was resolved */
+  url: string;
+  /** Provider name (e.g. 'youtube', 'ogp', 'discovery') */
+  provider: string;
+  /** Resolution time in milliseconds */
+  duration: number;
+  /** Whether the resolution succeeded */
+  success: boolean;
+  /** Whether the result was served from cache */
+  cacheHit: boolean;
+  /** Error code if resolution failed */
+  errorCode?: string;
+}
+
+/** Callback invoked with metrics data after each resolution */
+export type MetricsCallback = (event: MetricsEvent) => void;
