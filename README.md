@@ -59,6 +59,34 @@ await instagram("https://www.instagram.com/p/ABC123/", {
 });
 ```
 
+### Batch resolution
+
+Resolve multiple URLs in parallel with concurrency control. Individual failures are returned as `EmbedError` instances rather than throwing, so partial success is always possible.
+
+```ts
+import { embedBatch, EmbedError } from "framer-framer";
+
+const results = await embedBatch([
+  "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+  "https://x.com/user/status/123456789",
+  "https://vimeo.com/76979871",
+], { concurrency: 3 });
+
+for (const result of results) {
+  if (result instanceof EmbedError) {
+    console.error(result.code, result.message);
+  } else {
+    console.log(result.provider, result.html);
+  }
+}
+```
+
+| Option        | Type     | Default | Description                          |
+| ------------- | -------- | ------- | ------------------------------------ |
+| `concurrency` | `number` | `5`     | Maximum number of parallel requests  |
+
+All other `EmbedOptions` (e.g. `maxWidth`, `cache`, `timeout`) are passed through to each individual resolution.
+
 ### Options
 
 ```ts

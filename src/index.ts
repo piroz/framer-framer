@@ -28,6 +28,7 @@ export {
 export { clearHooks, onAfterResolve, onBeforeResolve, registerProvider } from "./resolver.js";
 export type {
   AfterResolveHook,
+  BatchEmbedOptions,
   BeforeResolveHook,
   EmbedOptions,
   EmbedResult,
@@ -38,8 +39,9 @@ export type {
 export { sanitizeHtml } from "./utils/sanitize.js";
 export { validateUrl } from "./utils/url.js";
 
-import { resolve } from "./resolver.js";
-import type { EmbedOptions, EmbedResult } from "./types.js";
+import type { EmbedError } from "./errors.js";
+import { resolve, resolveBatch } from "./resolver.js";
+import type { BatchEmbedOptions, EmbedOptions, EmbedResult } from "./types.js";
 
 /**
  * Resolve any URL to embed data.
@@ -54,6 +56,30 @@ import type { EmbedOptions, EmbedResult } from "./types.js";
  */
 export async function embed(url: string, options?: EmbedOptions): Promise<EmbedResult> {
   return resolve(url, options);
+}
+
+/**
+ * Resolve multiple URLs to embed data in parallel.
+ * Individual failures are returned as `EmbedError` instances in the result array
+ * rather than throwing, so partial success is always possible.
+ *
+ * @example
+ * ```ts
+ * const results = await embedBatch([
+ *   'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+ *   'https://x.com/user/status/123456789',
+ * ]);
+ * for (const r of results) {
+ *   if (r instanceof EmbedError) console.error(r.code);
+ *   else console.log(r.html);
+ * }
+ * ```
+ */
+export async function embedBatch(
+  urls: string[],
+  options?: BatchEmbedOptions,
+): Promise<(EmbedResult | EmbedError)[]> {
+  return resolveBatch(urls, options);
 }
 
 // Platform-specific convenience functions

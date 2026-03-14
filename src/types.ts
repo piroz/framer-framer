@@ -85,6 +85,12 @@ export interface HookContext {
   provider?: Provider;
 }
 
+/** Options for batch embed resolution */
+export interface BatchEmbedOptions extends EmbedOptions {
+  /** Maximum number of concurrent resolutions (default: 5) */
+  concurrency?: number;
+}
+
 /**
  * Called before resolution begins.
  * - Return `void` / `undefined` to continue normally.

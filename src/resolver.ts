@@ -5,6 +5,7 @@ import { resolveWithOgp } from "./fallback/ogp.js";
 import { builtinProviders } from "./providers/index.js";
 import type {
   AfterResolveHook,
+  BatchEmbedOptions,
   BeforeResolveHook,
   EmbedOptions,
   EmbedResult,
@@ -145,6 +146,53 @@ export async function resolve(url: string, options?: EmbedOptions): Promise<Embe
   if (cache) cache.set(url, options, final);
 
   return final;
+}
+
+/** Default concurrency for batch resolution */
+const DEFAULT_CONCURRENCY = 5;
+
+/**
+ * Resolve multiple URLs to embed data in parallel.
+ * Individual failures are returned as `EmbedError` instances in the result array
+ * rather than throwing, so partial success is always possible.
+ *
+ * @param urls - Array of URLs to resolve
+ * @param options - Embed options with optional `concurrency` (default: 5)
+ * @returns Array of results in the same order as the input URLs
+ */
+export async function resolveBatch(
+  urls: string[],
+  options?: BatchEmbedOptions,
+): Promise<(EmbedResult | EmbedError)[]> {
+  if (urls.length === 0) return [];
+
+  const { concurrency = DEFAULT_CONCURRENCY, ...embedOptions } = options ?? {};
+  const results: (EmbedResult | EmbedError)[] = new Array(urls.length);
+
+  let nextIndex = 0;
+
+  async function worker(): Promise<void> {
+    while (nextIndex < urls.length) {
+      const i = nextIndex++;
+      try {
+        results[i] = await resolve(urls[i], embedOptions);
+      } catch (err) {
+        results[i] =
+          err instanceof EmbedError
+            ? err
+            : new EmbedError(
+                "OEMBED_FETCH_FAILED",
+                err instanceof Error ? err.message : String(err),
+                { cause: err },
+              );
+      }
+    }
+  }
+
+  const workerCount = Math.min(concurrency, urls.length);
+  await Promise.all(Array.from({ length: workerCount }, () => worker()));
+
+  return results;
 }
 
 async function runAfterHooks(context: HookContext, result: EmbedResult): Promise<EmbedResult> {
