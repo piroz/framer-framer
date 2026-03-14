@@ -380,6 +380,129 @@ describe("server", () => {
     });
   });
 
+  describe("rateLimit", () => {
+    it("does not apply rate limiting when rateLimit is not configured", async () => {
+      mockedResolve.mockResolvedValue(fakeResult());
+
+      const app = createApp();
+      for (let i = 0; i < 5; i++) {
+        const res = await app.request("/embed?url=https://example.com");
+        expect(res.status).toBe(200);
+        expect(res.headers.get("X-RateLimit-Limit")).toBeNull();
+      }
+    });
+
+    it("allows requests within the rate limit", async () => {
+      mockedResolve.mockResolvedValue(fakeResult());
+
+      const app = createApp({ rateLimit: { max: 3, windowMs: 60000 } });
+      for (let i = 0; i < 3; i++) {
+        const res = await app.request(
+          new Request("http://localhost/embed?url=https://example.com", {
+            headers: { "X-Forwarded-For": "1.2.3.4" },
+          }),
+        );
+        expect(res.status).toBe(200);
+        expect(res.headers.get("X-RateLimit-Limit")).toBe("3");
+        expect(res.headers.get("X-RateLimit-Remaining")).toBe(String(3 - (i + 1)));
+      }
+    });
+
+    it("returns 429 when rate limit is exceeded", async () => {
+      mockedResolve.mockResolvedValue(fakeResult());
+
+      const app = createApp({ rateLimit: { max: 2, windowMs: 60000 } });
+
+      // Use up the limit
+      for (let i = 0; i < 2; i++) {
+        await app.request(
+          new Request("http://localhost/embed?url=https://example.com", {
+            headers: { "X-Forwarded-For": "1.2.3.4" },
+          }),
+        );
+      }
+
+      // Next request should be rate limited
+      const res = await app.request(
+        new Request("http://localhost/embed?url=https://example.com", {
+          headers: { "X-Forwarded-For": "1.2.3.4" },
+        }),
+      );
+      expect(res.status).toBe(429);
+      const body = await res.json();
+      expect(body.error).toMatch(/too many requests/i);
+      expect(body.code).toBe("RATE_LIMITED");
+      expect(res.headers.get("Retry-After")).toBeTruthy();
+      expect(res.headers.get("X-RateLimit-Remaining")).toBe("0");
+    });
+
+    it("tracks different IPs independently", async () => {
+      mockedResolve.mockResolvedValue(fakeResult());
+
+      const app = createApp({ rateLimit: { max: 1, windowMs: 60000 } });
+
+      const res1 = await app.request(
+        new Request("http://localhost/embed?url=https://example.com", {
+          headers: { "X-Forwarded-For": "1.1.1.1" },
+        }),
+      );
+      expect(res1.status).toBe(200);
+
+      const res2 = await app.request(
+        new Request("http://localhost/embed?url=https://example.com", {
+          headers: { "X-Forwarded-For": "2.2.2.2" },
+        }),
+      );
+      expect(res2.status).toBe(200);
+
+      // First IP should be rate limited
+      const res3 = await app.request(
+        new Request("http://localhost/embed?url=https://example.com", {
+          headers: { "X-Forwarded-For": "1.1.1.1" },
+        }),
+      );
+      expect(res3.status).toBe(429);
+    });
+
+    it("applies rate limiting to all endpoints including health", async () => {
+      const app = createApp({ rateLimit: { max: 1, windowMs: 60000 } });
+
+      const res1 = await app.request(
+        new Request("http://localhost/health", {
+          headers: { "X-Forwarded-For": "1.2.3.4" },
+        }),
+      );
+      expect(res1.status).toBe(200);
+
+      const res2 = await app.request(
+        new Request("http://localhost/health", {
+          headers: { "X-Forwarded-For": "1.2.3.4" },
+        }),
+      );
+      expect(res2.status).toBe(429);
+    });
+
+    it("uses X-Real-IP header when X-Forwarded-For is not present", async () => {
+      mockedResolve.mockResolvedValue(fakeResult());
+
+      const app = createApp({ rateLimit: { max: 1, windowMs: 60000 } });
+
+      const res1 = await app.request(
+        new Request("http://localhost/embed?url=https://example.com", {
+          headers: { "X-Real-IP": "10.0.0.1" },
+        }),
+      );
+      expect(res1.status).toBe(200);
+
+      const res2 = await app.request(
+        new Request("http://localhost/embed?url=https://example.com", {
+          headers: { "X-Real-IP": "10.0.0.1" },
+        }),
+      );
+      expect(res2.status).toBe(429);
+    });
+  });
+
   describe("defaultOptions", () => {
     it("merges default options with request params", async () => {
       mockedResolve.mockResolvedValueOnce(fakeResult());

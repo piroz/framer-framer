@@ -85,6 +85,14 @@ export interface HookContext {
   provider?: Provider;
 }
 
+/** Options for rate limiting */
+export interface RateLimitOptions {
+  /** Time window in milliseconds (default: 60000) */
+  windowMs?: number;
+  /** Maximum number of requests per window per IP (default: 100) */
+  max?: number;
+}
+
 /** Options for batch embed resolution */
 export interface BatchEmbedOptions extends EmbedOptions {
   /** Maximum number of concurrent resolutions (default: 5) */

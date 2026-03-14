@@ -35,6 +35,7 @@ export type {
   EmbedType,
   HookContext,
   Provider,
+  RateLimitOptions,
 } from "./types.js";
 export { sanitizeHtml } from "./utils/sanitize.js";
 export { validateUrl } from "./utils/url.js";

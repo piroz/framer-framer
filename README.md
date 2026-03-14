@@ -362,8 +362,22 @@ createApp({
     maxWidth: 640,
     fallback: true,
   },
+  rateLimit: {                   // IP-based rate limiting (omit to disable)
+    windowMs: 60_000,            // time window in ms (default: 60000)
+    max: 100,                    // max requests per window per IP (default: 100)
+  },
 });
 ```
+
+When rate limiting is enabled, all responses include the following headers:
+
+| Header                | Description                              |
+| --------------------- | ---------------------------------------- |
+| `X-RateLimit-Limit`   | Maximum requests allowed per window      |
+| `X-RateLimit-Remaining` | Remaining requests in the current window |
+| `X-RateLimit-Reset`   | Unix timestamp (seconds) when the window resets |
+
+Exceeding the limit returns `429 Too Many Requests` with a `Retry-After` header (seconds until reset).
 
 #### Using as a sub-app
 

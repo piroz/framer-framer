@@ -1,17 +1,26 @@
 import { Hono } from "hono";
 import { EmbedError } from "./errors.js";
 import { resolve, resolveBatch } from "./resolver.js";
-import type { EmbedOptions } from "./types.js";
+import type { EmbedOptions, RateLimitOptions } from "./types.js";
 
-export type { EmbedOptions } from "./types.js";
+export type { EmbedOptions, RateLimitOptions } from "./types.js";
 
 const DEFAULT_MAX_URLS = 20;
+const DEFAULT_RATE_LIMIT_WINDOW_MS = 60_000;
+const DEFAULT_RATE_LIMIT_MAX = 100;
+
+interface RateLimitEntry {
+  count: number;
+  resetTime: number;
+}
 
 export interface ServerOptions {
   /** Base path prefix for all routes (e.g. "/api/v1") */
   basePath?: string;
   /** Default EmbedOptions applied to every request */
   defaultOptions?: EmbedOptions;
+  /** Rate limiting configuration. Omit to disable rate limiting. */
+  rateLimit?: RateLimitOptions;
 }
 
 /**
@@ -52,6 +61,60 @@ export interface ServerOptions {
  */
 export function createApp(options?: ServerOptions): Hono {
   const app = options?.basePath ? new Hono().basePath(options.basePath) : new Hono();
+
+  if (options?.rateLimit) {
+    const windowMs = options.rateLimit.windowMs ?? DEFAULT_RATE_LIMIT_WINDOW_MS;
+    const max = options.rateLimit.max ?? DEFAULT_RATE_LIMIT_MAX;
+    const clients = new Map<string, RateLimitEntry>();
+
+    const cleanupInterval = setInterval(() => {
+      const now = Date.now();
+      for (const [ip, entry] of clients) {
+        if (now >= entry.resetTime) {
+          clients.delete(ip);
+        }
+      }
+    }, windowMs);
+    if (
+      typeof cleanupInterval === "object" &&
+      cleanupInterval !== null &&
+      "unref" in cleanupInterval
+    ) {
+      (cleanupInterval as { unref: () => void }).unref();
+    }
+
+    app.use("*", async (c, next) => {
+      const ip =
+        c.req.header("x-forwarded-for")?.split(",")[0]?.trim() ||
+        c.req.header("x-real-ip") ||
+        "unknown";
+
+      const now = Date.now();
+      let entry = clients.get(ip);
+
+      if (!entry || now >= entry.resetTime) {
+        entry = { count: 0, resetTime: now + windowMs };
+        clients.set(ip, entry);
+      }
+
+      entry.count++;
+
+      c.header("X-RateLimit-Limit", String(max));
+      c.header("X-RateLimit-Remaining", String(Math.max(0, max - entry.count)));
+      c.header("X-RateLimit-Reset", String(Math.ceil(entry.resetTime / 1000)));
+
+      if (entry.count > max) {
+        const retryAfter = Math.ceil((entry.resetTime - now) / 1000);
+        c.header("Retry-After", String(retryAfter));
+        return c.json(
+          { error: "Too many requests, please try again later", code: "RATE_LIMITED" },
+          429,
+        );
+      }
+
+      await next();
+    });
+  }
 
   app.get("/health", (c) => {
     return c.json({ status: "ok" });
