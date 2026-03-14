@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.4.0](https://github.com/piroz/framer-framer/compare/v2.3.0...v2.4.0) (2026-03-14)
+
+
+### Features
+
+* add GET /metrics endpoint with Prometheus exposition format ([#42](https://github.com/piroz/framer-framer/issues/42)) ([9066c41](https://github.com/piroz/framer-framer/commit/9066c41ed60250914134378a5105ea076a564927))
+* add metrics hook for resolution observability ([#41](https://github.com/piroz/framer-framer/issues/41)) ([dc99e6f](https://github.com/piroz/framer-framer/commit/dc99e6fa8997c7f96370d8a744a364458117dc1e))
+* add structured logging for embed resolution ([#40](https://github.com/piroz/framer-framer/issues/40)) ([7d933e8](https://github.com/piroz/framer-framer/commit/7d933e89a22984b018c7afc57a95a25e8816b660))
+
 ## [2.3.0](https://github.com/piroz/framer-framer/compare/v2.2.0...v2.3.0) (2026-03-14)
 
 
