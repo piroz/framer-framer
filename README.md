@@ -105,6 +105,7 @@ await embed(url, {
   sanitize: true,             // Sanitize oEmbed HTML to prevent XSS (default: true)
   discovery: true,            // oEmbed auto-discovery for unknown URLs (default: true)
   cache: myCache,             // EmbedCache instance (see Caching section)
+  logger: true,               // Enable built-in JSON logger (see Logging section)
 });
 ```
 
@@ -165,6 +166,39 @@ URLs that don't match any built-in provider and have no oEmbed discovery link ar
 const result = await embed("https://example.com/article", { fallback: true });
 // Returns link card HTML built from og:title, og:description, og:image
 ```
+
+### Logging
+
+Structured JSON logging for observability. Logs resolution success/failure, latency, provider, and cache hits.
+
+```ts
+// Built-in JSON logger (writes to stderr)
+await embed(url, { logger: true });
+
+// Custom logger (e.g. pino, winston)
+import type { Logger } from "framer-framer";
+
+const myLogger: Logger = {
+  debug: (entry) => pino.debug(entry),
+  info: (entry) => pino.info(entry),
+  warn: (entry) => pino.warn(entry),
+  error: (entry) => pino.error(entry),
+};
+
+await embed(url, { logger: myLogger });
+```
+
+Log entries include:
+
+| Field | Type | Description |
+|---|---|---|
+| `level` | `string` | `"debug"` `"info"` `"warn"` `"error"` |
+| `message` | `string` | `"embed resolved"` or `"embed failed"` |
+| `timestamp` | `string` | ISO 8601 timestamp |
+| `url` | `string` | The URL being resolved |
+| `provider` | `string` | Provider name (e.g. `"youtube"`) |
+| `latencyMs` | `number` | Resolution time in milliseconds |
+| `status` | `string` | `"provider"` `"discovery"` `"ogp_fallback"` `"cache_hit"` `"hook_short_circuit"` |
 
 ### Caching
 

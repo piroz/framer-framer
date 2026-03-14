@@ -13,6 +13,8 @@ import type {
   MetricsEvent,
   Provider,
 } from "./types.js";
+import type { Logger } from "./utils/logger.js";
+import { resolveLogger } from "./utils/logger.js";
 import { getMetricsCallbacks } from "./utils/metrics.js";
 import { validateUrl } from "./utils/url.js";
 
@@ -92,6 +94,9 @@ function getCache(options?: EmbedOptions): EmbedCache | undefined {
  * 6. Store result in cache and return
  */
 export async function resolve(url: string, options?: EmbedOptions): Promise<EmbedResult> {
+  const logger = resolveLogger(options?.logger);
+  const startTime = Date.now();
+
   // --- URL validation (SSRF protection) ---
   validateUrl(url);
 
@@ -100,6 +105,7 @@ export async function resolve(url: string, options?: EmbedOptions): Promise<Embe
   if (cache) {
     const cached = cache.get(url, options);
     if (cached) {
+      logResolution(logger, url, cached.provider, Date.now() - startTime, "cache_hit");
       emitMetrics({ url, provider: cached.provider, duration: 0, success: true, cacheHit: true });
       return cached;
     }
@@ -108,7 +114,6 @@ export async function resolve(url: string, options?: EmbedOptions): Promise<Embe
   const provider = findProvider(url);
 
   const context: HookContext = { url, options, provider };
-  const startTime = Date.now();
 
   // --- before hooks ---
   for (const hook of beforeHooks) {
@@ -116,6 +121,7 @@ export async function resolve(url: string, options?: EmbedOptions): Promise<Embe
     if (shortCircuit) {
       const final = await runAfterHooks(context, shortCircuit);
       if (cache) cache.set(url, options, final);
+      logResolution(logger, url, final.provider, Date.now() - startTime, "hook_short_circuit");
       emitMetrics({
         url,
         provider: final.provider,
@@ -130,6 +136,7 @@ export async function resolve(url: string, options?: EmbedOptions): Promise<Embe
   // --- resolve ---
   let result: EmbedResult | undefined;
   let resolvedProvider = provider?.name ?? "unknown";
+  let resolveMethod = "provider";
 
   try {
     if (provider) {
@@ -138,7 +145,10 @@ export async function resolve(url: string, options?: EmbedOptions): Promise<Embe
       // Try oEmbed auto-discovery before OGP fallback
       if (context.options?.discovery !== false) {
         result = (await resolveWithDiscovery(context.url, context.options)) ?? undefined;
-        if (result) resolvedProvider = "discovery";
+        if (result) {
+          resolvedProvider = "discovery";
+          resolveMethod = "discovery";
+        }
       }
 
       if (!result) {
@@ -146,6 +156,7 @@ export async function resolve(url: string, options?: EmbedOptions): Promise<Embe
         if (useFallback) {
           result = await resolveWithOgp(context.url, context.options);
           resolvedProvider = "ogp";
+          resolveMethod = "ogp_fallback";
         } else {
           throw new EmbedError(
             "PROVIDER_NOT_FOUND",
@@ -156,6 +167,7 @@ export async function resolve(url: string, options?: EmbedOptions): Promise<Embe
       }
     }
   } catch (err) {
+    logError(logger, url, provider?.name, Date.now() - startTime, err);
     const errorCode = err instanceof EmbedError ? err.code : "OEMBED_FETCH_FAILED";
     emitMetrics({
       url,
@@ -174,6 +186,7 @@ export async function resolve(url: string, options?: EmbedOptions): Promise<Embe
   // --- cache store ---
   if (cache) cache.set(url, options, final);
 
+  logResolution(logger, url, final.provider, Date.now() - startTime, resolveMethod);
   emitMetrics({
     url,
     provider: final.provider,
@@ -248,4 +261,43 @@ async function runAfterHooks(context: HookContext, result: EmbedResult): Promise
     }
   }
   return current;
+}
+
+function logResolution(
+  logger: Logger | undefined,
+  url: string,
+  provider: string,
+  latencyMs: number,
+  status: string,
+): void {
+  if (!logger) return;
+  logger.info({
+    level: "info",
+    message: "embed resolved",
+    timestamp: new Date().toISOString(),
+    url,
+    provider,
+    latencyMs,
+    status,
+  });
+}
+
+function logError(
+  logger: Logger | undefined,
+  url: string,
+  provider: string | undefined,
+  latencyMs: number,
+  err: unknown,
+): void {
+  if (!logger) return;
+  logger.error({
+    level: "error",
+    message: "embed failed",
+    timestamp: new Date().toISOString(),
+    url,
+    provider: provider ?? "unknown",
+    latencyMs,
+    errorCode: err instanceof EmbedError ? err.code : undefined,
+    errorMessage: err instanceof Error ? err.message : String(err),
+  });
 }

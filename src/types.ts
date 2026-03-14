@@ -63,6 +63,12 @@ export interface EmbedOptions {
    * When omitted, no caching is performed.
    */
   cache?: import("./cache.js").EmbedCache | false;
+  /**
+   * Structured logger for embed resolution.
+   * Pass `true` to enable the built-in JSON logger (writes to stderr),
+   * a `Logger` object for custom logging, or `false`/omit to disable.
+   */
+  logger?: import("./utils/logger.js").Logger | boolean;
 }
 
 /** Provider interface - implement this to add a new platform */

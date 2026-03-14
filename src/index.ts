@@ -40,6 +40,8 @@ export type {
   Provider,
   RateLimitOptions,
 } from "./types.js";
+export type { LogEntry, Logger, LogLevel } from "./utils/logger.js";
+export { createLogger } from "./utils/logger.js";
 export { clearMetrics, onMetrics } from "./utils/metrics.js";
 export { sanitizeHtml } from "./utils/sanitize.js";
 export { validateUrl } from "./utils/url.js";
