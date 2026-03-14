@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.2.0](https://github.com/piroz/framer-framer/compare/v2.1.0...v2.2.0) (2026-03-14)
+
+
+### Features
+
+* add Flickr oEmbed provider ([7565925](https://github.com/piroz/framer-framer/commit/7565925a866c3b091378945a18e454869377df84))
+* add note provider ([7b72564](https://github.com/piroz/framer-framer/commit/7b72564b66d0af962f5bde99c3404ed5930c962e))
+* **niconico:** add Niconico oEmbed provider ([b9cc90e](https://github.com/piroz/framer-framer/commit/b9cc90e411bf5ab6395d526bdd55529c02ae98fd))
+* **pinterest:** add Pinterest oEmbed provider ([e47992f](https://github.com/piroz/framer-framer/commit/e47992fd16f5bdd114fb65ed0a115c8cfe233c4a))
+* **reddit:** add Reddit oEmbed provider ([86ad88e](https://github.com/piroz/framer-framer/commit/86ad88e9123ae871aa9390d170deb6513e447465))
+* **slideshare:** add SlideShare oEmbed provider ([#30](https://github.com/piroz/framer-framer/issues/30)) ([dec4ec3](https://github.com/piroz/framer-framer/commit/dec4ec3c3fc6c78a7465df0cad152591fd1c7ed0))
+* **speakerdeck:** add Speaker Deck oEmbed provider ([14eaccd](https://github.com/piroz/framer-framer/commit/14eaccddcb7b2a9e94da82aff804c5247f8a082e))
+
 ## [2.1.0](https://github.com/piroz/framer-framer/compare/v2.0.0...v2.1.0) (2026-03-13)
 
 
