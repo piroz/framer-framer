@@ -261,6 +261,42 @@ Set `cache: false` to explicitly disable caching for a single call when a cache 
 cache.clear(); // remove all cached entries
 ```
 
+### Responsive wrapper
+
+Wrap embed HTML in a responsive container that maintains aspect ratio using the CSS padding-bottom technique.
+
+```ts
+import { wrapResponsive } from "framer-framer";
+
+// With known dimensions — aspect ratio is preserved
+const html = wrapResponsive('<iframe src="https://www.youtube.com/embed/abc"></iframe>', {
+  width: 640,
+  height: 360,
+});
+// → nested divs with padding-bottom: 56.25% for 16:9 aspect ratio
+
+// Without dimensions — simple width: 100% wrapper
+const html = wrapResponsive('<iframe src="..."></iframe>');
+
+// Use CSS class names instead of inline styles
+const html = wrapResponsive('<iframe src="..."></iframe>', {
+  width: 640,
+  height: 360,
+  mode: "class",
+  className: "my-embed", // default: "embed-responsive"
+});
+// → <div class="my-embed"><div class="my-embed__ratio" style="padding-bottom:56.2500%"><div class="my-embed__inner">...</div></div></div>
+```
+
+`ResponsiveOptions`:
+
+| Option      | Type     | Default             | Description                                        |
+| ----------- | -------- | ------------------- | -------------------------------------------------- |
+| `width`     | `number` | —                   | Embed width (for aspect ratio calculation)         |
+| `height`    | `number` | —                   | Embed height (for aspect ratio calculation)        |
+| `maxWidth`  | `string` | `"100%"`            | Maximum width constraint (inline mode only)        |
+| `mode`      | `string` | `"inline"`          | `"inline"` for style attributes, `"class"` for CSS class names |
+| `className` | `string` | `"embed-responsive"` | CSS class name prefix (class mode only)           |
 ### Provider query API
 
 Check which providers are registered and whether a URL can be embedded.
