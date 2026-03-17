@@ -1,5 +1,19 @@
 # Changelog
 
+## [3.0.0](https://github.com/piroz/framer-framer/compare/v2.4.0...v3.0.0) (2026-03-17)
+
+
+### ⚠ BREAKING CHANGES
+
+* restructure EmbedOptions auth namespace and deprecate resolve() ([#51](https://github.com/piroz/framer-framer/issues/51))
+
+### Features
+
+* add provider query API (getProviders / canEmbed / GET /providers) ([#50](https://github.com/piroz/framer-framer/issues/50)) ([0db2cd0](https://github.com/piroz/framer-framer/commit/0db2cd09cc58c70c7dbd9d183b5b04aa6d0c3834))
+* add URL auto-expansion utility (expandUrls) ([#48](https://github.com/piroz/framer-framer/issues/48)) ([deea19c](https://github.com/piroz/framer-framer/commit/deea19caed4ea051e591b06e0b5957586550654d))
+* **cms:** add responsive wrapper utility ([#49](https://github.com/piroz/framer-framer/issues/49)) ([c09f1e0](https://github.com/piroz/framer-framer/commit/c09f1e04b501b2b0e94ef04e2192b2eb1aa7b043))
+* restructure EmbedOptions auth namespace and deprecate resolve() ([#51](https://github.com/piroz/framer-framer/issues/51)) ([8ddaf41](https://github.com/piroz/framer-framer/commit/8ddaf41c8de30ff1fd042a1fe7ee9ed0750466ab))
+
 ## [2.4.0](https://github.com/piroz/framer-framer/compare/v2.3.0...v2.4.0) (2026-03-14)
 
 
