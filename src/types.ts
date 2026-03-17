@@ -33,7 +33,25 @@ export interface EmbedResult {
 
 /** Options for embed resolution */
 export interface EmbedOptions {
-  /** Meta (Facebook/Instagram) authentication */
+  /**
+   * Authentication configuration.
+   *
+   * @example
+   * ```ts
+   * await embed(url, { auth: { meta: { accessToken: "APP_ID|CLIENT_TOKEN" } } });
+   * ```
+   */
+  auth?: {
+    /** Meta (Facebook/Instagram) authentication */
+    meta?: {
+      /** Access token in 'APP_ID|CLIENT_TOKEN' format */
+      accessToken: string;
+    };
+  };
+  /**
+   * Meta (Facebook/Instagram) authentication.
+   * @deprecated Use `auth.meta` instead. Will be removed in the next major version.
+   */
   meta?: {
     /** Access token in 'APP_ID|CLIENT_TOKEN' format */
     accessToken: string;

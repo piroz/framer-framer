@@ -57,7 +57,7 @@ export { sanitizeHtml } from "./utils/sanitize.js";
 export { validateUrl } from "./utils/url.js";
 
 import type { EmbedError } from "./errors.js";
-import { resolve, resolveBatch } from "./resolver.js";
+import { resolve as internalResolve, resolveBatch } from "./resolver.js";
 import type { BatchEmbedOptions, EmbedOptions, EmbedResult } from "./types.js";
 
 /**
@@ -72,7 +72,16 @@ import type { BatchEmbedOptions, EmbedOptions, EmbedResult } from "./types.js";
  * ```
  */
 export async function embed(url: string, options?: EmbedOptions): Promise<EmbedResult> {
-  return resolve(url, options);
+  return internalResolve(url, options);
+}
+
+/**
+ * Resolve any URL to embed data.
+ *
+ * @deprecated Use {@link embed} instead. `resolve()` will be removed in the next major version.
+ */
+export async function resolve(url: string, options?: EmbedOptions): Promise<EmbedResult> {
+  return internalResolve(url, options);
 }
 
 /**
@@ -100,89 +109,89 @@ export async function embedBatch(
 }
 
 // Platform-specific convenience functions
-// All go through resolve() so that registered hooks are always executed.
+// All go through the internal resolver so that registered hooks are always executed.
 
 /** Resolve a YouTube URL */
 export async function youtube(url: string, options?: EmbedOptions): Promise<EmbedResult> {
-  return resolve(url, options);
+  return internalResolve(url, options);
 }
 
 /** Resolve an X/Twitter URL */
 export async function twitter(url: string, options?: EmbedOptions): Promise<EmbedResult> {
-  return resolve(url, options);
+  return internalResolve(url, options);
 }
 
 /** Resolve a TikTok URL */
 export async function tiktok(url: string, options?: EmbedOptions): Promise<EmbedResult> {
-  return resolve(url, options);
+  return internalResolve(url, options);
 }
 
 /** Resolve a Flickr URL */
 export async function flickr(url: string, options?: EmbedOptions): Promise<EmbedResult> {
-  return resolve(url, options);
+  return internalResolve(url, options);
 }
 
 /** Resolve a Facebook URL (requires Meta access token) */
 export async function facebook(url: string, options?: EmbedOptions): Promise<EmbedResult> {
-  return resolve(url, options);
+  return internalResolve(url, options);
 }
 
 /** Resolve an Instagram URL (requires Meta access token) */
 export async function instagram(url: string, options?: EmbedOptions): Promise<EmbedResult> {
-  return resolve(url, options);
+  return internalResolve(url, options);
 }
 
 /** Resolve a Vimeo URL */
 export async function vimeo(url: string, options?: EmbedOptions): Promise<EmbedResult> {
-  return resolve(url, options);
+  return internalResolve(url, options);
 }
 
 /** Resolve a Spotify URL */
 export async function spotify(url: string, options?: EmbedOptions): Promise<EmbedResult> {
-  return resolve(url, options);
+  return internalResolve(url, options);
 }
 
 /** Resolve a SlideShare URL */
 export async function slideshare(url: string, options?: EmbedOptions): Promise<EmbedResult> {
-  return resolve(url, options);
+  return internalResolve(url, options);
 }
 
 /** Resolve a SoundCloud URL */
 export async function soundcloud(url: string, options?: EmbedOptions): Promise<EmbedResult> {
-  return resolve(url, options);
+  return internalResolve(url, options);
 }
 
 /** Resolve a Speaker Deck URL */
 export async function speakerdeck(url: string, options?: EmbedOptions): Promise<EmbedResult> {
-  return resolve(url, options);
+  return internalResolve(url, options);
 }
 
 /** Resolve a Pinterest URL */
 export async function pinterest(url: string, options?: EmbedOptions): Promise<EmbedResult> {
-  return resolve(url, options);
+  return internalResolve(url, options);
 }
 
 /** Resolve a Reddit URL */
 export async function reddit(url: string, options?: EmbedOptions): Promise<EmbedResult> {
-  return resolve(url, options);
+  return internalResolve(url, options);
 }
 
 /** Resolve a Hugging Face Spaces URL */
 export async function huggingface(url: string, options?: EmbedOptions): Promise<EmbedResult> {
-  return resolve(url, options);
+  return internalResolve(url, options);
 }
 
 /** Resolve a Gradio app URL */
 export async function gradio(url: string, options?: EmbedOptions): Promise<EmbedResult> {
-  return resolve(url, options);
+  return internalResolve(url, options);
 }
 
 /** Resolve a Niconico URL */
 export async function niconico(url: string, options?: EmbedOptions): Promise<EmbedResult> {
-  return resolve(url, options);
+  return internalResolve(url, options);
 }
 
 /** Resolve a note URL */
 export async function note(url: string, options?: EmbedOptions): Promise<EmbedResult> {
-  return resolve(url, options);
+  return internalResolve(url, options);
 }

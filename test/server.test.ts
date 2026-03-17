@@ -166,7 +166,7 @@ describe("server", () => {
 
       expect(mockedResolve).toHaveBeenCalledWith(
         "https://facebook.com/post/1",
-        expect.objectContaining({ meta: { accessToken: "APP|TOKEN" } }),
+        expect.objectContaining({ auth: { meta: { accessToken: "APP|TOKEN" } } }),
       );
     });
 
@@ -397,7 +397,7 @@ describe("server", () => {
 
       expect(mockedResolveBatch).toHaveBeenCalledWith(
         ["https://facebook.com/post/1"],
-        expect.objectContaining({ meta: { accessToken: "APP|TOKEN" } }),
+        expect.objectContaining({ auth: { meta: { accessToken: "APP|TOKEN" } } }),
       );
     });
 

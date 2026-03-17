@@ -5,12 +5,12 @@ import { OEmbedProvider } from "./base.js";
 /** Base class for Meta (Facebook/Instagram) oEmbed providers that require authentication */
 export abstract class MetaProvider extends OEmbedProvider {
   protected buildOEmbedUrl(url: string, options?: EmbedOptions): string {
-    const accessToken = options?.meta?.accessToken;
+    const accessToken = options?.auth?.meta?.accessToken ?? options?.meta?.accessToken;
     if (!accessToken) {
       throw new EmbedError(
         "VALIDATION_ERROR",
         `${this.name} oEmbed requires a Meta access token. ` +
-          'Pass it via options.meta.accessToken in "APP_ID|CLIENT_TOKEN" format.',
+          'Pass it via options.auth.meta.accessToken in "APP_ID|CLIENT_TOKEN" format.',
       );
     }
 

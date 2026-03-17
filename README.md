@@ -52,10 +52,10 @@ await note("https://note.com/username/n/abc123");
 
 // Facebook / Instagram require a Meta access token
 await facebook("https://www.facebook.com/video/123", {
-  meta: { accessToken: "APP_ID|CLIENT_TOKEN" },
+  auth: { meta: { accessToken: "APP_ID|CLIENT_TOKEN" } },
 });
 await instagram("https://www.instagram.com/p/ABC123/", {
-  meta: { accessToken: "APP_ID|CLIENT_TOKEN" },
+  auth: { meta: { accessToken: "APP_ID|CLIENT_TOKEN" } },
 });
 ```
 
@@ -124,8 +124,10 @@ await embed(url, {
   maxWidth: 640,              // Max embed width
   maxHeight: 480,             // Max embed height
   fallback: true,             // OGP fallback for unknown URLs (default: true)
-  meta: {                     // Required for Facebook/Instagram
-    accessToken: "APP_ID|CLIENT_TOKEN",
+  auth: {                     // Authentication configuration
+    meta: {                   // Required for Facebook/Instagram
+      accessToken: "APP_ID|CLIENT_TOKEN",
+    },
   },
   retry: {                    // Retry on transient failures (network errors, 5xx, 429)
     maxRetries: 2,            // default: 2
@@ -548,6 +550,34 @@ import { createApp } from "framer-framer/server";
 
 const app = createApp();
 app.use("*", cors({ origin: "https://example.com" }));
+```
+
+## Migration from v2.x
+
+### `meta` → `auth.meta`
+
+The `meta` option has moved under a new `auth` namespace:
+
+```ts
+// Before (v2.x) — still works but deprecated
+await embed(url, { meta: { accessToken: "APP_ID|CLIENT_TOKEN" } });
+
+// After (v3.x)
+await embed(url, { auth: { meta: { accessToken: "APP_ID|CLIENT_TOKEN" } } });
+```
+
+### `resolve()` → `embed()`
+
+`resolve()` is now deprecated in favour of `embed()`. Both functions are identical — `resolve()` will be removed in the next major version.
+
+```ts
+// Before (v2.x)
+import { resolve } from "framer-framer";
+const result = await resolve(url);
+
+// After (v3.x)
+import { embed } from "framer-framer";
+const result = await embed(url);
 ```
 
 ## Error handling

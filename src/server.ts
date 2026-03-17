@@ -236,7 +236,7 @@ export function createApp(options?: ServerOptions): Hono {
     // Extract access token from Authorization header (Bearer scheme)
     const authHeader = c.req.header("Authorization");
     if (authHeader?.startsWith("Bearer ")) {
-      embedOptions.meta = { accessToken: authHeader.slice(7) };
+      embedOptions.auth = { meta: { accessToken: authHeader.slice(7) } };
     }
 
     const fallback = c.req.query("fallback");
@@ -343,7 +343,7 @@ export function createApp(options?: ServerOptions): Hono {
 
     const authHeader = c.req.header("Authorization");
     if (authHeader?.startsWith("Bearer ")) {
-      embedOptions.meta = { accessToken: authHeader.slice(7) };
+      embedOptions.auth = { meta: { accessToken: authHeader.slice(7) } };
     }
 
     const startTime = metrics ? Date.now() : 0;
