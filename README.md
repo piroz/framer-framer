@@ -87,6 +87,36 @@ for (const result of results) {
 
 All other `EmbedOptions` (e.g. `maxWidth`, `cache`, `timeout`) are passed through to each individual resolution.
 
+### URL auto-expansion
+
+Automatically detect and expand URLs in text or HTML to embed HTML. Ideal for CMS and blog engines.
+
+```ts
+import { expandUrls } from "framer-framer";
+
+const text = 'Check this video: https://www.youtube.com/watch?v=dQw4w9WgXcQ and read more at [my blog](https://example.com)';
+const expanded = await expandUrls(text);
+// URLs are replaced with embed HTML; Markdown links are preserved
+```
+
+#### HTML mode
+
+```ts
+const html = '<p>Watch https://www.youtube.com/watch?v=dQw4w9WgXcQ here</p>';
+const expanded = await expandUrls(html, { format: "html" });
+// Bare URLs in text content are expanded; URLs in href/src attributes are preserved
+```
+
+#### ExpandOptions
+
+| Option        | Type                       | Default  | Description                                |
+| ------------- | -------------------------- | -------- | ------------------------------------------ |
+| `format`      | `"text" \| "html"`         | `"text"` | Input format (text/Markdown or HTML)        |
+| `concurrency` | `number`                   | `5`      | Maximum number of parallel URL resolutions  |
+| `exclude`     | `(string \| RegExp)[]`     | —        | URL patterns to skip (prefix match or regex)|
+
+All other `EmbedOptions` (e.g. `maxWidth`, `cache`, `timeout`) are passed through to each resolution.
+
 ### Options
 
 ```ts

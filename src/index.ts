@@ -1,5 +1,7 @@
 export type { CacheOptions } from "./cache.js";
 export { createCache, EmbedCache } from "./cache.js";
+export type { ExpandOptions } from "./cms/auto-expand.js";
+export { expandUrls } from "./cms/auto-expand.js";
 export { discoverOEmbedUrl, resolveWithDiscovery } from "./discovery.js";
 export type { EmbedErrorCode } from "./errors.js";
 export { EmbedError } from "./errors.js";
