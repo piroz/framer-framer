@@ -43,6 +43,37 @@ describe("server", () => {
     });
   });
 
+  describe("GET /providers", () => {
+    it("returns a list of registered providers", async () => {
+      const app = createApp();
+      const res = await app.request("/providers");
+      expect(res.status).toBe(200);
+      const body = await res.json();
+      expect(body.providers).toBeInstanceOf(Array);
+      expect(body.providers.length).toBeGreaterThanOrEqual(17);
+      const names = body.providers.map((p: { name: string }) => p.name);
+      expect(names).toContain("youtube");
+      expect(names).toContain("twitter");
+    });
+
+    it("includes patterns for each provider", async () => {
+      const app = createApp();
+      const res = await app.request("/providers");
+      const body = await res.json();
+      const youtube = body.providers.find((p: { name: string }) => p.name === "youtube");
+      expect(youtube.patterns).toBeInstanceOf(Array);
+      expect(youtube.patterns.length).toBeGreaterThan(0);
+    });
+
+    it("works with basePath option", async () => {
+      const app = createApp({ basePath: "/api/v1" });
+      const res = await app.request("/api/v1/providers");
+      expect(res.status).toBe(200);
+      const body = await res.json();
+      expect(body.providers).toBeInstanceOf(Array);
+    });
+  });
+
   describe("GET /embed", () => {
     it("returns 400 with RFC 7807 Problem Details when url is missing", async () => {
       const app = createApp();

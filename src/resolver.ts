@@ -12,6 +12,7 @@ import type {
   HookContext,
   MetricsEvent,
   Provider,
+  ProviderInfo,
 } from "./types.js";
 import type { Logger } from "./utils/logger.js";
 import { resolveLogger } from "./utils/logger.js";
@@ -40,6 +41,35 @@ export function findProvider(url: string): Provider | undefined {
  */
 export function registerProvider(provider: Provider): void {
   providers.unshift(provider);
+}
+
+/**
+ * Return information about all registered providers.
+ * Custom providers registered via `registerProvider()` appear first.
+ */
+export function getProviders(): ProviderInfo[] {
+  return providers.map((p) => ({
+    name: p.name,
+    patterns: extractPatterns(p),
+  }));
+}
+
+/**
+ * Check whether a URL can be resolved by a registered provider.
+ * This only checks registered providers (built-in + custom); it does not
+ * attempt oEmbed auto-discovery or OGP fallback.
+ */
+export function canEmbed(url: string): boolean {
+  return providers.some((p) => p.match(url));
+}
+
+/** Extract URL patterns from a provider as string representations. */
+function extractPatterns(provider: Provider): string[] {
+  const p = provider as { patterns?: RegExp[] };
+  if (Array.isArray(p.patterns)) {
+    return p.patterns.map((r) => r.source);
+  }
+  return [];
 }
 
 /**

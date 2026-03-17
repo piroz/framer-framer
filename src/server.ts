@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { EmbedError } from "./errors.js";
-import { resolve, resolveBatch } from "./resolver.js";
+import { getProviders, resolve, resolveBatch } from "./resolver.js";
 import type { EmbedOptions, ProblemDetails, RateLimitOptions } from "./types.js";
 
 export type { EmbedOptions, ProblemDetails, RateLimitOptions } from "./types.js";
@@ -191,6 +191,10 @@ export function createApp(options?: ServerOptions): Hono {
 
   app.get("/health", (c) => {
     return c.json({ status: "ok" });
+  });
+
+  app.get("/providers", (c) => {
+    return c.json({ providers: getProviders() });
   });
 
   if (metrics) {

@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { EmbedError } from "../src/errors.js";
-import { findProvider, resolve } from "../src/resolver.js";
+import { canEmbed, findProvider, getProviders, resolve } from "../src/resolver.js";
 
 describe("findProvider - URL auto-detection", () => {
   // YouTube
@@ -259,5 +259,42 @@ describe("resolve - oEmbed discovery integration", () => {
     expect(result.provider).toBe("SiteWithBoth");
     expect(result.type).toBe("link");
     expect(result.html).toContain("framer-framer-card");
+  });
+});
+
+describe("getProviders", () => {
+  it("returns all built-in providers with name and patterns", () => {
+    const providers = getProviders();
+    expect(providers.length).toBeGreaterThanOrEqual(17);
+    const names = providers.map((p) => p.name);
+    expect(names).toContain("youtube");
+    expect(names).toContain("twitter");
+    expect(names).toContain("tiktok");
+    expect(names).toContain("niconico");
+    expect(names).toContain("note");
+  });
+
+  it("returns patterns as regex source strings", () => {
+    const providers = getProviders();
+    const youtube = providers.find((p) => p.name === "youtube");
+    expect(youtube).toBeDefined();
+    expect(youtube?.patterns.length).toBeGreaterThan(0);
+    // Patterns should be regex source strings, not full /pattern/ with slashes
+    for (const pattern of youtube?.patterns ?? []) {
+      expect(pattern).not.toMatch(/^\//);
+    }
+  });
+});
+
+describe("canEmbed", () => {
+  it("returns true for a URL matching a built-in provider", () => {
+    expect(canEmbed("https://www.youtube.com/watch?v=dQw4w9WgXcQ")).toBe(true);
+    expect(canEmbed("https://x.com/user/status/123456789")).toBe(true);
+    expect(canEmbed("https://vimeo.com/76979871")).toBe(true);
+  });
+
+  it("returns false for an unknown URL", () => {
+    expect(canEmbed("https://example.com/page")).toBe(false);
+    expect(canEmbed("https://github.com/piroz/repo")).toBe(false);
   });
 });

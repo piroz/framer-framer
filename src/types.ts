@@ -163,3 +163,11 @@ export interface MetricsEvent {
 
 /** Callback invoked with metrics data after each resolution */
 export type MetricsCallback = (event: MetricsEvent) => void;
+
+/** Information about a registered provider */
+export interface ProviderInfo {
+  /** Provider name (e.g. 'youtube', 'twitter') */
+  name: string;
+  /** URL regex patterns this provider handles (as strings) */
+  patterns: string[];
+}

@@ -27,7 +27,14 @@ export {
   VimeoProvider,
   YouTubeProvider,
 } from "./providers/index.js";
-export { clearHooks, onAfterResolve, onBeforeResolve, registerProvider } from "./resolver.js";
+export {
+  canEmbed,
+  clearHooks,
+  getProviders,
+  onAfterResolve,
+  onBeforeResolve,
+  registerProvider,
+} from "./resolver.js";
 export type {
   AfterResolveHook,
   BatchEmbedOptions,
@@ -40,6 +47,7 @@ export type {
   MetricsEvent,
   ProblemDetails,
   Provider,
+  ProviderInfo,
   RateLimitOptions,
 } from "./types.js";
 export type { LogEntry, Logger, LogLevel } from "./utils/logger.js";

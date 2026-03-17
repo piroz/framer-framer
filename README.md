@@ -259,6 +259,31 @@ Set `cache: false` to explicitly disable caching for a single call when a cache 
 cache.clear(); // remove all cached entries
 ```
 
+### Provider query API
+
+Check which providers are registered and whether a URL can be embedded.
+
+```ts
+import { getProviders, canEmbed } from "framer-framer";
+
+// List all registered providers
+const providers = getProviders();
+// [{ name: "youtube", patterns: ["^https?:\\/\\/(www\\.)?youtube\\.com\\/watch\\?", ...] }, ...]
+
+// Check if a URL can be resolved by a registered provider
+canEmbed("https://www.youtube.com/watch?v=dQw4w9WgXcQ"); // true
+canEmbed("https://example.com/page");                      // false
+```
+
+`canEmbed()` only checks registered providers (built-in + custom). It does not attempt oEmbed auto-discovery or OGP fallback.
+
+`ProviderInfo` type:
+
+| Field      | Type       | Description                                  |
+| ---------- | ---------- | -------------------------------------------- |
+| `name`     | `string`   | Provider name (e.g. `"youtube"`)             |
+| `patterns` | `string[]` | URL regex patterns (as regex source strings) |
+
 ### Custom providers
 
 ```ts
@@ -385,6 +410,7 @@ serve({ fetch: app.fetch, port: 3000 });
 | Method | Path           | Description                          |
 | ------ | -------------- | ------------------------------------ |
 | GET    | `/health`      | Health check (`{ status: "ok" }`)    |
+| GET    | `/providers`   | List registered providers            |
 | GET    | `/embed`       | Resolve a URL to embed data          |
 | POST   | `/embed/batch` | Resolve multiple URLs in one request |
 | GET    | `/metrics`     | Prometheus-format metrics (requires `metrics: true`) |
