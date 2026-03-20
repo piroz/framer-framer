@@ -55,6 +55,9 @@ export function defineProvider(schema: ProviderSchema): Provider {
     name = schema.name;
     protected endpoint = schema.endpoint;
     protected patterns = patterns;
+    override readonly defaultAspectRatio = schema.defaultAspectRatio;
+    override readonly embedType = schema.embedType;
+    override readonly supportsMaxWidth = schema.supportsMaxWidth ?? true;
 
     protected override toEmbedResult(url: string, data: Record<string, unknown>): EmbedResult {
       if (transform) {

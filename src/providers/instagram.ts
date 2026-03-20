@@ -2,6 +2,8 @@ import { MetaProvider } from "./meta.js";
 
 export class InstagramProvider extends MetaProvider {
   name = "instagram";
+  readonly defaultAspectRatio = "1:1";
+  readonly embedType = "rich" as const;
 
   protected endpoint = "https://graph.facebook.com/v22.0/instagram_oembed";
 

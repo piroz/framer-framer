@@ -137,6 +137,32 @@ describe("defineProvider", () => {
     });
   });
 
+  describe("metadata", () => {
+    it("exposes metadata from schema", () => {
+      const provider = defineProvider({
+        ...schema,
+        defaultAspectRatio: "16:9",
+        embedType: "video",
+        supportsMaxWidth: true,
+      });
+
+      const p = provider as {
+        defaultAspectRatio?: string;
+        embedType?: string;
+        supportsMaxWidth?: boolean;
+      };
+      expect(p.defaultAspectRatio).toBe("16:9");
+      expect(p.embedType).toBe("video");
+      expect(p.supportsMaxWidth).toBe(true);
+    });
+
+    it("defaults supportsMaxWidth to true when not specified", () => {
+      const provider = defineProvider(schema);
+      const p = provider as { supportsMaxWidth?: boolean };
+      expect(p.supportsMaxWidth).toBe(true);
+    });
+  });
+
   describe("validation", () => {
     it("throws if name is missing", () => {
       expect(() =>

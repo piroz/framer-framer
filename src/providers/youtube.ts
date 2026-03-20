@@ -2,6 +2,8 @@ import { OEmbedProvider } from "./base.js";
 
 export class YouTubeProvider extends OEmbedProvider {
   name = "youtube";
+  readonly defaultAspectRatio = "16:9";
+  readonly embedType = "video" as const;
 
   protected endpoint = "https://www.youtube.com/oembed";
 

@@ -2,6 +2,7 @@ import { OEmbedProvider } from "./base.js";
 
 export class FlickrProvider extends OEmbedProvider {
   name = "flickr";
+  readonly embedType = "photo" as const;
   protected endpoint = "https://www.flickr.com/services/oembed";
   protected patterns = [
     /^https?:\/\/(www\.)?flickr\.com\/photos\/[\w@.-]+\/\d+/,

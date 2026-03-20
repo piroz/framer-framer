@@ -284,6 +284,60 @@ describe("getProviders", () => {
       expect(pattern).not.toMatch(/^\//);
     }
   });
+
+  it("returns metadata fields for providers", () => {
+    const providers = getProviders();
+    const youtube = providers.find((p) => p.name === "youtube");
+    expect(youtube?.defaultAspectRatio).toBe("16:9");
+    expect(youtube?.embedType).toBe("video");
+    expect(youtube?.supportsMaxWidth).toBe(true);
+  });
+
+  it("returns embedType for all built-in providers", () => {
+    const providers = getProviders();
+    const builtinNames = [
+      "youtube",
+      "twitter",
+      "tiktok",
+      "facebook",
+      "flickr",
+      "instagram",
+      "vimeo",
+      "spotify",
+      "slideshare",
+      "soundcloud",
+      "speakerdeck",
+      "pinterest",
+      "reddit",
+      "huggingface",
+      "gradio",
+      "niconico",
+      "note",
+    ];
+    for (const name of builtinNames) {
+      const provider = providers.find((p) => p.name === name);
+      expect(provider?.embedType, `${name} should have embedType`).toBeDefined();
+    }
+  });
+
+  it("returns supportsMaxWidth=true for oEmbed providers and false for iframe providers", () => {
+    const providers = getProviders();
+    // oEmbed-based providers support maxWidth
+    expect(providers.find((p) => p.name === "youtube")?.supportsMaxWidth).toBe(true);
+    expect(providers.find((p) => p.name === "vimeo")?.supportsMaxWidth).toBe(true);
+    // iframe-based providers do not support maxWidth
+    expect(providers.find((p) => p.name === "huggingface")?.supportsMaxWidth).toBe(false);
+    expect(providers.find((p) => p.name === "gradio")?.supportsMaxWidth).toBe(false);
+  });
+
+  it("returns defaultAspectRatio for video providers", () => {
+    const providers = getProviders();
+    const videoProviders = ["youtube", "vimeo", "niconico"];
+    for (const name of videoProviders) {
+      const provider = providers.find((p) => p.name === name);
+      expect(provider?.defaultAspectRatio, `${name} should have defaultAspectRatio`).toBe("16:9");
+    }
+  });
 });
 
 describe("canEmbed", () => {

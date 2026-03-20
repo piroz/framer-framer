@@ -2,6 +2,7 @@ import { OEmbedProvider } from "./base.js";
 
 export class SpotifyProvider extends OEmbedProvider {
   name = "spotify";
+  readonly embedType = "rich" as const;
 
   protected endpoint = "https://open.spotify.com/oembed";
 

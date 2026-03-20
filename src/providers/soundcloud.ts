@@ -2,6 +2,7 @@ import { OEmbedProvider } from "./base.js";
 
 export class SoundCloudProvider extends OEmbedProvider {
   name = "soundcloud";
+  readonly embedType = "rich" as const;
 
   protected endpoint = "https://soundcloud.com/oembed";
 

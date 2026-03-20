@@ -2,6 +2,7 @@ import { MetaProvider } from "./meta.js";
 
 export class FacebookProvider extends MetaProvider {
   name = "facebook";
+  readonly embedType = "rich" as const;
 
   protected endpoint = "https://graph.facebook.com/v22.0/oembed_post";
   private videoEndpoint = "https://graph.facebook.com/v22.0/oembed_video";

@@ -188,6 +188,12 @@ export interface ProviderInfo {
   name: string;
   /** URL regex patterns this provider handles (as strings) */
   patterns: string[];
+  /** Default aspect ratio hint (e.g. '16:9', '1:1') */
+  defaultAspectRatio?: string;
+  /** oEmbed content type hint */
+  embedType?: EmbedType;
+  /** Whether this provider supports the maxWidth parameter */
+  supportsMaxWidth?: boolean;
 }
 
 /** Schema for declarative provider definition */
@@ -198,6 +204,12 @@ export interface ProviderSchema {
   endpoint: string;
   /** URL patterns this provider handles (glob strings or RegExp) */
   urlPatterns: (string | RegExp)[];
+  /** Default aspect ratio hint (e.g. '16:9', '1:1') */
+  defaultAspectRatio?: string;
+  /** oEmbed content type hint */
+  embedType?: EmbedType;
+  /** Whether this provider supports the maxWidth parameter (default: true) */
+  supportsMaxWidth?: boolean;
   /** Optional configuration */
   options?: {
     /** Custom transform to convert raw oEmbed response to EmbedResult */

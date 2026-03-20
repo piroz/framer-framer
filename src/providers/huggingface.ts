@@ -15,6 +15,8 @@ import { IframeProvider } from "./iframe-base.js";
  */
 export class HuggingFaceProvider extends IframeProvider {
   name = "huggingface";
+  readonly defaultAspectRatio = "4:3";
+  readonly embedType = "rich" as const;
 
   protected defaultWidth = 800;
   protected defaultHeight = 600;

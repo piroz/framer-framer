@@ -319,10 +319,13 @@ canEmbed("https://example.com/page");                      // false
 
 `ProviderInfo` type:
 
-| Field      | Type       | Description                                  |
-| ---------- | ---------- | -------------------------------------------- |
-| `name`     | `string`   | Provider name (e.g. `"youtube"`)             |
-| `patterns` | `string[]` | URL regex patterns (as regex source strings) |
+| Field                | Type       | Description                                  |
+| -------------------- | ---------- | -------------------------------------------- |
+| `name`               | `string`   | Provider name (e.g. `"youtube"`)             |
+| `patterns`           | `string[]` | URL regex patterns (as regex source strings) |
+| `defaultAspectRatio` | `string?`  | Default aspect ratio hint (e.g. `"16:9"`, `"1:1"`) |
+| `embedType`          | `string?`  | oEmbed content type hint (`"rich"`, `"video"`, `"photo"`, `"link"`) |
+| `supportsMaxWidth`   | `boolean?` | Whether the provider supports the `maxWidth` parameter |
 
 ### Custom providers
 
@@ -363,6 +366,9 @@ const [providerA, providerB] = defineProviders([
 | `name` | `string` | Provider name |
 | `endpoint` | `string` | oEmbed endpoint URL |
 | `urlPatterns` | `(string \| RegExp)[]` | URL patterns (glob strings or RegExp) |
+| `defaultAspectRatio` | `string?` | Default aspect ratio hint (e.g. `"16:9"`) |
+| `embedType` | `string?` | oEmbed content type hint (`"rich"`, `"video"`, `"photo"`, `"link"`) |
+| `supportsMaxWidth` | `boolean?` | Whether the provider supports `maxWidth` (default: `true`) |
 | `options.transform` | `(data, url) => EmbedResult` | Custom response transform |
 
 Glob patterns support `*` (any characters except `/`) and `**` (any characters including `/`).

@@ -2,6 +2,8 @@ import { OEmbedProvider } from "./base.js";
 
 export class NiconicoProvider extends OEmbedProvider {
   name = "niconico";
+  readonly defaultAspectRatio = "16:9";
+  readonly embedType = "video" as const;
 
   protected endpoint = "https://embed.nicovideo.jp/oembed";
 

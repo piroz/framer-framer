@@ -1,5 +1,5 @@
 import { EmbedError } from "../errors.js";
-import type { EmbedOptions, EmbedResult, Provider } from "../types.js";
+import type { EmbedOptions, EmbedResult, EmbedType, Provider } from "../types.js";
 import { escapeHtml } from "../utils/html.js";
 
 /**
@@ -16,6 +16,15 @@ export abstract class IframeProvider implements Provider {
 
   /** URL patterns this provider handles */
   protected abstract patterns: RegExp[];
+
+  /** Default aspect ratio hint (e.g. '16:9', '1:1') */
+  readonly defaultAspectRatio?: string;
+
+  /** oEmbed content type hint */
+  readonly embedType?: EmbedType;
+
+  /** Whether this provider supports the maxWidth parameter (default: false for iframe providers) */
+  readonly supportsMaxWidth: boolean = false;
 
   /** Default iframe width */
   protected defaultWidth = 800;

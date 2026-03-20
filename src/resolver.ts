@@ -51,6 +51,7 @@ export function getProviders(): ProviderInfo[] {
   return providers.map((p) => ({
     name: p.name,
     patterns: extractPatterns(p),
+    ...extractMetadata(p),
   }));
 }
 
@@ -70,6 +71,22 @@ function extractPatterns(provider: Provider): string[] {
     return p.patterns.map((r) => r.source);
   }
   return [];
+}
+
+/** Extract optional metadata fields from a provider. */
+function extractMetadata(
+  provider: Provider,
+): Pick<ProviderInfo, "defaultAspectRatio" | "embedType" | "supportsMaxWidth"> {
+  const p = provider as {
+    defaultAspectRatio?: string;
+    embedType?: ProviderInfo["embedType"];
+    supportsMaxWidth?: boolean;
+  };
+  const result: Pick<ProviderInfo, "defaultAspectRatio" | "embedType" | "supportsMaxWidth"> = {};
+  if (p.defaultAspectRatio != null) result.defaultAspectRatio = p.defaultAspectRatio;
+  if (p.embedType != null) result.embedType = p.embedType;
+  if (p.supportsMaxWidth != null) result.supportsMaxWidth = p.supportsMaxWidth;
+  return result;
 }
 
 /**

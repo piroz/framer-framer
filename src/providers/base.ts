@@ -1,6 +1,6 @@
 import { DEFAULT_TIMEOUT_MS } from "../constants.js";
 import { EmbedError } from "../errors.js";
-import type { EmbedOptions, EmbedResult, Provider } from "../types.js";
+import type { EmbedOptions, EmbedResult, EmbedType, Provider } from "../types.js";
 import { withRetry } from "../utils/retry.js";
 import { sanitizeHtml } from "../utils/sanitize.js";
 
@@ -13,6 +13,15 @@ export abstract class OEmbedProvider implements Provider {
 
   /** oEmbed endpoint URL */
   protected abstract endpoint: string;
+
+  /** Default aspect ratio hint (e.g. '16:9', '1:1') */
+  readonly defaultAspectRatio?: string;
+
+  /** oEmbed content type hint */
+  readonly embedType?: EmbedType;
+
+  /** Whether this provider supports the maxWidth parameter (default: true for oEmbed providers) */
+  readonly supportsMaxWidth: boolean = true;
 
   match(url: string): boolean {
     return this.patterns.some((pattern) => pattern.test(url));

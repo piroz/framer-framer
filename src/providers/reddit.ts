@@ -2,6 +2,7 @@ import { OEmbedProvider } from "./base.js";
 
 export class RedditProvider extends OEmbedProvider {
   name = "reddit";
+  readonly embedType = "rich" as const;
 
   protected endpoint = "https://www.reddit.com/oembed";
 
