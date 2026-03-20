@@ -7,6 +7,7 @@ import { HuggingFaceProvider } from "./huggingface.js";
 import { InstagramProvider } from "./instagram.js";
 import { MastodonProvider } from "./mastodon.js";
 import { NiconicoProvider } from "./niconico.js";
+import { ThreadsProvider } from "./threads.js";
 
 /** Pattern for the new SlideShare URL format: /slideshow/<slug>/<id> */
 const SLIDESHARE_NEW_URL_PATTERN = /^https?:\/\/(www\.)?slideshare\.net\/slideshow\/[\w-]+\/\d+/;
@@ -161,6 +162,7 @@ export const huggingfaceProvider = new HuggingFaceProvider();
 export const gradioProvider = new GradioProvider();
 export const mastodonProvider = new MastodonProvider();
 export const niconicoProvider = new NiconicoProvider();
+export const threadsProvider = new ThreadsProvider();
 
 /** All built-in providers */
 export const builtinProviders: Provider[] = [
@@ -182,6 +184,7 @@ export const builtinProviders: Provider[] = [
   mastodonProvider,
   niconicoProvider,
   blueskyProvider,
+  threadsProvider,
 ];
 
 export { defineProvider, defineProviders } from "./declarative.js";
@@ -194,6 +197,7 @@ export {
   InstagramProvider,
   MastodonProvider,
   NiconicoProvider,
+  ThreadsProvider,
 };
 
 // ---------------------------------------------------------------------------

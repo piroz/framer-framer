@@ -34,6 +34,7 @@ export {
   MastodonProvider,
   MetaProvider,
   NiconicoProvider,
+  ThreadsProvider,
 } from "./providers/index.js";
 export {
   canEmbed,
@@ -212,5 +213,10 @@ export async function note(url: string, options?: EmbedOptions): Promise<EmbedRe
 
 /** Resolve a Bluesky URL */
 export async function bluesky(url: string, options?: EmbedOptions): Promise<EmbedResult> {
+  return internalResolve(url, options);
+}
+
+/** Resolve a Threads URL (requires Meta access token) */
+export async function threads(url: string, options?: EmbedOptions): Promise<EmbedResult> {
   return internalResolve(url, options);
 }
