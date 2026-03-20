@@ -1,4 +1,5 @@
 import type { Provider } from "../types.js";
+import { BlueskyProvider } from "./bluesky.js";
 import { FacebookProvider } from "./facebook.js";
 import { FlickrProvider } from "./flickr.js";
 import { GradioProvider } from "./gradio.js";
@@ -18,6 +19,7 @@ import { VimeoProvider } from "./vimeo.js";
 import { YouTubeProvider } from "./youtube.js";
 
 /** Singleton provider instances shared across the library */
+export const blueskyProvider = new BlueskyProvider();
 export const youtubeProvider = new YouTubeProvider();
 export const twitterProvider = new TwitterProvider();
 export const tiktokProvider = new TikTokProvider();
@@ -55,9 +57,11 @@ export const builtinProviders: Provider[] = [
   gradioProvider,
   niconicoProvider,
   noteProvider,
+  blueskyProvider,
 ];
 
 export {
+  BlueskyProvider,
   FacebookProvider,
   FlickrProvider,
   GradioProvider,

@@ -4,7 +4,7 @@
 
 Universal embed resolver for Node.js — extract embed HTML from any URL using oEmbed APIs.
 
-Supports YouTube, X/Twitter, TikTok, Flickr, Facebook, Instagram, Vimeo, Spotify, SoundCloud, SlideShare, Speaker Deck, Pinterest, Reddit, Niconico, Hugging Face Spaces, Gradio, note out of the box, with oEmbed auto-discovery and OGP metadata fallback for any other URL. Zero runtime dependencies.
+Supports YouTube, X/Twitter, TikTok, Flickr, Facebook, Instagram, Vimeo, Spotify, SoundCloud, SlideShare, Speaker Deck, Pinterest, Reddit, Niconico, Hugging Face Spaces, Gradio, note, Bluesky out of the box, with oEmbed auto-discovery and OGP metadata fallback for any other URL. Zero runtime dependencies.
 
 ## Install
 
@@ -31,7 +31,7 @@ console.log(result.provider); // "youtube"
 ```ts
 import {
   youtube, twitter, tiktok, flickr, facebook, instagram,
-  vimeo, spotify, soundcloud, slideshare, speakerdeck, pinterest, reddit, niconico, huggingface, gradio, note,
+  vimeo, spotify, soundcloud, slideshare, speakerdeck, pinterest, reddit, niconico, huggingface, gradio, note, bluesky,
 } from "framer-framer";
 
 await youtube("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
@@ -49,6 +49,7 @@ await niconico("https://www.nicovideo.jp/watch/sm9");
 await huggingface("https://huggingface.co/spaces/stabilityai/stable-diffusion");
 await gradio("https://user-app.hf.space");
 await note("https://note.com/username/n/abc123");
+await bluesky("https://bsky.app/profile/bsky.app/post/3jxmszpoehs27");
 
 // Facebook / Instagram require a Meta access token
 await facebook("https://www.facebook.com/video/123", {

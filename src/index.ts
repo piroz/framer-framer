@@ -9,6 +9,7 @@ export type { EmbedErrorCode } from "./errors.js";
 export { EmbedError } from "./errors.js";
 export { OEmbedProvider } from "./providers/base.js";
 export {
+  BlueskyProvider,
   defineProvider,
   defineProviders,
   FacebookProvider,
@@ -198,5 +199,10 @@ export async function niconico(url: string, options?: EmbedOptions): Promise<Emb
 
 /** Resolve a note URL */
 export async function note(url: string, options?: EmbedOptions): Promise<EmbedResult> {
+  return internalResolve(url, options);
+}
+
+/** Resolve a Bluesky URL */
+export async function bluesky(url: string, options?: EmbedOptions): Promise<EmbedResult> {
   return internalResolve(url, options);
 }
