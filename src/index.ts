@@ -9,6 +9,8 @@ export type { EmbedErrorCode } from "./errors.js";
 export { EmbedError } from "./errors.js";
 export { OEmbedProvider } from "./providers/base.js";
 export {
+  defineProvider,
+  defineProviders,
   FacebookProvider,
   FlickrProvider,
   GradioProvider,
@@ -50,6 +52,7 @@ export type {
   ProblemDetails,
   Provider,
   ProviderInfo,
+  ProviderSchema,
   RateLimitOptions,
 } from "./types.js";
 export type { LogEntry, Logger, LogLevel } from "./utils/logger.js";

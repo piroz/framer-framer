@@ -324,6 +324,68 @@ canEmbed("https://example.com/page");                      // false
 
 ### Custom providers
 
+#### Declarative definition
+
+Define providers with a simple schema — no class boilerplate needed:
+
+```ts
+import { defineProvider, defineProviders, registerProvider } from "framer-framer";
+
+// Single provider
+const dailymotion = defineProvider({
+  name: "dailymotion",
+  endpoint: "https://www.dailymotion.com/services/oembed",
+  urlPatterns: ["https://www.dailymotion.com/video/*"],
+});
+registerProvider(dailymotion);
+
+// Multiple providers at once
+const [providerA, providerB] = defineProviders([
+  {
+    name: "provider-a",
+    endpoint: "https://a.example.com/oembed",
+    urlPatterns: [/^https?:\/\/a\.example\.com\//],
+  },
+  {
+    name: "provider-b",
+    endpoint: "https://b.example.com/oembed",
+    urlPatterns: ["https://b.example.com/**"],
+  },
+]);
+```
+
+`ProviderSchema`:
+
+| Field | Type | Description |
+|---|---|---|
+| `name` | `string` | Provider name |
+| `endpoint` | `string` | oEmbed endpoint URL |
+| `urlPatterns` | `(string \| RegExp)[]` | URL patterns (glob strings or RegExp) |
+| `options.transform` | `(data, url) => EmbedResult` | Custom response transform |
+
+Glob patterns support `*` (any characters except `/`) and `**` (any characters including `/`).
+
+##### Custom response transform
+
+```ts
+const provider = defineProvider({
+  name: "custom",
+  endpoint: "https://custom.example.com/oembed",
+  urlPatterns: ["https://custom.example.com/**"],
+  options: {
+    transform: (data, url) => ({
+      type: "rich",
+      html: `<div class="custom-embed">${data.html}</div>`,
+      provider: "custom",
+      title: data.title as string,
+      url,
+    }),
+  },
+});
+```
+
+#### Class-based definition
+
 ```ts
 import { registerProvider, OEmbedProvider } from "framer-framer";
 

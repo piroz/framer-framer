@@ -189,3 +189,18 @@ export interface ProviderInfo {
   /** URL regex patterns this provider handles (as strings) */
   patterns: string[];
 }
+
+/** Schema for declarative provider definition */
+export interface ProviderSchema {
+  /** Provider name (e.g. 'dailymotion') */
+  name: string;
+  /** oEmbed endpoint URL */
+  endpoint: string;
+  /** URL patterns this provider handles (glob strings or RegExp) */
+  urlPatterns: (string | RegExp)[];
+  /** Optional configuration */
+  options?: {
+    /** Custom transform to convert raw oEmbed response to EmbedResult */
+    transform?: (data: Record<string, unknown>, url: string) => EmbedResult;
+  };
+}

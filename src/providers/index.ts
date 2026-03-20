@@ -76,5 +76,6 @@ export {
   VimeoProvider,
   YouTubeProvider,
 };
+export { defineProvider, defineProviders } from "./declarative.js";
 export { IframeProvider } from "./iframe-base.js";
 export { MetaProvider } from "./meta.js";
