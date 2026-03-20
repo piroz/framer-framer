@@ -5,6 +5,7 @@ import { FlickrProvider } from "./flickr.js";
 import { GradioProvider } from "./gradio.js";
 import { HuggingFaceProvider } from "./huggingface.js";
 import { InstagramProvider } from "./instagram.js";
+import { MastodonProvider } from "./mastodon.js";
 import { NiconicoProvider } from "./niconico.js";
 import { NoteProvider } from "./note.js";
 import { PinterestProvider } from "./pinterest.js";
@@ -35,6 +36,7 @@ export const pinterestProvider = new PinterestProvider();
 export const redditProvider = new RedditProvider();
 export const huggingfaceProvider = new HuggingFaceProvider();
 export const gradioProvider = new GradioProvider();
+export const mastodonProvider = new MastodonProvider();
 export const niconicoProvider = new NiconicoProvider();
 export const noteProvider = new NoteProvider();
 
@@ -55,6 +57,7 @@ export const builtinProviders: Provider[] = [
   redditProvider,
   huggingfaceProvider,
   gradioProvider,
+  mastodonProvider,
   niconicoProvider,
   noteProvider,
   blueskyProvider,
@@ -67,6 +70,7 @@ export {
   GradioProvider,
   HuggingFaceProvider,
   InstagramProvider,
+  MastodonProvider,
   NiconicoProvider,
   NoteProvider,
   PinterestProvider,

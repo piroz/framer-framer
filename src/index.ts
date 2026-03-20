@@ -18,6 +18,7 @@ export {
   HuggingFaceProvider,
   IframeProvider,
   InstagramProvider,
+  MastodonProvider,
   MetaProvider,
   NiconicoProvider,
   NoteProvider,
@@ -189,6 +190,11 @@ export async function huggingface(url: string, options?: EmbedOptions): Promise<
 
 /** Resolve a Gradio app URL */
 export async function gradio(url: string, options?: EmbedOptions): Promise<EmbedResult> {
+  return internalResolve(url, options);
+}
+
+/** Resolve a Mastodon URL */
+export async function mastodon(url: string, options?: EmbedOptions): Promise<EmbedResult> {
   return internalResolve(url, options);
 }
 

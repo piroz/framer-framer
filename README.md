@@ -4,7 +4,7 @@
 
 Universal embed resolver for Node.js — extract embed HTML from any URL using oEmbed APIs.
 
-Supports YouTube, X/Twitter, TikTok, Flickr, Facebook, Instagram, Vimeo, Spotify, SoundCloud, SlideShare, Speaker Deck, Pinterest, Reddit, Niconico, Hugging Face Spaces, Gradio, note, Bluesky out of the box, with oEmbed auto-discovery and OGP metadata fallback for any other URL. Zero runtime dependencies.
+Supports YouTube, X/Twitter, TikTok, Flickr, Facebook, Instagram, Vimeo, Spotify, SoundCloud, SlideShare, Speaker Deck, Pinterest, Reddit, Mastodon, Niconico, Hugging Face Spaces, Gradio, note, Bluesky out of the box, with oEmbed auto-discovery and OGP metadata fallback for any other URL. Zero runtime dependencies.
 
 ## Install
 
@@ -31,7 +31,7 @@ console.log(result.provider); // "youtube"
 ```ts
 import {
   youtube, twitter, tiktok, flickr, facebook, instagram,
-  vimeo, spotify, soundcloud, slideshare, speakerdeck, pinterest, reddit, niconico, huggingface, gradio, note, bluesky,
+  vimeo, spotify, soundcloud, slideshare, speakerdeck, pinterest, reddit, mastodon, niconico, huggingface, gradio, note, bluesky,
 } from "framer-framer";
 
 await youtube("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
@@ -45,6 +45,7 @@ await slideshare("https://www.slideshare.net/user/presentation-title");
 await speakerdeck("https://speakerdeck.com/speaker/my-presentation");
 await pinterest("https://www.pinterest.com/pin/123456789/");
 await reddit("https://www.reddit.com/r/typescript/comments/abc123/my_post/");
+await mastodon("https://mastodon.social/@Gargron/109370844932549021");
 await niconico("https://www.nicovideo.jp/watch/sm9");
 await huggingface("https://huggingface.co/spaces/stabilityai/stable-diffusion");
 await gradio("https://user-app.hf.space");

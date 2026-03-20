@@ -47,7 +47,8 @@ export async function discoverOEmbedUrl(
 
   const match = OEMBED_LINK_RE.exec(html);
   const href = match?.[1] ?? match?.[2];
-  return href ?? undefined;
+  // HTML attributes may contain HTML entities (e.g. &amp; → &)
+  return href?.replaceAll("&amp;", "&") ?? undefined;
 }
 
 /**
