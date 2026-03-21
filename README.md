@@ -134,7 +134,7 @@ await embed(url, {
     maxRetries: 2,            // default: 2
     baseDelay: 500,           // default: 500ms, exponential backoff: delay = baseDelay * 2^attempt
   },
-  timeout: 5000,              // Request timeout in ms (default: 10000)
+  timeout: 5000,              // Per-request timeout in ms (default: 10000) — applies to oEmbed, OGP fallback, and discovery
   sanitize: true,             // Sanitize oEmbed HTML to prevent XSS (default: true)
   discovery: true,            // oEmbed auto-discovery for unknown URLs (default: true)
   cache: myCache,             // EmbedCache instance (see Caching section)
@@ -407,7 +407,7 @@ registerProvider(new DailymotionProvider());
 
 ### Hooks
 
-Hooks let you intercept every `resolve()` call — useful for caching, analytics, HTML wrapping, and more. All resolution paths (`embed()`, `youtube()`, etc.) go through hooks.
+Hooks let you intercept every `resolve()` call — useful for caching, analytics, HTML wrapping, and more. All resolution paths (`embed()`, `youtube()`, etc.) go through hooks. Hooks run once per resolution (outside the retry loop) — `onBeforeResolve` fires before the first attempt, and `onAfterResolve` fires after the final result.
 
 ```ts
 import { onBeforeResolve, onAfterResolve, clearHooks } from "framer-framer";
