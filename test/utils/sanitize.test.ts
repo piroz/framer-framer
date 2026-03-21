@@ -31,6 +31,17 @@ describe("sanitizeHtml", () => {
       expect(sanitizeHtml(html)).toBe(html);
     });
 
+    it("preserves img tags with allowed attributes", () => {
+      const html =
+        '<img src="https://example.com/photo.jpg" alt="Photo" width="1024" height="684">';
+      expect(sanitizeHtml(html)).toBe(html);
+    });
+
+    it("preserves img tags with loading attribute", () => {
+      const html = '<img src="https://example.com/photo.jpg" alt="Photo" loading="lazy">';
+      expect(sanitizeHtml(html)).toBe(html);
+    });
+
     it("removes style attributes", () => {
       const html = '<div style="background:url(evil)">Content</div>';
       expect(sanitizeHtml(html)).toBe("<div>Content</div>");
@@ -43,9 +54,14 @@ describe("sanitizeHtml", () => {
       expect(sanitizeHtml(html)).toBe("<p>Content</p>");
     });
 
-    it("removes img tags", () => {
-      const html = '<img src="https://example.com/img.jpg" alt="photo"><p>Text</p>';
-      expect(sanitizeHtml(html)).toBe("<p>Text</p>");
+    it("strips disallowed attributes from img tags", () => {
+      const html = '<img src="https://example.com/img.jpg" alt="photo" onclick="evil()" id="bad">';
+      expect(sanitizeHtml(html)).toBe('<img src="https://example.com/img.jpg" alt="photo">');
+    });
+
+    it("removes javascript: src from img tags", () => {
+      const html = '<img src="javascript:alert(1)" alt="xss">';
+      expect(sanitizeHtml(html)).toBe('<img alt="xss">');
     });
 
     it("removes form tags but preserves text", () => {
@@ -190,6 +206,20 @@ describe("sanitizeHtml", () => {
         'frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" ' +
         'allowfullscreen title="Video Title"></iframe>';
       expect(sanitizeHtml(html)).toBe(html);
+    });
+
+    it("handles Flickr oEmbed HTML", () => {
+      const html =
+        '<a data-flickr-embed="true" href="https://www.flickr.com/photos/beaurogers/31833779864/">' +
+        '<img src="https://live.staticflickr.com/7455/31833779864_cae3985f4d_b.jpg" width="1024" height="684" alt="Shiprock, New Mexico">' +
+        "</a>" +
+        '<script async src="https://embedr.flickr.com/assets/client-code.js"></script>';
+      expect(sanitizeHtml(html)).toBe(
+        '<a href="https://www.flickr.com/photos/beaurogers/31833779864/">' +
+          '<img src="https://live.staticflickr.com/7455/31833779864_cae3985f4d_b.jpg" width="1024" height="684" alt="Shiprock, New Mexico">' +
+          "</a>" +
+          '<script async src="https://embedr.flickr.com/assets/client-code.js"></script>',
+      );
     });
 
     it("strips malicious additions to otherwise valid HTML", () => {

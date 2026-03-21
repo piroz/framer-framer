@@ -5,6 +5,7 @@ const ALLOWED_SCRIPT_DOMAINS: ReadonlySet<string> = new Set([
   "www.tiktok.com",
   "www.instagram.com",
   "connect.facebook.net",
+  "embedr.flickr.com",
 ]);
 
 /** Tags whose content should be stripped entirely (not just the tag) */
@@ -25,6 +26,7 @@ const ALLOWED_TAGS: Readonly<Record<string, ReadonlySet<string>>> = {
     "loading",
   ]),
   blockquote: new Set(["class", "cite", "data-instgrm-permalink", "data-instgrm-version"]),
+  img: new Set(["src", "alt", "width", "height", "title", "loading"]),
   a: new Set(["href", "title", "target", "rel"]),
   p: new Set(["class"]),
   div: new Set(["class"]),
