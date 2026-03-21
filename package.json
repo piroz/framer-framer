@@ -1,6 +1,6 @@
 {
   "name": "framer-framer",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "Universal embed resolver and REST API server - extract embed HTML from any URL (YouTube, X/Twitter, TikTok, Facebook, Instagram, Vimeo, Spotify, SoundCloud, Hugging Face, Gradio, and more)",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
