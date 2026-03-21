@@ -271,7 +271,7 @@ describe("getProviders", () => {
     expect(names).toContain("twitter");
     expect(names).toContain("tiktok");
     expect(names).toContain("niconico");
-    expect(names).toContain("note");
+    expect(names).not.toContain("note");
   });
 
   it("returns patterns as regex source strings", () => {
@@ -312,7 +312,6 @@ describe("getProviders", () => {
       "huggingface",
       "gradio",
       "niconico",
-      "note",
     ];
     for (const name of builtinNames) {
       const provider = providers.find((p) => p.name === name);

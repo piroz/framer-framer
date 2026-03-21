@@ -59,7 +59,6 @@ export const builtinProviders: Provider[] = [
   gradioProvider,
   mastodonProvider,
   niconicoProvider,
-  noteProvider,
   blueskyProvider,
 ];
 
