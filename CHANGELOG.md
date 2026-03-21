@@ -1,5 +1,21 @@
 # Changelog
 
+## [3.1.0](https://github.com/piroz/framer-framer/compare/v3.0.0...v3.1.0) (2026-03-21)
+
+
+### Features
+
+* add Bluesky provider ([#56](https://github.com/piroz/framer-framer/issues/56)) ([ddbe234](https://github.com/piroz/framer-framer/commit/ddbe23451f0f051a0004857bb13b3a69c6504e63))
+* add declarative provider definition (defineProvider / defineProviders) ([#55](https://github.com/piroz/framer-framer/issues/55)) ([c5083bc](https://github.com/piroz/framer-framer/commit/c5083bc3615b4831befddcacc78972c422ae6697))
+* add Mastodon provider ([#58](https://github.com/piroz/framer-framer/issues/58)) ([dff2c1f](https://github.com/piroz/framer-framer/commit/dff2c1fe48aa9bda1c336eb514641d374001eefc))
+* add provider metadata (defaultAspectRatio, embedType, supportsMaxWidth) ([#59](https://github.com/piroz/framer-framer/issues/59)) ([c193182](https://github.com/piroz/framer-framer/commit/c19318224c46b700cec416631d52057861b44371))
+
+
+### Bug Fixes
+
+* allow img tags in sanitizeHtml for Flickr oEmbed ([#60](https://github.com/piroz/framer-framer/issues/60)) ([d6bf73c](https://github.com/piroz/framer-framer/commit/d6bf73c0bb5d279fb08fa6eae169d65e12779488))
+* handle broken oEmbed endpoints for niconico and note providers ([#61](https://github.com/piroz/framer-framer/issues/61)) ([f842a03](https://github.com/piroz/framer-framer/commit/f842a033293a02563807570b97859325b9a8f27d))
+
 ## [3.0.0](https://github.com/piroz/framer-framer/compare/v2.4.0...v3.0.0) (2026-03-17)
 
 
