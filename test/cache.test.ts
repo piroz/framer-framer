@@ -130,6 +130,33 @@ describe("EmbedCache", () => {
     expect(cache.size).toBe(2);
   });
 
+  it("delete() removes a specific entry and returns true", () => {
+    const cache = new EmbedCache();
+    cache.set("https://a.com", undefined, fakeResult());
+    cache.set("https://b.com", undefined, fakeResult());
+
+    expect(cache.delete("https://a.com")).toBe(true);
+    expect(cache.get("https://a.com")).toBeUndefined();
+    expect(cache.get("https://b.com")).toBeDefined();
+    expect(cache.size).toBe(1);
+  });
+
+  it("delete() returns false when entry does not exist", () => {
+    const cache = new EmbedCache();
+    expect(cache.delete("https://nonexistent.com")).toBe(false);
+  });
+
+  it("delete() respects options in cache key", () => {
+    const cache = new EmbedCache();
+    cache.set("https://a.com", { maxWidth: 400 }, fakeResult({ html: "<w400>" }));
+    cache.set("https://a.com", { maxWidth: 800 }, fakeResult({ html: "<w800>" }));
+
+    // Delete only the maxWidth=400 variant
+    expect(cache.delete("https://a.com", { maxWidth: 400 })).toBe(true);
+    expect(cache.get("https://a.com", { maxWidth: 400 })).toBeUndefined();
+    expect(cache.get("https://a.com", { maxWidth: 800 })).toBeDefined();
+  });
+
   it("overwrites existing entry for same key", () => {
     const cache = new EmbedCache();
     cache.set("https://a.com", undefined, fakeResult({ html: "<old/>" }));

@@ -83,6 +83,12 @@ export class EmbedCache {
     this.map.set(key, { result, expiresAt: Date.now() + this.ttl });
   }
 
+  /** Remove a specific entry from the cache. Returns `true` if the entry existed. */
+  delete(url: string, options?: EmbedOptions): boolean {
+    const key = buildKey(url, options);
+    return this.map.delete(key);
+  }
+
   /** Remove all entries from the cache. */
   clear(): void {
     this.map.clear();

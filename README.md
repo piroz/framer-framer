@@ -259,6 +259,7 @@ The cache key includes the URL and dimension options (`maxWidth`, `maxHeight`), 
 Set `cache: false` to explicitly disable caching for a single call when a cache is normally used.
 
 ```ts
+cache.delete("https://www.youtube.com/watch?v=abc"); // remove a specific entry
 cache.clear(); // remove all cached entries
 ```
 
