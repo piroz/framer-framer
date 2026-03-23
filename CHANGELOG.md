@@ -1,5 +1,20 @@
 # Changelog
 
+## [3.2.0](https://github.com/piroz/framer-framer/compare/v3.1.0...v3.2.0) (2026-03-23)
+
+
+### Features
+
+* add EmbedCache.delete() for per-entry cache invalidation ([#66](https://github.com/piroz/framer-framer/issues/66)) ([1efd4d8](https://github.com/piroz/framer-framer/commit/1efd4d85a862297d771a52371966b2733ad61ff7))
+
+
+### Bug Fixes
+
+* 3.1.1 release\n\nRelease-As: 3.1.1 ([20ff3e0](https://github.com/piroz/framer-framer/commit/20ff3e00e4d0f2081a193b04a5095179a2ec9eb3))
+* exclude Pinterest board URLs from oEmbed matching ([#76](https://github.com/piroz/framer-framer/issues/76)) ([7b8db7e](https://github.com/piroz/framer-framer/commit/7b8db7ea0fe63dedf137712bfc576960c340ced0))
+* **pinterest:** normalize .jp domain URLs to .com for oEmbed API ([#78](https://github.com/piroz/framer-framer/issues/78)) ([a4ea26a](https://github.com/piroz/framer-framer/commit/a4ea26ac4e03d089658da931dcc45ca8bc6136bc))
+* **slideshare:** add error message for unsupported new URL format ([#77](https://github.com/piroz/framer-framer/issues/77)) ([6d90c9d](https://github.com/piroz/framer-framer/commit/6d90c9dc01f3a1a3a221f768e945a0d084f86378))
+
 ## [3.1.0](https://github.com/piroz/framer-framer/compare/v3.0.0...v3.1.0) (2026-03-21)
 
 
