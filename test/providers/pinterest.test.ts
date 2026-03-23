@@ -39,21 +39,16 @@ describe("PinterestProvider", () => {
     });
 
     it.each([
-      "https://www.pinterest.com/user/my-board/",
-      "https://pinterest.com/user/my-board",
-      "https://www.pinterest.jp/user/my-board/",
-      "https://pinterest.jp/user/my-board",
-    ])("matches board URL: %s", (url) => {
-      expect(provider.match(url)).toBe(true);
-    });
-
-    it.each([
       "https://www.pinterest.com/",
       "https://www.pinterest.com/user/",
       "https://www.example.com/pin/123456789/",
       "https://www.pinterest.fr/pin/123456789/",
       "https://www.pinterest.com/settings/profile/",
       "https://www.pinterest.com/_saved/pins/",
+      "https://www.pinterest.com/user/my-board/",
+      "https://pinterest.com/user/my-board",
+      "https://www.pinterest.jp/user/my-board/",
+      "https://pinterest.jp/user/my-board",
     ])("does not match: %s", (url) => {
       expect(provider.match(url)).toBe(false);
     });
@@ -68,14 +63,6 @@ describe("PinterestProvider", () => {
     expect(result.title).toBe("Beautiful Interior Design");
     expect(result.author_name).toBe("Designer");
     expect(result.url).toBe("https://www.pinterest.com/pin/123456789/");
-  });
-
-  it("resolves a board URL", async () => {
-    const result = await provider.resolve("https://www.pinterest.com/user/my-board/");
-
-    expect(result.provider).toBe("pinterest");
-    expect(result.type).toBe("rich");
-    expect(result.url).toBe("https://www.pinterest.com/user/my-board/");
   });
 
   it("resolves a pinterest.jp URL", async () => {

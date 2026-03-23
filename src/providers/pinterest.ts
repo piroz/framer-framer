@@ -6,8 +6,5 @@ export class PinterestProvider extends OEmbedProvider {
 
   protected endpoint = "https://www.pinterest.com/oembed.json";
 
-  protected patterns = [
-    /^https?:\/\/(www\.)?pinterest\.(com|jp)\/pin\//,
-    /^https?:\/\/(www\.)?pinterest\.(com|jp)\/(?!pin\/|settings\/|_saved\/)[\w.-]+\/[\w.-]+\/?$/,
-  ];
+  protected patterns = [/^https?:\/\/(www\.)?pinterest\.(com|jp)\/pin\//];
 }
