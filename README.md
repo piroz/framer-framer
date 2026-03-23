@@ -112,6 +112,21 @@ const expanded = await expandUrls(html, { format: "html" });
 // Bare URLs in text content are expanded; URLs in href/src attributes are preserved
 ```
 
+#### Exclude patterns
+
+```ts
+const expanded = await expandUrls(text, {
+  exclude: [
+    "https://example.com",      // prefix match
+    /^https?:\/\/private\./,    // regex match
+  ],
+});
+```
+
+#### Error handling
+
+URLs that fail to resolve (e.g. timeout, invalid provider response) are left unchanged in the output — no errors are thrown for individual URL failures.
+
 #### ExpandOptions
 
 | Option        | Type                       | Default  | Description                                |
@@ -145,6 +160,27 @@ await embed(url, {
   logger: true,               // Enable built-in JSON logger (see Logging section)
 });
 ```
+
+### HTML sanitization
+
+oEmbed HTML responses are sanitized by default to prevent XSS. Only whitelisted tags and attributes are preserved; `<script>` tags are only allowed from trusted provider domains (e.g. `platform.twitter.com`, `www.tiktok.com`).
+
+Disable per-call with `sanitize: false`:
+
+```ts
+await embed(url, { sanitize: false });
+```
+
+You can also use the sanitizer directly:
+
+```ts
+import { sanitizeHtml } from "framer-framer";
+
+const safe = sanitizeHtml('<iframe src="https://example.com"></iframe><script>alert("xss")</script>');
+// → '<iframe src="https://example.com"></iframe>'
+```
+
+Allowed tags: `iframe`, `blockquote`, `img`, `a`, `p`, `div`, `span`, `script` (trusted domains only), `br`, `strong`, `em`.
 
 ### URL validation
 
@@ -211,8 +247,27 @@ Structured JSON logging for observability. Logs resolution success/failure, late
 ```ts
 // Built-in JSON logger (writes to stderr)
 await embed(url, { logger: true });
+```
 
-// Custom logger (e.g. pino, winston)
+#### `createLogger()` — create a reusable logger instance
+
+```ts
+import { createLogger, embed } from "framer-framer";
+
+const logger = createLogger();
+
+// Reuse across multiple calls
+await embed(url1, { logger });
+await embed(url2, { logger });
+```
+
+`createLogger()` returns a `Logger` object that writes JSON to stderr. Pass it to `logger` in `EmbedOptions` to share a single logger across calls.
+
+#### Custom logger
+
+Provide your own `Logger` implementation to integrate with existing logging libraries (e.g. pino, winston):
+
+```ts
 import type { Logger } from "framer-framer";
 
 const myLogger: Logger = {
@@ -637,6 +692,37 @@ createApp({
   },
   metrics: true,                 // enable GET /metrics endpoint (default: false)
 });
+```
+
+#### Full server example with caching, logging, and rate limiting
+
+```ts
+import { serve } from "@hono/node-server";
+import { createApp } from "framer-framer/server";
+import { createCache, createLogger } from "framer-framer";
+
+const cache = createCache({ maxSize: 500, ttl: 300_000 });
+const logger = createLogger();
+
+const app = createApp({
+  basePath: "/api/v1",
+  defaultOptions: {
+    maxWidth: 800,
+    cache,
+    logger,
+    timeout: 5000,
+  },
+  rateLimit: {
+    windowMs: 60_000,
+    max: 60,
+  },
+  metrics: true,
+});
+
+serve({ fetch: app.fetch, port: 3000 });
+// GET  http://localhost:3000/api/v1/embed?url=...
+// POST http://localhost:3000/api/v1/embed/batch
+// GET  http://localhost:3000/api/v1/metrics
 ```
 
 #### Metrics
