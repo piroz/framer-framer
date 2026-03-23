@@ -65,11 +65,21 @@ describe("PinterestProvider", () => {
     expect(result.url).toBe("https://www.pinterest.com/pin/123456789/");
   });
 
-  it("resolves a pinterest.jp URL", async () => {
+  it("resolves a pinterest.jp URL by normalizing to .com for the API", async () => {
     const result = await provider.resolve("https://www.pinterest.jp/pin/123456789/");
 
     expect(result.provider).toBe("pinterest");
     expect(result.url).toBe("https://www.pinterest.jp/pin/123456789/");
+
+    const fetchCall = vi.mocked(fetch).mock.calls[0][0] as string;
+    expect(fetchCall).toContain("url=https%3A%2F%2Fwww.pinterest.com%2Fpin%2F123456789%2F");
+  });
+
+  it("normalizes pinterest.jp without www prefix", async () => {
+    await provider.resolve("https://pinterest.jp/pin/123456789/");
+
+    const fetchCall = vi.mocked(fetch).mock.calls[0][0] as string;
+    expect(fetchCall).toContain("url=https%3A%2F%2Fpinterest.com%2Fpin%2F123456789%2F");
   });
 
   it("passes maxWidth/maxHeight to the API", async () => {
