@@ -796,6 +796,12 @@ import { embed } from "framer-framer";
 const result = await embed(url);
 ```
 
+## Known limitations
+
+### SlideShare new URL format
+
+SlideShare's new URL format (`https://www.slideshare.net/slideshow/<slug>/<id>`) is not supported by their oEmbed API. If you pass a new-format URL, framer-framer will throw an `EmbedError` with code `OEMBED_FETCH_FAILED` suggesting to use the legacy URL format (`https://www.slideshare.net/<user>/<slug>`).
+
 ## Error handling
 
 All errors thrown by framer-framer are instances of `EmbedError`, which extends `Error` with a `code` property for programmatic error handling.

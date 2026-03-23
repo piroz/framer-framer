@@ -19,6 +19,16 @@ describe("SlideShareProvider", () => {
       expect(provider.match("http://slideshare.net/user/presentation")).toBe(true);
     });
 
+    it("matches the new /slideshow/ URL format", () => {
+      expect(provider.match("https://www.slideshare.net/slideshow/culture-1798664/1798664")).toBe(
+        true,
+      );
+    });
+
+    it("matches the new /slideshow/ URL format without www", () => {
+      expect(provider.match("https://slideshare.net/slideshow/some-presentation/12345")).toBe(true);
+    });
+
     it("does not match the SlideShare homepage", () => {
       expect(provider.match("https://www.slideshare.net/")).toBe(false);
     });
@@ -96,6 +106,21 @@ describe("SlideShareProvider", () => {
       await expect(provider.resolve("https://www.slideshare.net/user/nonexistent")).rejects.toThrow(
         "slideshare oEmbed request failed: 404 Not Found",
       );
+    });
+
+    it("throws a descriptive error for the new /slideshow/ URL format", async () => {
+      await expect(
+        provider.resolve("https://www.slideshare.net/slideshow/culture-1798664/1798664"),
+      ).rejects.toThrow(/new URL format.*not supported.*legacy URL format/);
+    });
+
+    it("does not call fetch for the new /slideshow/ URL format", async () => {
+      try {
+        await provider.resolve("https://www.slideshare.net/slideshow/culture-1798664/1798664");
+      } catch {
+        // expected
+      }
+      expect(fetch).not.toHaveBeenCalled();
     });
   });
 });
