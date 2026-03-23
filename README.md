@@ -90,6 +90,8 @@ for (const result of results) {
 
 All other `EmbedOptions` (e.g. `maxWidth`, `cache`, `timeout`) are passed through to each individual resolution.
 
+> **Timeout behavior:** The `timeout` option applies to each URL independently, not to the batch as a whole. Each URL gets its own `AbortSignal.timeout()`, so a slow URL will not affect the timeout of other URLs in the batch.
+
 ### URL auto-expansion
 
 Automatically detect and expand URLs in text or HTML to embed HTML. Ideal for CMS and blog engines.
@@ -639,6 +641,8 @@ When rate limiting is enabled, all responses include the following headers:
 | `X-RateLimit-Reset`   | Unix timestamp (seconds) when the window resets |
 
 Exceeding the limit returns `429 Too Many Requests` with a `Retry-After` header (seconds until reset).
+
+> **Design note:** Rate limiting uses an in-memory, per-process IP counter. For multi-process or distributed deployments, an external store (e.g. Redis) adapter is planned for a future release. Provider-specific rate limits are intentionally not supported — the uniform IP-based approach keeps configuration simple while covering the most common use case.
 
 #### Using as a sub-app
 
