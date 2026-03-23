@@ -493,6 +493,25 @@ const unsubscribe = onMetrics((event) => { /* ... */ });
 unsubscribe(); // removes only this callback
 ```
 
+#### Integration with external systems
+
+The `onMetrics()` hook can bridge to any external observability system. No built-in adapters are provided — the callback interface is intentionally minimal so you can integrate without adding runtime dependencies.
+
+**OpenTelemetry example:**
+
+```ts
+import { trace, metrics as otelMetrics } from "@opentelemetry/api";
+import { onMetrics } from "framer-framer";
+
+const tracer = trace.getTracer("framer-framer");
+const meter = otelMetrics.getMeter("framer-framer");
+const requestCounter = meter.createCounter("embed.requests");
+
+onMetrics((event) => {
+  requestCounter.add(1, { provider: event.provider, success: String(event.success) });
+});
+```
+
 #### `clearMetrics()` — remove all metrics callbacks
 
 ```ts
