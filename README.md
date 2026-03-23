@@ -44,9 +44,11 @@ await soundcloud("https://soundcloud.com/artist/track");
 await slideshare("https://www.slideshare.net/user/presentation-title");
 await speakerdeck("https://speakerdeck.com/speaker/my-presentation");
 await pinterest("https://www.pinterest.com/pin/123456789/");
+await pinterest("https://www.pinterest.com/user/my-board/"); // board URLs
 await reddit("https://www.reddit.com/r/typescript/comments/abc123/my_post/");
 await mastodon("https://mastodon.social/@Gargron/109370844932549021");
 await niconico("https://www.nicovideo.jp/watch/sm9");
+await niconico("https://live.nicovideo.jp/watch/lv123456789"); // live streams
 await huggingface("https://huggingface.co/spaces/stabilityai/stable-diffusion");
 await gradio("https://user-app.hf.space");
 await bluesky("https://bsky.app/profile/bsky.app/post/3jxmszpoehs27");
