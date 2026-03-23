@@ -50,7 +50,7 @@ export interface EmbedOptions {
   };
   /**
    * Meta (Facebook/Instagram) authentication.
-   * @deprecated Use `auth.meta` instead. Will be removed in the next major version.
+   * @deprecated Use `auth.meta` instead. Will be removed in v4.0.0.
    */
   meta?: {
     /** Access token in 'APP_ID|CLIENT_TOKEN' format */

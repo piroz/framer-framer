@@ -785,7 +785,7 @@ await embed(url, { auth: { meta: { accessToken: "APP_ID|CLIENT_TOKEN" } } });
 
 ### `resolve()` → `embed()`
 
-`resolve()` is now deprecated in favour of `embed()`. Both functions are identical — `resolve()` will be removed in the next major version.
+> **Deprecated**: `resolve()` is deprecated and will be removed in **v4.0.0**. Use `embed()` instead — both functions are identical.
 
 ```ts
 // Before (v2.x)

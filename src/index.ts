@@ -85,7 +85,7 @@ export async function embed(url: string, options?: EmbedOptions): Promise<EmbedR
 /**
  * Resolve any URL to embed data.
  *
- * @deprecated Use {@link embed} instead. `resolve()` will be removed in the next major version.
+ * @deprecated Use {@link embed} instead. `resolve()` will be removed in v4.0.0.
  */
 export async function resolve(url: string, options?: EmbedOptions): Promise<EmbedResult> {
   return internalResolve(url, options);
