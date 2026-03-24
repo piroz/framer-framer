@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { TikTokProvider } from "../../src/providers/tiktok.js";
+import { tiktokProvider } from "../../src/providers/index.js";
 
 describe("TikTokProvider", () => {
-  const provider = new TikTokProvider();
+  const provider = tiktokProvider;
 
   beforeEach(() => {
     vi.stubGlobal(

@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { NoteProvider } from "../../src/providers/note.js";
+import { noteProvider } from "../../src/providers/index.js";
 
 describe("NoteProvider", () => {
-  const provider = new NoteProvider();
+  const provider = noteProvider;
 
   beforeEach(() => {
     vi.stubGlobal(

@@ -8,19 +8,9 @@ export { discoverOEmbedUrl, resolveWithDiscovery } from "./discovery.js";
 export type { EmbedErrorCode } from "./errors.js";
 export { EmbedError } from "./errors.js";
 export { OEmbedProvider } from "./providers/base.js";
-export {
+export type {
   BlueskyProvider,
-  defineProvider,
-  defineProviders,
-  FacebookProvider,
   FlickrProvider,
-  GradioProvider,
-  HuggingFaceProvider,
-  IframeProvider,
-  InstagramProvider,
-  MastodonProvider,
-  MetaProvider,
-  NiconicoProvider,
   NoteProvider,
   PinterestProvider,
   RedditProvider,
@@ -32,6 +22,18 @@ export {
   TwitterProvider,
   VimeoProvider,
   YouTubeProvider,
+} from "./providers/index.js";
+export {
+  defineProvider,
+  defineProviders,
+  FacebookProvider,
+  GradioProvider,
+  HuggingFaceProvider,
+  IframeProvider,
+  InstagramProvider,
+  MastodonProvider,
+  MetaProvider,
+  NiconicoProvider,
 } from "./providers/index.js";
 export {
   canEmbed,

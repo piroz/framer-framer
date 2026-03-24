@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { EmbedCache } from "../src/cache.js";
 import { expandUrls } from "../src/cms/auto-expand.js";
 import { EmbedError } from "../src/errors.js";
-import { YouTubeProvider } from "../src/providers/youtube.js";
+import { youtubeProvider } from "../src/providers/index.js";
 import type { EmbedResult } from "../src/types.js";
 
 function fakeResult(overrides?: Partial<EmbedResult>): EmbedResult {
@@ -37,7 +37,7 @@ describe("Timeout edge cases", () => {
       }),
     );
 
-    const provider = new YouTubeProvider();
+    const provider = youtubeProvider;
     const err = await provider
       .resolve("https://www.youtube.com/watch?v=dQw4w9WgXcQ", {
         timeout: 1,
@@ -58,7 +58,7 @@ describe("Timeout edge cases", () => {
       }),
     );
 
-    const provider = new YouTubeProvider();
+    const provider = youtubeProvider;
     try {
       await provider.resolve("https://www.youtube.com/watch?v=dQw4w9WgXcQ", {
         retry: { maxRetries: 0 },
@@ -81,7 +81,7 @@ describe("Timeout edge cases", () => {
       }),
     );
 
-    const provider = new YouTubeProvider();
+    const provider = youtubeProvider;
     try {
       await provider.resolve("https://www.youtube.com/watch?v=dQw4w9WgXcQ", {
         retry: { maxRetries: 0 },
@@ -109,7 +109,7 @@ describe("Invalid oEmbed response handling", () => {
       }),
     );
 
-    const provider = new YouTubeProvider();
+    const provider = youtubeProvider;
     try {
       await provider.resolve("https://www.youtube.com/watch?v=dQw4w9WgXcQ", {
         retry: { maxRetries: 0 },
@@ -137,7 +137,7 @@ describe("Invalid oEmbed response handling", () => {
       }),
     );
 
-    const provider = new YouTubeProvider();
+    const provider = youtubeProvider;
     const result = await provider.resolve("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
     expect(result.html).toBe("");
   });
@@ -155,7 +155,7 @@ describe("Invalid oEmbed response handling", () => {
       }),
     );
 
-    const provider = new YouTubeProvider();
+    const provider = youtubeProvider;
     const result = await provider.resolve("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
     expect(result.type).toBe("rich");
   });
@@ -175,7 +175,7 @@ describe("Invalid oEmbed response handling", () => {
       }),
     );
 
-    const provider = new YouTubeProvider();
+    const provider = youtubeProvider;
     // Should not throw — the provider casts fields without strict validation
     const result = await provider.resolve("https://www.youtube.com/watch?v=dQw4w9WgXcQ", {
       sanitize: false,
@@ -193,7 +193,7 @@ describe("Invalid oEmbed response handling", () => {
       }),
     );
 
-    const provider = new YouTubeProvider();
+    const provider = youtubeProvider;
     const result = await provider.resolve("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
     expect(result.type).toBe("rich");
     expect(result.html).toBe("");

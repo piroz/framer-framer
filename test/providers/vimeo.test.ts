@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { VimeoProvider } from "../../src/providers/vimeo.js";
+import { vimeoProvider } from "../../src/providers/index.js";
 
 describe("VimeoProvider", () => {
-  const provider = new VimeoProvider();
+  const provider = vimeoProvider;
 
   beforeEach(() => {
     vi.stubGlobal(

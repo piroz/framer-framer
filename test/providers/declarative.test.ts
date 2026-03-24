@@ -163,6 +163,69 @@ describe("defineProvider", () => {
     });
   });
 
+  describe("normalizeUrl option", () => {
+    it("normalizes the URL sent to the oEmbed API but preserves the original in the result", async () => {
+      const provider = defineProvider({
+        ...schema,
+        options: {
+          normalizeUrl: (url) => url.replace("example.com", "canonical.com"),
+        },
+      });
+
+      const result = await provider.resolve("https://example.com/video/123");
+
+      // The fetch URL should use the normalized domain
+      const fetchCall = vi.mocked(fetch).mock.calls[0][0] as string;
+      expect(fetchCall).toContain("url=https%3A%2F%2Fcanonical.com%2Fvideo%2F123");
+
+      // The result should preserve the original URL
+      expect(result.url).toBe("https://example.com/video/123");
+    });
+
+    it("does not modify the URL when normalizeUrl is not set", async () => {
+      const provider = defineProvider(schema);
+      await provider.resolve("https://example.com/video/123");
+
+      const fetchCall = vi.mocked(fetch).mock.calls[0][0] as string;
+      expect(fetchCall).toContain("url=https%3A%2F%2Fexample.com%2Fvideo%2F123");
+    });
+  });
+
+  describe("validate option", () => {
+    it("throws when validate rejects the URL", async () => {
+      const provider = defineProvider({
+        ...schema,
+        options: {
+          validate: (url) => {
+            if (url.includes("blocked")) {
+              throw new Error("This URL format is not supported");
+            }
+          },
+        },
+      });
+
+      await expect(provider.resolve("https://example.com/video/blocked")).rejects.toThrow(
+        "This URL format is not supported",
+      );
+      // fetch should not be called
+      expect(fetch).not.toHaveBeenCalled();
+    });
+
+    it("allows resolution when validate does not throw", async () => {
+      const provider = defineProvider({
+        ...schema,
+        options: {
+          validate: () => {
+            // no-op: all URLs are valid
+          },
+        },
+      });
+
+      const result = await provider.resolve("https://example.com/video/123");
+      expect(result.provider).toBe("example");
+    });
+  });
+
   describe("validation", () => {
     it("throws if name is missing", () => {
       expect(() =>

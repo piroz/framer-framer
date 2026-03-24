@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { BlueskyProvider } from "../../src/providers/bluesky.js";
+import { blueskyProvider } from "../../src/providers/index.js";
 
 describe("BlueskyProvider", () => {
-  const provider = new BlueskyProvider();
+  const provider = blueskyProvider;
 
   beforeEach(() => {
     vi.stubGlobal(

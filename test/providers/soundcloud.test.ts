@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { SoundCloudProvider } from "../../src/providers/soundcloud.js";
+import { soundcloudProvider } from "../../src/providers/index.js";
 
 describe("SoundCloudProvider", () => {
-  const provider = new SoundCloudProvider();
+  const provider = soundcloudProvider;
 
   beforeEach(() => {
     vi.stubGlobal(
