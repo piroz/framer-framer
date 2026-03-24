@@ -1,5 +1,24 @@
 # Changelog
 
+## [3.2.0](https://github.com/piroz/framer-framer/compare/v3.1.1...v3.2.0) (2026-03-24)
+
+
+### ⚠ BREAKING CHANGES
+
+* migrate 13 oEmbed providers from class-based to defineProvider()
+
+### Features
+
+* add Threads provider ([1266b75](https://github.com/piroz/framer-framer/commit/1266b7517d3180d1a59d2cd34446ed53293f3ada))
+* add Threads provider ([67288fe](https://github.com/piroz/framer-framer/commit/67288fecc952ff28fd3679118fa2f7c40933b0a7))
+* migrate 13 oEmbed providers from class-based to defineProvider() ([994f6df](https://github.com/piroz/framer-framer/commit/994f6dfdf0cd6fee66c652c5e6570b24dc95551c)), closes [#81](https://github.com/piroz/framer-framer/issues/81)
+* migrate 13 oEmbed providers to defineProvider() ([23aa198](https://github.com/piroz/framer-framer/commit/23aa19850b6f8c226a5a1b90edbd57ec0d1727cb))
+
+
+### Bug Fixes
+
+* 3.2.0 release ([682e896](https://github.com/piroz/framer-framer/commit/682e896dc80e569376dd2e3875f0e43c31925c86))
+
 ## [3.1.1](https://github.com/piroz/framer-framer/compare/v3.1.0...v3.1.1) (2026-03-23)
 
 
