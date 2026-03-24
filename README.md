@@ -4,7 +4,7 @@
 
 Universal embed resolver for Node.js — extract embed HTML from any URL using oEmbed APIs.
 
-Supports YouTube, X/Twitter, TikTok, Flickr, Facebook, Instagram, Vimeo, Spotify, SoundCloud, SlideShare, Speaker Deck, Pinterest, Reddit, Mastodon, Niconico, Hugging Face Spaces, Gradio, Bluesky out of the box, with oEmbed auto-discovery and OGP metadata fallback for any other URL. Zero runtime dependencies.
+Supports YouTube, X/Twitter, TikTok, Flickr, Facebook, Instagram, Threads, Vimeo, Spotify, SoundCloud, SlideShare, Speaker Deck, Pinterest, Reddit, Mastodon, Niconico, Hugging Face Spaces, Gradio, Bluesky, note out of the box, with oEmbed auto-discovery and OGP metadata fallback for any other URL. Zero runtime dependencies.
 
 ## Install
 
@@ -30,8 +30,8 @@ console.log(result.provider); // "youtube"
 
 ```ts
 import {
-  youtube, twitter, tiktok, flickr, facebook, instagram,
-  vimeo, spotify, soundcloud, slideshare, speakerdeck, pinterest, reddit, mastodon, niconico, huggingface, gradio, bluesky,
+  youtube, twitter, tiktok, flickr, facebook, instagram, threads,
+  vimeo, spotify, soundcloud, slideshare, speakerdeck, pinterest, reddit, mastodon, niconico, huggingface, gradio, bluesky, note,
 } from "framer-framer";
 
 await youtube("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
@@ -52,11 +52,14 @@ await huggingface("https://huggingface.co/spaces/stabilityai/stable-diffusion");
 await gradio("https://user-app.hf.space");
 await bluesky("https://bsky.app/profile/bsky.app/post/3jxmszpoehs27");
 
-// Facebook / Instagram require a Meta access token
+// Facebook / Instagram / Threads require a Meta access token
 await facebook("https://www.facebook.com/video/123", {
   auth: { meta: { accessToken: "APP_ID|CLIENT_TOKEN" } },
 });
 await instagram("https://www.instagram.com/p/ABC123/", {
+  auth: { meta: { accessToken: "APP_ID|CLIENT_TOKEN" } },
+});
+await threads("https://www.threads.net/@zuck/post/CuXFPIvSEvG", {
   auth: { meta: { accessToken: "APP_ID|CLIENT_TOKEN" } },
 });
 ```
@@ -144,7 +147,7 @@ await embed(url, {
   maxHeight: 480,             // Max embed height
   fallback: true,             // OGP fallback for unknown URLs (default: true)
   auth: {                     // Authentication configuration
-    meta: {                   // Required for Facebook/Instagram
+    meta: {                   // Required for Facebook/Instagram/Threads
       accessToken: "APP_ID|CLIENT_TOKEN",
     },
   },
@@ -611,7 +614,7 @@ serve({ fetch: app.fetch, port: 3000 });
 | `sanitize`  | `string` | Set to `"false"` to disable HTML sanitization |
 | `discovery` | `string` | Set to `"false"` to disable oEmbed auto-discovery |
 
-For Facebook/Instagram, pass the Meta access token via the `Authorization` header:
+For Facebook/Instagram/Threads, pass the Meta access token via the `Authorization` header:
 
 ```
 Authorization: Bearer APP_ID|CLIENT_TOKEN
@@ -869,7 +872,7 @@ node tools/render-check.mjs --port 3333
 node tools/render-check.mjs --no-serve  # generate HTML only
 ```
 
-Facebook/Instagram require a Meta access token via env var:
+Facebook/Instagram/Threads require a Meta access token via env var:
 
 ```bash
 META_ACCESS_TOKEN=APP_ID|CLIENT_TOKEN node tools/render-check.mjs

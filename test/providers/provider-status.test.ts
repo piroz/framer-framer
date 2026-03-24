@@ -53,10 +53,11 @@ describe("Provider status validation", () => {
       "mastodon",
       "niconico",
       "bluesky",
+      "threads",
     ];
 
-    it("registers all 18 expected providers", () => {
-      expect(builtinProviders).toHaveLength(18);
+    it("registers all 19 expected providers", () => {
+      expect(builtinProviders).toHaveLength(19);
     });
 
     it.each(expectedProviders)("includes %s provider", (name) => {

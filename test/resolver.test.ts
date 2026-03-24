@@ -265,12 +265,13 @@ describe("resolve - oEmbed discovery integration", () => {
 describe("getProviders", () => {
   it("returns all built-in providers with name and patterns", () => {
     const providers = getProviders();
-    expect(providers.length).toBeGreaterThanOrEqual(17);
+    expect(providers.length).toBeGreaterThanOrEqual(18);
     const names = providers.map((p) => p.name);
     expect(names).toContain("youtube");
     expect(names).toContain("twitter");
     expect(names).toContain("tiktok");
     expect(names).toContain("niconico");
+    expect(names).toContain("threads");
     expect(names).not.toContain("note");
   });
 
