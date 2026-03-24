@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { TwitterProvider } from "../../src/providers/twitter.js";
+import { twitterProvider } from "../../src/providers/index.js";
 
 describe("TwitterProvider", () => {
-  const provider = new TwitterProvider();
+  const provider = twitterProvider;
 
   beforeEach(() => {
     vi.stubGlobal(

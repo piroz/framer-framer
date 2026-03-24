@@ -1,4 +1,4 @@
-import type { EmbedResult, Provider, ProviderSchema } from "../types.js";
+import type { EmbedOptions, EmbedResult, Provider, ProviderSchema } from "../types.js";
 import { OEmbedProvider } from "./base.js";
 
 /**
@@ -50,6 +50,8 @@ export function defineProvider(schema: ProviderSchema): Provider {
 
   const patterns = schema.urlPatterns.map(toRegExp);
   const transform = schema.options?.transform;
+  const normalizeUrl = schema.options?.normalizeUrl;
+  const validate = schema.options?.validate;
 
   class DeclarativeProvider extends OEmbedProvider {
     name = schema.name;
@@ -58,6 +60,18 @@ export function defineProvider(schema: ProviderSchema): Provider {
     override readonly defaultAspectRatio = schema.defaultAspectRatio;
     override readonly embedType = schema.embedType;
     override readonly supportsMaxWidth = schema.supportsMaxWidth ?? true;
+
+    override async resolve(url: string, options?: EmbedOptions): Promise<EmbedResult> {
+      if (validate) {
+        validate(url);
+      }
+      return super.resolve(url, options);
+    }
+
+    protected override buildOEmbedUrl(url: string, options?: EmbedOptions): string {
+      const effectiveUrl = normalizeUrl ? normalizeUrl(url) : url;
+      return super.buildOEmbedUrl(effectiveUrl, options);
+    }
 
     protected override toEmbedResult(url: string, data: Record<string, unknown>): EmbedResult {
       if (transform) {

@@ -9,11 +9,9 @@ export type { EmbedErrorCode } from "./errors.js";
 export { EmbedError } from "./errors.js";
 export { OEmbedProvider } from "./providers/base.js";
 export {
-  BlueskyProvider,
   defineProvider,
   defineProviders,
   FacebookProvider,
-  FlickrProvider,
   GradioProvider,
   HuggingFaceProvider,
   IframeProvider,
@@ -21,17 +19,6 @@ export {
   MastodonProvider,
   MetaProvider,
   NiconicoProvider,
-  NoteProvider,
-  PinterestProvider,
-  RedditProvider,
-  SlideShareProvider,
-  SoundCloudProvider,
-  SpeakerDeckProvider,
-  SpotifyProvider,
-  TikTokProvider,
-  TwitterProvider,
-  VimeoProvider,
-  YouTubeProvider,
 } from "./providers/index.js";
 export {
   canEmbed,

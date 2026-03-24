@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { PinterestProvider } from "../../src/providers/pinterest.js";
+import { pinterestProvider } from "../../src/providers/index.js";
 
 describe("PinterestProvider", () => {
-  const provider = new PinterestProvider();
+  const provider = pinterestProvider;
 
   beforeEach(() => {
     vi.stubGlobal(

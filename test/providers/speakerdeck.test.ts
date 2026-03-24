@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { SpeakerDeckProvider } from "../../src/providers/speakerdeck.js";
+import { speakerdeckProvider } from "../../src/providers/index.js";
 
 describe("SpeakerDeckProvider", () => {
-  const provider = new SpeakerDeckProvider();
+  const provider = speakerdeckProvider;
 
   beforeEach(() => {
     vi.stubGlobal(

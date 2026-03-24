@@ -1,23 +1,25 @@
 import { describe, expect, it } from "vitest";
-import { BlueskyProvider } from "../../src/providers/bluesky.js";
 import { FacebookProvider } from "../../src/providers/facebook.js";
-import { FlickrProvider } from "../../src/providers/flickr.js";
 import { GradioProvider } from "../../src/providers/gradio.js";
 import { HuggingFaceProvider } from "../../src/providers/huggingface.js";
-import { builtinProviders } from "../../src/providers/index.js";
+import {
+  blueskyProvider,
+  builtinProviders,
+  flickrProvider,
+  pinterestProvider,
+  redditProvider,
+  slideshareProvider,
+  soundcloudProvider,
+  speakerdeckProvider,
+  spotifyProvider,
+  tiktokProvider,
+  twitterProvider,
+  vimeoProvider,
+  youtubeProvider,
+} from "../../src/providers/index.js";
 import { InstagramProvider } from "../../src/providers/instagram.js";
 import { MastodonProvider } from "../../src/providers/mastodon.js";
 import { NiconicoProvider } from "../../src/providers/niconico.js";
-import { PinterestProvider } from "../../src/providers/pinterest.js";
-import { RedditProvider } from "../../src/providers/reddit.js";
-import { SlideShareProvider } from "../../src/providers/slideshare.js";
-import { SoundCloudProvider } from "../../src/providers/soundcloud.js";
-import { SpeakerDeckProvider } from "../../src/providers/speakerdeck.js";
-import { SpotifyProvider } from "../../src/providers/spotify.js";
-import { TikTokProvider } from "../../src/providers/tiktok.js";
-import { TwitterProvider } from "../../src/providers/twitter.js";
-import { VimeoProvider } from "../../src/providers/vimeo.js";
-import { YouTubeProvider } from "../../src/providers/youtube.js";
 
 /**
  * Provider status validation tests.
@@ -69,7 +71,7 @@ describe("Provider status validation", () => {
   });
 
   describe("YouTube", () => {
-    const provider = new YouTubeProvider();
+    const provider = youtubeProvider;
 
     it.each([
       "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
@@ -92,7 +94,7 @@ describe("Provider status validation", () => {
   });
 
   describe("Twitter/X", () => {
-    const provider = new TwitterProvider();
+    const provider = twitterProvider;
 
     it.each([
       "https://twitter.com/user/status/123456789",
@@ -113,7 +115,7 @@ describe("Provider status validation", () => {
   });
 
   describe("TikTok", () => {
-    const provider = new TikTokProvider();
+    const provider = tiktokProvider;
 
     it.each([
       "https://www.tiktok.com/@user/video/1234567890",
@@ -156,7 +158,7 @@ describe("Provider status validation", () => {
   });
 
   describe("Flickr", () => {
-    const provider = new FlickrProvider();
+    const provider = flickrProvider;
 
     it.each([
       "https://www.flickr.com/photos/user/12345678901",
@@ -194,7 +196,7 @@ describe("Provider status validation", () => {
   });
 
   describe("Vimeo", () => {
-    const provider = new VimeoProvider();
+    const provider = vimeoProvider;
 
     it.each([
       "https://vimeo.com/123456789",
@@ -214,7 +216,7 @@ describe("Provider status validation", () => {
   });
 
   describe("Spotify", () => {
-    const provider = new SpotifyProvider();
+    const provider = spotifyProvider;
 
     it.each([
       "https://open.spotify.com/track/abc123",
@@ -236,7 +238,7 @@ describe("Provider status validation", () => {
   });
 
   describe("SlideShare", () => {
-    const provider = new SlideShareProvider();
+    const provider = slideshareProvider;
 
     it.each([
       "https://www.slideshare.net/user/presentation-name",
@@ -254,7 +256,7 @@ describe("Provider status validation", () => {
   });
 
   describe("SoundCloud", () => {
-    const provider = new SoundCloudProvider();
+    const provider = soundcloudProvider;
 
     it.each([
       "https://soundcloud.com/artist/track-name",
@@ -274,7 +276,7 @@ describe("Provider status validation", () => {
   });
 
   describe("Speaker Deck", () => {
-    const provider = new SpeakerDeckProvider();
+    const provider = speakerdeckProvider;
 
     it.each([
       "https://speakerdeck.com/user/presentation-name",
@@ -292,7 +294,7 @@ describe("Provider status validation", () => {
   });
 
   describe("Pinterest", () => {
-    const provider = new PinterestProvider();
+    const provider = pinterestProvider;
 
     it.each([
       "https://www.pinterest.com/pin/123456789/",
@@ -311,7 +313,7 @@ describe("Provider status validation", () => {
   });
 
   describe("Reddit", () => {
-    const provider = new RedditProvider();
+    const provider = redditProvider;
 
     it.each([
       "https://www.reddit.com/r/subreddit/comments/abc123/post_title",
@@ -408,7 +410,7 @@ describe("Provider status validation", () => {
   });
 
   describe("Bluesky", () => {
-    const provider = new BlueskyProvider();
+    const provider = blueskyProvider;
 
     it.each([
       "https://bsky.app/profile/user.bsky.social/post/abc123",
@@ -427,31 +429,70 @@ describe("Provider status validation", () => {
 
   describe("provider metadata", () => {
     const providers = [
-      { cls: YouTubeProvider, name: "youtube", embedType: "video", aspectRatio: "16:9" },
-      { cls: TwitterProvider, name: "twitter", embedType: "rich", aspectRatio: undefined },
-      { cls: TikTokProvider, name: "tiktok", embedType: "video", aspectRatio: "9:16" },
-      { cls: FacebookProvider, name: "facebook", embedType: "rich", aspectRatio: undefined },
-      { cls: FlickrProvider, name: "flickr", embedType: "photo", aspectRatio: undefined },
-      { cls: InstagramProvider, name: "instagram", embedType: "rich", aspectRatio: "1:1" },
-      { cls: VimeoProvider, name: "vimeo", embedType: "video", aspectRatio: "16:9" },
-      { cls: SpotifyProvider, name: "spotify", embedType: "rich", aspectRatio: undefined },
-      { cls: SlideShareProvider, name: "slideshare", embedType: "rich", aspectRatio: "16:9" },
-      { cls: SoundCloudProvider, name: "soundcloud", embedType: "rich", aspectRatio: undefined },
-      { cls: SpeakerDeckProvider, name: "speakerdeck", embedType: "rich", aspectRatio: "16:9" },
-      { cls: PinterestProvider, name: "pinterest", embedType: "rich", aspectRatio: undefined },
-      { cls: RedditProvider, name: "reddit", embedType: "rich", aspectRatio: undefined },
-      { cls: HuggingFaceProvider, name: "huggingface", embedType: "rich", aspectRatio: "4:3" },
-      { cls: GradioProvider, name: "gradio", embedType: "rich", aspectRatio: "4:3" },
-      { cls: MastodonProvider, name: "mastodon", embedType: undefined, aspectRatio: undefined },
-      { cls: NiconicoProvider, name: "niconico", embedType: "video", aspectRatio: "16:9" },
-      { cls: BlueskyProvider, name: "bluesky", embedType: undefined, aspectRatio: undefined },
+      { instance: youtubeProvider, name: "youtube", embedType: "video", aspectRatio: "16:9" },
+      { instance: twitterProvider, name: "twitter", embedType: "rich", aspectRatio: undefined },
+      { instance: tiktokProvider, name: "tiktok", embedType: "video", aspectRatio: "9:16" },
+      {
+        instance: new FacebookProvider(),
+        name: "facebook",
+        embedType: "rich",
+        aspectRatio: undefined,
+      },
+      { instance: flickrProvider, name: "flickr", embedType: "photo", aspectRatio: undefined },
+      {
+        instance: new InstagramProvider(),
+        name: "instagram",
+        embedType: "rich",
+        aspectRatio: "1:1",
+      },
+      { instance: vimeoProvider, name: "vimeo", embedType: "video", aspectRatio: "16:9" },
+      { instance: spotifyProvider, name: "spotify", embedType: "rich", aspectRatio: undefined },
+      { instance: slideshareProvider, name: "slideshare", embedType: "rich", aspectRatio: "16:9" },
+      {
+        instance: soundcloudProvider,
+        name: "soundcloud",
+        embedType: "rich",
+        aspectRatio: undefined,
+      },
+      {
+        instance: speakerdeckProvider,
+        name: "speakerdeck",
+        embedType: "rich",
+        aspectRatio: "16:9",
+      },
+      { instance: pinterestProvider, name: "pinterest", embedType: "rich", aspectRatio: undefined },
+      { instance: redditProvider, name: "reddit", embedType: "rich", aspectRatio: undefined },
+      {
+        instance: new HuggingFaceProvider(),
+        name: "huggingface",
+        embedType: "rich",
+        aspectRatio: "4:3",
+      },
+      { instance: new GradioProvider(), name: "gradio", embedType: "rich", aspectRatio: "4:3" },
+      {
+        instance: new MastodonProvider(),
+        name: "mastodon",
+        embedType: undefined,
+        aspectRatio: undefined,
+      },
+      {
+        instance: new NiconicoProvider(),
+        name: "niconico",
+        embedType: "video",
+        aspectRatio: "16:9",
+      },
+      { instance: blueskyProvider, name: "bluesky", embedType: undefined, aspectRatio: undefined },
     ];
 
-    it.each(providers)("$name has correct metadata", ({ cls, name, embedType, aspectRatio }) => {
-      const provider = new cls();
-      expect(provider.name).toBe(name);
+    it.each(providers)("$name has correct metadata", ({
+      instance,
+      name,
+      embedType,
+      aspectRatio,
+    }) => {
+      expect(instance.name).toBe(name);
 
-      const p = provider as { embedType?: string; defaultAspectRatio?: string };
+      const p = instance as { embedType?: string; defaultAspectRatio?: string };
       if (embedType !== undefined) {
         expect(p.embedType).toBe(embedType);
       }

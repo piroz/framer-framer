@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { resolveWithOgp } from "../src/fallback/ogp.js";
-import { YouTubeProvider } from "../src/providers/youtube.js";
+import { youtubeProvider } from "../src/providers/index.js";
 
 describe("Timeout option", () => {
   let timeoutSpy: ReturnType<typeof vi.spyOn>;
@@ -14,7 +14,7 @@ describe("Timeout option", () => {
   });
 
   describe("OEmbedProvider", () => {
-    const provider = new YouTubeProvider();
+    const provider = youtubeProvider;
 
     beforeEach(() => {
       vi.stubGlobal(
@@ -95,9 +95,8 @@ describe("Timeout option", () => {
         }),
       );
 
-      const provider = new YouTubeProvider();
       await expect(
-        provider.resolve("https://www.youtube.com/watch?v=dQw4w9WgXcQ", {
+        youtubeProvider.resolve("https://www.youtube.com/watch?v=dQw4w9WgXcQ", {
           timeout: 1,
           retry: { maxRetries: 0 },
         }),

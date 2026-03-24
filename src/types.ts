@@ -214,5 +214,15 @@ export interface ProviderSchema {
   options?: {
     /** Custom transform to convert raw oEmbed response to EmbedResult */
     transform?: (data: Record<string, unknown>, url: string) => EmbedResult;
+    /**
+     * Normalize the URL before sending it to the oEmbed API endpoint.
+     * The original URL is preserved in the result; only the API request uses the normalized form.
+     */
+    normalizeUrl?: (url: string) => string;
+    /**
+     * Validate the URL before resolution.
+     * Throw an error to reject the URL (e.g. unsupported URL format).
+     */
+    validate?: (url: string) => void;
   };
 }

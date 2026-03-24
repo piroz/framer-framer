@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { SlideShareProvider } from "../../src/providers/slideshare.js";
+import { slideshareProvider } from "../../src/providers/index.js";
 
 describe("SlideShareProvider", () => {
-  const provider = new SlideShareProvider();
+  const provider = slideshareProvider;
 
   describe("match", () => {
     it("matches a standard SlideShare URL", () => {

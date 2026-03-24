@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { RedditProvider } from "../../src/providers/reddit.js";
+import { redditProvider } from "../../src/providers/index.js";
 
 describe("RedditProvider", () => {
-  const provider = new RedditProvider();
+  const provider = redditProvider;
 
   beforeEach(() => {
     vi.stubGlobal(

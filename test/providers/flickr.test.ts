@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { FlickrProvider } from "../../src/providers/flickr.js";
+import { flickrProvider } from "../../src/providers/index.js";
 
 describe("FlickrProvider", () => {
-  const provider = new FlickrProvider();
+  const provider = flickrProvider;
 
   describe("match", () => {
     it.each([
