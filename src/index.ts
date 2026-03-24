@@ -8,6 +8,21 @@ export { discoverOEmbedUrl, resolveWithDiscovery } from "./discovery.js";
 export type { EmbedErrorCode } from "./errors.js";
 export { EmbedError } from "./errors.js";
 export { OEmbedProvider } from "./providers/base.js";
+export type {
+  BlueskyProvider,
+  FlickrProvider,
+  NoteProvider,
+  PinterestProvider,
+  RedditProvider,
+  SlideShareProvider,
+  SoundCloudProvider,
+  SpeakerDeckProvider,
+  SpotifyProvider,
+  TikTokProvider,
+  TwitterProvider,
+  VimeoProvider,
+  YouTubeProvider,
+} from "./providers/index.js";
 export {
   defineProvider,
   defineProviders,

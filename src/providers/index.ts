@@ -195,3 +195,34 @@ export {
   MastodonProvider,
   NiconicoProvider,
 };
+
+// ---------------------------------------------------------------------------
+// Backward-compatible type aliases for migrated providers.
+// These allow `import type { YouTubeProvider }` to keep working.
+// ---------------------------------------------------------------------------
+/** @deprecated Use `typeof youtubeProvider` or `Provider` instead. */
+export type YouTubeProvider = Provider;
+/** @deprecated Use `typeof twitterProvider` or `Provider` instead. */
+export type TwitterProvider = Provider;
+/** @deprecated Use `typeof tiktokProvider` or `Provider` instead. */
+export type TikTokProvider = Provider;
+/** @deprecated Use `typeof flickrProvider` or `Provider` instead. */
+export type FlickrProvider = Provider;
+/** @deprecated Use `typeof vimeoProvider` or `Provider` instead. */
+export type VimeoProvider = Provider;
+/** @deprecated Use `typeof spotifyProvider` or `Provider` instead. */
+export type SpotifyProvider = Provider;
+/** @deprecated Use `typeof slideshareProvider` or `Provider` instead. */
+export type SlideShareProvider = Provider;
+/** @deprecated Use `typeof soundcloudProvider` or `Provider` instead. */
+export type SoundCloudProvider = Provider;
+/** @deprecated Use `typeof speakerdeckProvider` or `Provider` instead. */
+export type SpeakerDeckProvider = Provider;
+/** @deprecated Use `typeof pinterestProvider` or `Provider` instead. */
+export type PinterestProvider = Provider;
+/** @deprecated Use `typeof redditProvider` or `Provider` instead. */
+export type RedditProvider = Provider;
+/** @deprecated Use `typeof blueskyProvider` or `Provider` instead. */
+export type BlueskyProvider = Provider;
+/** @deprecated Use `typeof noteProvider` or `Provider` instead. */
+export type NoteProvider = Provider;
