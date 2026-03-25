@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { createCache, EmbedCache } from "../src/cache.js";
+import type { CacheAdapter } from "../src/cache.js";
+import { buildKey, createCache, EmbedCache } from "../src/cache.js";
 import { clearHooks, onBeforeResolve } from "../src/resolver.js";
 import type { EmbedResult } from "../src/types.js";
 
@@ -22,148 +23,182 @@ describe("EmbedCache", () => {
     vi.useRealTimers();
   });
 
-  it("stores and retrieves results", () => {
+  it("implements CacheAdapter interface", () => {
+    const cache: CacheAdapter = new EmbedCache();
+    expect(cache.get).toBeDefined();
+    expect(cache.set).toBeDefined();
+    expect(cache.delete).toBeDefined();
+    expect(cache.clear).toBeDefined();
+  });
+
+  it("stores and retrieves results", async () => {
     const cache = new EmbedCache();
     const result = fakeResult();
-    cache.set("https://example.com", undefined, result);
-    expect(cache.get("https://example.com")).toEqual(result);
+    await cache.set("https://example.com", result);
+    expect(await cache.get("https://example.com")).toEqual(result);
   });
 
-  it("returns undefined on cache miss", () => {
+  it("returns undefined on cache miss", async () => {
     const cache = new EmbedCache();
-    expect(cache.get("https://example.com")).toBeUndefined();
+    expect(await cache.get("https://example.com")).toBeUndefined();
   });
 
-  it("differentiates by sanitize option", () => {
+  it("differentiates by cache key (sanitize option)", async () => {
     const cache = new EmbedCache();
     const r1 = fakeResult({ html: "<iframe>sanitized</iframe>" });
     const r2 = fakeResult({ html: "<iframe>raw</iframe>" });
 
-    cache.set("https://example.com", undefined, r1);
-    cache.set("https://example.com", { sanitize: false }, r2);
+    const key1 = buildKey("https://example.com");
+    const key2 = buildKey("https://example.com", { sanitize: false });
 
-    expect(cache.get("https://example.com")?.html).toBe("<iframe>sanitized</iframe>");
-    expect(cache.get("https://example.com", { sanitize: false })?.html).toBe(
-      "<iframe>raw</iframe>",
-    );
+    await cache.set(key1, r1);
+    await cache.set(key2, r2);
+
+    expect((await cache.get(key1))?.html).toBe("<iframe>sanitized</iframe>");
+    expect((await cache.get(key2))?.html).toBe("<iframe>raw</iframe>");
   });
 
-  it("differentiates by options (maxWidth/maxHeight)", () => {
+  it("differentiates by cache key (maxWidth/maxHeight)", async () => {
     const cache = new EmbedCache();
     const r1 = fakeResult({ html: "<iframe w=400>" });
     const r2 = fakeResult({ html: "<iframe w=800>" });
 
-    cache.set("https://example.com", { maxWidth: 400 }, r1);
-    cache.set("https://example.com", { maxWidth: 800 }, r2);
+    const key1 = buildKey("https://example.com", { maxWidth: 400 });
+    const key2 = buildKey("https://example.com", { maxWidth: 800 });
 
-    expect(cache.get("https://example.com", { maxWidth: 400 })?.html).toBe("<iframe w=400>");
-    expect(cache.get("https://example.com", { maxWidth: 800 })?.html).toBe("<iframe w=800>");
+    await cache.set(key1, r1);
+    await cache.set(key2, r2);
+
+    expect((await cache.get(key1))?.html).toBe("<iframe w=400>");
+    expect((await cache.get(key2))?.html).toBe("<iframe w=800>");
   });
 
-  it("evicts expired entries on get", () => {
+  it("evicts expired entries on get", async () => {
     const cache = new EmbedCache({ ttl: 1000 });
-    cache.set("https://example.com", undefined, fakeResult());
+    await cache.set("https://example.com", fakeResult());
 
     vi.advanceTimersByTime(1001);
 
-    expect(cache.get("https://example.com")).toBeUndefined();
+    expect(await cache.get("https://example.com")).toBeUndefined();
     expect(cache.size).toBe(0);
   });
 
-  it("returns entry before TTL expires", () => {
+  it("returns entry before TTL expires", async () => {
     const cache = new EmbedCache({ ttl: 1000 });
-    cache.set("https://example.com", undefined, fakeResult());
+    await cache.set("https://example.com", fakeResult());
 
     vi.advanceTimersByTime(999);
 
-    expect(cache.get("https://example.com")).toBeDefined();
+    expect(await cache.get("https://example.com")).toBeDefined();
   });
 
-  it("evicts LRU entry when maxSize is reached", () => {
-    const cache = new EmbedCache({ maxSize: 2 });
-    cache.set("https://a.com", undefined, fakeResult({ url: "https://a.com" }));
-    cache.set("https://b.com", undefined, fakeResult({ url: "https://b.com" }));
-    cache.set("https://c.com", undefined, fakeResult({ url: "https://c.com" }));
+  it("supports per-entry TTL override", async () => {
+    const cache = new EmbedCache({ ttl: 10_000 });
+    await cache.set("https://example.com", fakeResult(), 500);
 
-    expect(cache.get("https://a.com")).toBeUndefined();
-    expect(cache.get("https://b.com")).toBeDefined();
-    expect(cache.get("https://c.com")).toBeDefined();
+    vi.advanceTimersByTime(501);
+
+    expect(await cache.get("https://example.com")).toBeUndefined();
+  });
+
+  it("evicts LRU entry when maxSize is reached", async () => {
+    const cache = new EmbedCache({ maxSize: 2 });
+    await cache.set("https://a.com", fakeResult({ url: "https://a.com" }));
+    await cache.set("https://b.com", fakeResult({ url: "https://b.com" }));
+    await cache.set("https://c.com", fakeResult({ url: "https://c.com" }));
+
+    expect(await cache.get("https://a.com")).toBeUndefined();
+    expect(await cache.get("https://b.com")).toBeDefined();
+    expect(await cache.get("https://c.com")).toBeDefined();
     expect(cache.size).toBe(2);
   });
 
-  it("promotes accessed entries (LRU ordering)", () => {
+  it("promotes accessed entries (LRU ordering)", async () => {
     const cache = new EmbedCache({ maxSize: 2 });
-    cache.set("https://a.com", undefined, fakeResult({ url: "https://a.com" }));
-    cache.set("https://b.com", undefined, fakeResult({ url: "https://b.com" }));
+    await cache.set("https://a.com", fakeResult({ url: "https://a.com" }));
+    await cache.set("https://b.com", fakeResult({ url: "https://b.com" }));
 
     // Access a.com to promote it
-    cache.get("https://a.com");
+    await cache.get("https://a.com");
 
     // Adding c.com should now evict b.com (LRU), not a.com
-    cache.set("https://c.com", undefined, fakeResult({ url: "https://c.com" }));
+    await cache.set("https://c.com", fakeResult({ url: "https://c.com" }));
 
-    expect(cache.get("https://a.com")).toBeDefined();
-    expect(cache.get("https://b.com")).toBeUndefined();
-    expect(cache.get("https://c.com")).toBeDefined();
+    expect(await cache.get("https://a.com")).toBeDefined();
+    expect(await cache.get("https://b.com")).toBeUndefined();
+    expect(await cache.get("https://c.com")).toBeDefined();
   });
 
-  it("clear() removes all entries", () => {
+  it("clear() removes all entries", async () => {
     const cache = new EmbedCache();
-    cache.set("https://a.com", undefined, fakeResult());
-    cache.set("https://b.com", undefined, fakeResult());
+    await cache.set("https://a.com", fakeResult());
+    await cache.set("https://b.com", fakeResult());
     expect(cache.size).toBe(2);
 
-    cache.clear();
+    await cache.clear();
 
     expect(cache.size).toBe(0);
-    expect(cache.get("https://a.com")).toBeUndefined();
+    expect(await cache.get("https://a.com")).toBeUndefined();
   });
 
-  it("size returns current entry count", () => {
+  it("size returns current entry count", async () => {
     const cache = new EmbedCache();
     expect(cache.size).toBe(0);
 
-    cache.set("https://a.com", undefined, fakeResult());
+    await cache.set("https://a.com", fakeResult());
     expect(cache.size).toBe(1);
 
-    cache.set("https://b.com", undefined, fakeResult());
+    await cache.set("https://b.com", fakeResult());
     expect(cache.size).toBe(2);
   });
 
-  it("delete() removes a specific entry and returns true", () => {
+  it("delete() removes a specific entry and returns true", async () => {
     const cache = new EmbedCache();
-    cache.set("https://a.com", undefined, fakeResult());
-    cache.set("https://b.com", undefined, fakeResult());
+    await cache.set("https://a.com", fakeResult());
+    await cache.set("https://b.com", fakeResult());
 
-    expect(cache.delete("https://a.com")).toBe(true);
-    expect(cache.get("https://a.com")).toBeUndefined();
-    expect(cache.get("https://b.com")).toBeDefined();
+    expect(await cache.delete("https://a.com")).toBe(true);
+    expect(await cache.get("https://a.com")).toBeUndefined();
+    expect(await cache.get("https://b.com")).toBeDefined();
     expect(cache.size).toBe(1);
   });
 
-  it("delete() returns false when entry does not exist", () => {
+  it("delete() returns false when entry does not exist", async () => {
     const cache = new EmbedCache();
-    expect(cache.delete("https://nonexistent.com")).toBe(false);
+    expect(await cache.delete("https://nonexistent.com")).toBe(false);
   });
 
-  it("delete() respects options in cache key", () => {
+  it("overwrites existing entry for same key", async () => {
     const cache = new EmbedCache();
-    cache.set("https://a.com", { maxWidth: 400 }, fakeResult({ html: "<w400>" }));
-    cache.set("https://a.com", { maxWidth: 800 }, fakeResult({ html: "<w800>" }));
-
-    // Delete only the maxWidth=400 variant
-    expect(cache.delete("https://a.com", { maxWidth: 400 })).toBe(true);
-    expect(cache.get("https://a.com", { maxWidth: 400 })).toBeUndefined();
-    expect(cache.get("https://a.com", { maxWidth: 800 })).toBeDefined();
-  });
-
-  it("overwrites existing entry for same key", () => {
-    const cache = new EmbedCache();
-    cache.set("https://a.com", undefined, fakeResult({ html: "<old/>" }));
-    cache.set("https://a.com", undefined, fakeResult({ html: "<new/>" }));
+    await cache.set("https://a.com", fakeResult({ html: "<old/>" }));
+    await cache.set("https://a.com", fakeResult({ html: "<new/>" }));
 
     expect(cache.size).toBe(1);
-    expect(cache.get("https://a.com")?.html).toBe("<new/>");
+    expect((await cache.get("https://a.com"))?.html).toBe("<new/>");
+  });
+});
+
+describe("buildKey", () => {
+  it("returns URL when no options", () => {
+    expect(buildKey("https://example.com")).toBe("https://example.com");
+  });
+
+  it("includes maxWidth in key", () => {
+    expect(buildKey("https://example.com", { maxWidth: 400 })).toBe("https://example.com|w=400");
+  });
+
+  it("includes maxHeight in key", () => {
+    expect(buildKey("https://example.com", { maxHeight: 300 })).toBe("https://example.com|h=300");
+  });
+
+  it("includes sanitize=false in key", () => {
+    expect(buildKey("https://example.com", { sanitize: false })).toBe("https://example.com|s=0");
+  });
+
+  it("combines multiple options", () => {
+    expect(
+      buildKey("https://example.com", { maxWidth: 400, maxHeight: 300, sanitize: false }),
+    ).toBe("https://example.com|w=400|h=300|s=0");
   });
 });
 
@@ -176,6 +211,43 @@ describe("createCache", () => {
   it("accepts custom options", () => {
     const cache = createCache({ maxSize: 50, ttl: 10_000 });
     expect(cache).toBeInstanceOf(EmbedCache);
+  });
+});
+
+describe("custom CacheAdapter", () => {
+  it("works with resolve() when implementing CacheAdapter", async () => {
+    const store = new Map<string, EmbedResult>();
+    const customAdapter: CacheAdapter = {
+      async get(key) {
+        return store.get(key);
+      },
+      async set(key, value) {
+        store.set(key, value);
+      },
+      async delete(key) {
+        return store.delete(key);
+      },
+      async clear() {
+        store.clear();
+      },
+    };
+
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ type: "video", html: "<iframe>yt</iframe>" }),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    const { resolve } = await import("../src/resolver.js");
+
+    const result1 = await resolve("https://www.youtube.com/watch?v=abc", { cache: customAdapter });
+    const result2 = await resolve("https://www.youtube.com/watch?v=abc", { cache: customAdapter });
+
+    expect(result1.html).toBe(result2.html);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(store.size).toBe(1);
+
+    vi.restoreAllMocks();
   });
 });
 

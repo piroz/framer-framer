@@ -1,4 +1,5 @@
-import type { EmbedCache } from "./cache.js";
+import type { CacheAdapter } from "./cache.js";
+import { buildKey } from "./cache.js";
 import { resolveWithDiscovery } from "./discovery.js";
 import { EmbedError } from "./errors.js";
 import { resolveWithOgp } from "./fallback/ogp.js";
@@ -124,8 +125,8 @@ export function clearHooks(): void {
   afterHooks.length = 0;
 }
 
-/** Extract the cache instance from options (returns undefined when disabled). */
-function getCache(options?: EmbedOptions): EmbedCache | undefined {
+/** Extract the cache adapter from options (returns undefined when disabled). */
+function getCache(options?: EmbedOptions): CacheAdapter | undefined {
   if (!options?.cache) return undefined;
   return options.cache;
 }
@@ -149,8 +150,9 @@ export async function resolve(url: string, options?: EmbedOptions): Promise<Embe
 
   // --- cache lookup ---
   const cache = getCache(options);
+  const cacheKey = cache ? buildKey(url, options) : "";
   if (cache) {
-    const cached = cache.get(url, options);
+    const cached = await cache.get(cacheKey);
     if (cached) {
       logResolution(logger, url, cached.provider, Date.now() - startTime, "cache_hit");
       emitMetrics({ url, provider: cached.provider, duration: 0, success: true, cacheHit: true });
@@ -167,7 +169,7 @@ export async function resolve(url: string, options?: EmbedOptions): Promise<Embe
     const shortCircuit = await hook(context);
     if (shortCircuit) {
       const final = await runAfterHooks(context, shortCircuit);
-      if (cache) cache.set(url, options, final);
+      if (cache) await cache.set(cacheKey, final);
       logResolution(logger, url, final.provider, Date.now() - startTime, "hook_short_circuit");
       emitMetrics({
         url,
@@ -231,7 +233,7 @@ export async function resolve(url: string, options?: EmbedOptions): Promise<Embe
   const final = await runAfterHooks(context, result);
 
   // --- cache store ---
-  if (cache) cache.set(url, options, final);
+  if (cache) await cache.set(cacheKey, final);
 
   logResolution(logger, url, final.provider, Date.now() - startTime, resolveMethod);
   emitMetrics({

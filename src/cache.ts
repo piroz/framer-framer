@@ -14,6 +14,36 @@ export interface CacheOptions {
   ttl?: number;
 }
 
+/**
+ * Cache adapter interface.
+ *
+ * All methods return Promise to support external cache backends (Redis, KV, etc.).
+ * In-memory adapters may resolve synchronously; the Promise wrapper adds
+ * negligible overhead compared to the embed resolution itself.
+ */
+export interface CacheAdapter {
+  /**
+   * Look up a cached result.
+   * Returns `undefined` on miss or expiry.
+   */
+  get(key: string): Promise<EmbedResult | undefined>;
+
+  /**
+   * Store a result in the cache.
+   * The adapter is responsible for its own eviction policy.
+   */
+  set(key: string, value: EmbedResult, ttl?: number): Promise<void>;
+
+  /**
+   * Remove a specific entry from the cache.
+   * Returns `true` if the entry existed.
+   */
+  delete(key: string): Promise<boolean>;
+
+  /** Remove all entries from the cache. */
+  clear(): Promise<void>;
+}
+
 interface CacheEntry {
   result: EmbedResult;
   expiresAt: number;
@@ -23,7 +53,7 @@ interface CacheEntry {
  * Build a cache key from a URL and its resolved options.
  * Only cache-relevant options are included in the key.
  */
-function buildKey(url: string, options?: EmbedOptions): string {
+export function buildKey(url: string, options?: EmbedOptions): string {
   if (!options) return url;
   const parts: string[] = [url];
   if (options.maxWidth != null) parts.push(`w=${options.maxWidth}`);
@@ -35,23 +65,23 @@ function buildKey(url: string, options?: EmbedOptions): string {
 /**
  * In-memory LRU cache for embed results.
  *
+ * Implements the `CacheAdapter` interface with synchronous-resolve Promises.
  * Uses a `Map` whose insertion order tracks recency — accessing an entry
  * moves it to the end (most-recently used), and eviction removes the first
  * entry (least-recently used).
  */
-export class EmbedCache {
+export class EmbedCache implements CacheAdapter {
   private readonly map = new Map<string, CacheEntry>();
   private readonly maxSize: number;
-  private readonly ttl: number;
+  private readonly defaultTtl: number;
 
   constructor(options?: CacheOptions) {
     this.maxSize = options?.maxSize ?? DEFAULT_MAX_SIZE;
-    this.ttl = options?.ttl ?? DEFAULT_TTL;
+    this.defaultTtl = options?.ttl ?? DEFAULT_TTL;
   }
 
   /** Look up a cached result. Returns `undefined` on miss or expiry. */
-  get(url: string, options?: EmbedOptions): EmbedResult | undefined {
-    const key = buildKey(url, options);
+  async get(key: string): Promise<EmbedResult | undefined> {
     const entry = this.map.get(key);
     if (!entry) return undefined;
 
@@ -68,9 +98,7 @@ export class EmbedCache {
   }
 
   /** Store a result in the cache. */
-  set(url: string, options: EmbedOptions | undefined, result: EmbedResult): void {
-    const key = buildKey(url, options);
-
+  async set(key: string, value: EmbedResult, ttl?: number): Promise<void> {
     // Delete first so re-insertion moves to end
     this.map.delete(key);
 
@@ -80,17 +108,16 @@ export class EmbedCache {
       if (!oldest.done) this.map.delete(oldest.value);
     }
 
-    this.map.set(key, { result, expiresAt: Date.now() + this.ttl });
+    this.map.set(key, { result: value, expiresAt: Date.now() + (ttl ?? this.defaultTtl) });
   }
 
   /** Remove a specific entry from the cache. Returns `true` if the entry existed. */
-  delete(url: string, options?: EmbedOptions): boolean {
-    const key = buildKey(url, options);
+  async delete(key: string): Promise<boolean> {
     return this.map.delete(key);
   }
 
   /** Remove all entries from the cache. */
-  clear(): void {
+  async clear(): Promise<void> {
     this.map.clear();
   }
 

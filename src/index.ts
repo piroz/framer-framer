@@ -1,5 +1,5 @@
-export type { CacheOptions } from "./cache.js";
-export { createCache, EmbedCache } from "./cache.js";
+export type { CacheAdapter, CacheOptions } from "./cache.js";
+export { buildKey, createCache, EmbedCache } from "./cache.js";
 export type { ExpandOptions } from "./cms/auto-expand.js";
 export { expandUrls } from "./cms/auto-expand.js";
 export type { ResponsiveOptions } from "./cms/responsive.js";

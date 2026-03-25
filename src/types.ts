@@ -76,11 +76,11 @@ export interface EmbedOptions {
   /** Sanitize HTML in oEmbed responses to prevent XSS (default: true) */
   sanitize?: boolean;
   /**
-   * In-memory LRU cache for embed results.
-   * Pass an `EmbedCache` instance to enable caching, or `false` to explicitly disable.
-   * When omitted, no caching is performed.
+   * Cache for embed results.
+   * Pass a `CacheAdapter` implementation (e.g. `EmbedCache`) to enable caching,
+   * or `false` to explicitly disable. When omitted, no caching is performed.
    */
-  cache?: import("./cache.js").EmbedCache | false;
+  cache?: import("./cache.js").CacheAdapter | false;
   /**
    * Structured logger for embed resolution.
    * Pass `true` to enable the built-in JSON logger (writes to stderr),

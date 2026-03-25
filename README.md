@@ -320,8 +320,45 @@ The cache key includes the URL and dimension options (`maxWidth`, `maxHeight`), 
 Set `cache: false` to explicitly disable caching for a single call when a cache is normally used.
 
 ```ts
-cache.delete("https://www.youtube.com/watch?v=abc"); // remove a specific entry
-cache.clear(); // remove all cached entries
+await cache.delete("https://www.youtube.com/watch?v=abc"); // remove a specific entry
+await cache.clear(); // remove all cached entries
+```
+
+#### Custom cache adapter
+
+Implement the `CacheAdapter` interface to use any cache backend (Redis, Cloudflare KV, etc.):
+
+```ts
+import type { CacheAdapter } from "framer-framer";
+import type { EmbedResult } from "framer-framer";
+
+class RedisCacheAdapter implements CacheAdapter {
+  private redis: RedisClient;
+
+  constructor(redis: RedisClient) {
+    this.redis = redis;
+  }
+
+  async get(key: string): Promise<EmbedResult | undefined> {
+    const raw = await this.redis.get(`embed:${key}`);
+    return raw ? JSON.parse(raw) : undefined;
+  }
+
+  async set(key: string, value: EmbedResult, ttl?: number): Promise<void> {
+    await this.redis.set(`embed:${key}`, JSON.stringify(value), "EX", ttl ?? 300);
+  }
+
+  async delete(key: string): Promise<boolean> {
+    return (await this.redis.del(`embed:${key}`)) > 0;
+  }
+
+  async clear(): Promise<void> {
+    // Implementation depends on your Redis setup
+  }
+}
+
+const cache = new RedisCacheAdapter(redisClient);
+await embed(url, { cache });
 ```
 
 ### Responsive wrapper

@@ -211,80 +211,80 @@ describe("Cache boundary conditions", () => {
     vi.useRealTimers();
   });
 
-  it("returns entry at exact TTL boundary (not yet expired)", () => {
+  it("returns entry at exact TTL boundary (not yet expired)", async () => {
     const cache = new EmbedCache({ ttl: 1000 });
-    cache.set("https://a.com", undefined, fakeResult());
+    await cache.set("https://a.com", fakeResult());
 
     vi.advanceTimersByTime(1000);
 
     // At exactly ttl, Date.now() === expiresAt, condition is > not >=
-    expect(cache.get("https://a.com")).toBeDefined();
+    expect(await cache.get("https://a.com")).toBeDefined();
   });
 
-  it("evicts entry 1ms after TTL", () => {
+  it("evicts entry 1ms after TTL", async () => {
     const cache = new EmbedCache({ ttl: 1000 });
-    cache.set("https://a.com", undefined, fakeResult());
+    await cache.set("https://a.com", fakeResult());
 
     vi.advanceTimersByTime(1001);
 
-    expect(cache.get("https://a.com")).toBeUndefined();
+    expect(await cache.get("https://a.com")).toBeUndefined();
   });
 
-  it("works correctly with maxSize of 1", () => {
+  it("works correctly with maxSize of 1", async () => {
     const cache = new EmbedCache({ maxSize: 1 });
 
-    cache.set("https://a.com", undefined, fakeResult({ url: "https://a.com" }));
-    expect(cache.get("https://a.com")).toBeDefined();
+    await cache.set("https://a.com", fakeResult({ url: "https://a.com" }));
+    expect(await cache.get("https://a.com")).toBeDefined();
     expect(cache.size).toBe(1);
 
-    cache.set("https://b.com", undefined, fakeResult({ url: "https://b.com" }));
-    expect(cache.get("https://a.com")).toBeUndefined();
-    expect(cache.get("https://b.com")).toBeDefined();
+    await cache.set("https://b.com", fakeResult({ url: "https://b.com" }));
+    expect(await cache.get("https://a.com")).toBeUndefined();
+    expect(await cache.get("https://b.com")).toBeDefined();
     expect(cache.size).toBe(1);
   });
 
-  it("re-inserting after TTL expiry creates a fresh entry", () => {
+  it("re-inserting after TTL expiry creates a fresh entry", async () => {
     const cache = new EmbedCache({ ttl: 100 });
-    cache.set("https://a.com", undefined, fakeResult({ html: "<old/>" }));
+    await cache.set("https://a.com", fakeResult({ html: "<old/>" }));
 
     vi.advanceTimersByTime(101);
-    expect(cache.get("https://a.com")).toBeUndefined();
+    expect(await cache.get("https://a.com")).toBeUndefined();
 
-    cache.set("https://a.com", undefined, fakeResult({ html: "<new/>" }));
-    expect(cache.get("https://a.com")?.html).toBe("<new/>");
+    await cache.set("https://a.com", fakeResult({ html: "<new/>" }));
+    expect((await cache.get("https://a.com"))?.html).toBe("<new/>");
   });
 
-  it("evicts multiple entries when filling to capacity from empty", () => {
+  it("evicts multiple entries when filling to capacity from empty", async () => {
     const cache = new EmbedCache({ maxSize: 3 });
 
     for (let i = 0; i < 5; i++) {
-      cache.set(`https://${i}.com`, undefined, fakeResult({ url: `https://${i}.com` }));
+      await cache.set(`https://${i}.com`, fakeResult({ url: `https://${i}.com` }));
     }
 
     expect(cache.size).toBe(3);
     // First two should be evicted
-    expect(cache.get("https://0.com")).toBeUndefined();
-    expect(cache.get("https://1.com")).toBeUndefined();
+    expect(await cache.get("https://0.com")).toBeUndefined();
+    expect(await cache.get("https://1.com")).toBeUndefined();
     // Last three should exist
-    expect(cache.get("https://2.com")).toBeDefined();
-    expect(cache.get("https://3.com")).toBeDefined();
-    expect(cache.get("https://4.com")).toBeDefined();
+    expect(await cache.get("https://2.com")).toBeDefined();
+    expect(await cache.get("https://3.com")).toBeDefined();
+    expect(await cache.get("https://4.com")).toBeDefined();
   });
 
-  it("expired entries do not count toward size after lazy eviction", () => {
+  it("expired entries do not count toward size after lazy eviction", async () => {
     const cache = new EmbedCache({ maxSize: 3, ttl: 100 });
 
-    cache.set("https://a.com", undefined, fakeResult());
-    cache.set("https://b.com", undefined, fakeResult());
+    await cache.set("https://a.com", fakeResult());
+    await cache.set("https://b.com", fakeResult());
     expect(cache.size).toBe(2);
 
     vi.advanceTimersByTime(101);
 
     // Access triggers lazy eviction
-    cache.get("https://a.com");
+    await cache.get("https://a.com");
     expect(cache.size).toBe(1); // only b.com remains (not yet accessed/evicted)
 
-    cache.get("https://b.com");
+    await cache.get("https://b.com");
     expect(cache.size).toBe(0);
   });
 });
