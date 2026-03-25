@@ -7,14 +7,14 @@
     "node": ">=22.0.0"
   },
   "scripts": {
-    "build": "npm run build -w packages/core",
-    "test": "npm test -w packages/core",
+    "build": "npm run build -w packages/core && npm run build -w packages/react",
+    "test": "npm test -w packages/core && npm run build -w packages/core && npm test -w packages/react",
     "test:watch": "npm run test:watch -w packages/core",
-    "typecheck": "npm run typecheck -w packages/core",
-    "lint": "npm run lint -w packages/core",
-    "lint:fix": "npm run lint:fix -w packages/core",
-    "format": "npm run format -w packages/core",
-    "format:fix": "npm run format:fix -w packages/core",
-    "ci": "npm run ci -w packages/core"
+    "typecheck": "npm run typecheck -w packages/core && npm run build -w packages/core && npm run typecheck -w packages/react",
+    "lint": "npm run lint -w packages/core && npm run lint -w packages/react",
+    "lint:fix": "npm run lint:fix -w packages/core && npm run lint:fix -w packages/react",
+    "format": "npm run format -w packages/core && npm run format -w packages/react",
+    "format:fix": "npm run format:fix -w packages/core && npm run format:fix -w packages/react",
+    "ci": "npm run ci -w packages/core && npm run ci -w packages/react"
   }
 }

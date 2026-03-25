@@ -1,0 +1,71 @@
+{
+  "name": "@framer-framer/react",
+  "version": "0.1.0",
+  "description": "React component for framer-framer - embed any URL with <Embed url=\"...\" />",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "lint": "biome check src test",
+    "lint:fix": "biome check --write src test",
+    "format": "biome format src test",
+    "format:fix": "biome format --write src test",
+    "ci": "npm run lint && npm run typecheck && npm run test && npm run build",
+    "prepublishOnly": "npm run build"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0"
+  },
+  "dependencies": {
+    "framer-framer": "^3.2.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.4.4",
+    "@testing-library/react": "^16.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "jsdom": "^26.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.4.0",
+    "vitest": "^4.0.18"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:piroz/framer-framer.git",
+    "directory": "packages/react"
+  },
+  "author": "piroz",
+  "license": "MIT",
+  "bugs": "https://github.com/piroz/framer-framer/issues",
+  "keywords": [
+    "react",
+    "embed",
+    "oembed",
+    "component",
+    "youtube",
+    "twitter",
+    "tiktok",
+    "iframe",
+    "framer-framer"
+  ]
+}
