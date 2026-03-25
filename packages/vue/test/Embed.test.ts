@@ -143,6 +143,66 @@ describe("Embed component", () => {
     });
   });
 
+  it("sets data-framer-theme to auto by default", () => {
+    mockEmbed.mockReturnValue(new Promise(() => {}));
+    const wrapper = mount(Embed, {
+      props: { url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ" },
+    });
+
+    expect(wrapper.find("[data-framer-theme='auto']").exists()).toBe(true);
+  });
+
+  it("sets data-framer-theme to dark when theme prop is dark", () => {
+    mockEmbed.mockReturnValue(new Promise(() => {}));
+    const wrapper = mount(Embed, {
+      props: { url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ", theme: "dark" },
+    });
+
+    expect(wrapper.find("[data-framer-theme='dark']").exists()).toBe(true);
+  });
+
+  it("sets data-framer-theme to light when theme prop is light", () => {
+    mockEmbed.mockReturnValue(new Promise(() => {}));
+    const wrapper = mount(Embed, {
+      props: { url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ", theme: "light" },
+    });
+
+    expect(wrapper.find("[data-framer-theme='light']").exists()).toBe(true);
+  });
+
+  it("injects theme CSS style tag", () => {
+    mockEmbed.mockReturnValue(new Promise(() => {}));
+    const wrapper = mount(Embed, {
+      props: { url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ" },
+    });
+
+    const styleTag = wrapper.find("style#framer-framer-theme");
+    expect(styleTag.exists()).toBe(true);
+    expect(styleTag.text()).toContain("--framer-skeleton-bg");
+  });
+
+  it("applies theme attribute in error state", async () => {
+    mockEmbed.mockRejectedValue(new Error("fail"));
+    const wrapper = mount(Embed, {
+      props: { url: "https://example.com/bad", theme: "dark" },
+    });
+
+    await flushPromises();
+
+    expect(wrapper.find("[data-framer-theme='dark']").exists()).toBe(true);
+  });
+
+  it("applies theme attribute in success state", async () => {
+    mockEmbed.mockResolvedValue(mockResult);
+    const wrapper = mount(Embed, {
+      props: { url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ", theme: "dark" },
+    });
+
+    await flushPromises();
+
+    expect(wrapper.find("[data-framer-theme='dark']").exists()).toBe(true);
+  });
+
   it("re-renders when url prop changes", async () => {
     const result2 = { ...mockResult, provider: "vimeo", url: "https://vimeo.com/123" };
     mockEmbed.mockResolvedValueOnce(mockResult).mockResolvedValueOnce(result2);

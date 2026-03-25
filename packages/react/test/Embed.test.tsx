@@ -138,4 +138,58 @@ describe("Embed", () => {
     const container = screen.getByTestId("framer-framer-embed");
     expect(container.style.maxWidth).toBe("500px");
   });
+
+  it("sets data-framer-theme to auto by default", () => {
+    mockEmbed.mockReturnValue(new Promise(() => {}));
+    render(<Embed url="https://example.com" />);
+
+    const container = screen.getByTestId("framer-framer-embed");
+    expect(container.getAttribute("data-framer-theme")).toBe("auto");
+  });
+
+  it("sets data-framer-theme to dark when theme prop is dark", () => {
+    mockEmbed.mockReturnValue(new Promise(() => {}));
+    render(<Embed url="https://example.com" theme="dark" />);
+
+    const container = screen.getByTestId("framer-framer-embed");
+    expect(container.getAttribute("data-framer-theme")).toBe("dark");
+  });
+
+  it("sets data-framer-theme to light when theme prop is light", () => {
+    mockEmbed.mockReturnValue(new Promise(() => {}));
+    render(<Embed url="https://example.com" theme="light" />);
+
+    const container = screen.getByTestId("framer-framer-embed");
+    expect(container.getAttribute("data-framer-theme")).toBe("light");
+  });
+
+  it("injects theme CSS style tag", () => {
+    mockEmbed.mockReturnValue(new Promise(() => {}));
+    render(<Embed url="https://example.com" />);
+
+    const container = screen.getByTestId("framer-framer-embed");
+    const styleTag = container.querySelector("style#framer-framer-theme");
+    expect(styleTag).toBeDefined();
+    expect(styleTag?.textContent).toContain("--framer-skeleton-bg");
+  });
+
+  it("applies theme attribute in error state", async () => {
+    mockEmbed.mockRejectedValue(new Error("fail"));
+    render(<Embed url="https://example.com" theme="dark" />);
+
+    await waitFor(() => {
+      const container = screen.getByTestId("framer-framer-embed");
+      expect(container.getAttribute("data-framer-theme")).toBe("dark");
+    });
+  });
+
+  it("applies theme attribute in success state", async () => {
+    mockEmbed.mockResolvedValue(mockResult);
+    render(<Embed url="https://example.com" theme="dark" />);
+
+    await waitFor(() => {
+      const container = screen.getByTestId("framer-framer-embed");
+      expect(container.getAttribute("data-framer-theme")).toBe("dark");
+    });
+  });
 });

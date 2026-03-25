@@ -1,10 +1,13 @@
 import type { EmbedOptions, EmbedResult } from "framer-framer";
 import type { ReactNode } from "react";
+import type { Theme } from "./theme.js";
 
 /** Props for the Embed component */
 export interface EmbedProps {
   /** URL to embed */
   url: string;
+  /** Theme mode: 'light', 'dark', or 'auto' (default: 'auto') */
+  theme?: Theme;
   /** Max embed width in pixels */
   maxWidth?: number;
   /** Max embed height in pixels */

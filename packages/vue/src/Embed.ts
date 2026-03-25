@@ -1,5 +1,7 @@
 import type { EmbedOptions, EmbedResult } from "framer-framer";
 import { defineComponent, h, type PropType, type SlotsType } from "vue";
+import type { Theme } from "./theme.js";
+import { themeCSS, themeStyleId } from "./theme.js";
 import { useEmbed } from "./useEmbed.js";
 
 export const Embed = defineComponent({
@@ -20,6 +22,10 @@ export const Embed = defineComponent({
     options: {
       type: Object as PropType<EmbedOptions>,
       default: undefined,
+    },
+    theme: {
+      type: String as PropType<Theme>,
+      default: "auto",
     },
   },
   emits: {
@@ -42,8 +48,14 @@ export const Embed = defineComponent({
     let lastEmittedError: Error | null = null;
 
     return () => {
+      const themeStyle = h("style", { id: themeStyleId }, themeCSS);
+      const themeAttr = props.theme ?? "auto";
+
       if (loading.value) {
-        return slots.loading ? slots.loading() : h("div", { class: "framer-framer-loading" });
+        const loadingContent = slots.loading
+          ? slots.loading()
+          : h("div", { class: "framer-framer-loading" });
+        return h("div", { "data-framer-theme": themeAttr }, [themeStyle, loadingContent]);
       }
 
       if (error.value) {
@@ -51,9 +63,10 @@ export const Embed = defineComponent({
           lastEmittedError = error.value;
           emit("error", error.value);
         }
-        return slots.error
+        const errorContent = slots.error
           ? slots.error({ error: error.value })
           : h("div", { class: "framer-framer-error" }, error.value.message);
+        return h("div", { "data-framer-theme": themeAttr }, [themeStyle, errorContent]);
       }
 
       if (result.value) {
@@ -61,12 +74,19 @@ export const Embed = defineComponent({
           lastEmittedUrl = result.value.url;
           emit("load", result.value);
         }
-        return slots.default
-          ? slots.default({ result: result.value })
-          : h("div", {
-              class: "framer-framer-embed",
-              innerHTML: result.value.html,
-            });
+        if (slots.default) {
+          return h("div", { "data-framer-theme": themeAttr }, [
+            themeStyle,
+            slots.default({ result: result.value }),
+          ]);
+        }
+        return h("div", { "data-framer-theme": themeAttr }, [
+          themeStyle,
+          h("div", {
+            class: "framer-framer-embed",
+            innerHTML: result.value.html,
+          }),
+        ]);
       }
 
       return null;

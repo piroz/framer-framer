@@ -8,7 +8,7 @@ export interface SkeletonProps {
 }
 
 const containerStyle: CSSProperties = {
-  backgroundColor: "#e5e7eb",
+  backgroundColor: "var(--framer-skeleton-bg, #e5e7eb)",
   borderRadius: 8,
   overflow: "hidden",
   position: "relative",

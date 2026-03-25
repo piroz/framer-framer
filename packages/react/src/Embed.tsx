@@ -2,6 +2,7 @@ import type { CSSProperties } from "react";
 import { forwardRef, useEffect } from "react";
 import { ErrorState } from "./ErrorState.js";
 import { Skeleton } from "./Skeleton.js";
+import { themeCSS, themeStyleId } from "./theme.js";
 import type { EmbedProps } from "./types.js";
 import { useEmbed } from "./useEmbed.js";
 
@@ -11,7 +12,7 @@ import { useEmbed } from "./useEmbed.js";
  * @example
  * ```tsx
  * <Embed url="https://www.youtube.com/watch?v=dQw4w9WgXcQ" />
- * <Embed url="https://x.com/jack/status/20" maxWidth={550} />
+ * <Embed url="https://x.com/jack/status/20" maxWidth={550} theme="dark" />
  * ```
  */
 export const Embed = forwardRef<HTMLDivElement, EmbedProps>(function Embed(
@@ -26,6 +27,7 @@ export const Embed = forwardRef<HTMLDivElement, EmbedProps>(function Embed(
     errorFallback,
     className,
     style,
+    theme = "auto",
   },
   ref,
 ) {
@@ -52,7 +54,14 @@ export const Embed = forwardRef<HTMLDivElement, EmbedProps>(function Embed(
 
   if (status === "loading") {
     return (
-      <div ref={ref} className={className} style={containerStyle} data-testid="framer-framer-embed">
+      <div
+        ref={ref}
+        className={className}
+        style={containerStyle}
+        data-testid="framer-framer-embed"
+        data-framer-theme={theme}
+      >
+        <style id={themeStyleId}>{themeCSS}</style>
         {loadingFallback ?? <Skeleton maxWidth={maxWidth} />}
       </div>
     );
@@ -62,7 +71,14 @@ export const Embed = forwardRef<HTMLDivElement, EmbedProps>(function Embed(
     const fallback = typeof errorFallback === "function" ? errorFallback(error) : errorFallback;
 
     return (
-      <div ref={ref} className={className} style={containerStyle} data-testid="framer-framer-embed">
+      <div
+        ref={ref}
+        className={className}
+        style={containerStyle}
+        data-testid="framer-framer-embed"
+        data-framer-theme={theme}
+      >
+        <style id={themeStyleId}>{themeCSS}</style>
         {fallback ?? <ErrorState error={error} />}
       </div>
     );
@@ -74,8 +90,11 @@ export const Embed = forwardRef<HTMLDivElement, EmbedProps>(function Embed(
       className={className}
       style={containerStyle}
       data-testid="framer-framer-embed"
-      // biome-ignore lint/security/noDangerouslySetInnerHtml: oEmbed HTML is sanitized by framer-framer core
-      dangerouslySetInnerHTML={{ __html: data?.html ?? "" }}
-    />
+      data-framer-theme={theme}
+    >
+      <style id={themeStyleId}>{themeCSS}</style>
+      {/* biome-ignore lint/security/noDangerouslySetInnerHtml: oEmbed HTML is sanitized by framer-framer core */}
+      <div dangerouslySetInnerHTML={{ __html: data?.html ?? "" }} />
+    </div>
   );
 });

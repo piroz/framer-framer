@@ -1,4 +1,5 @@
 import type { EmbedOptions, EmbedResult } from "framer-framer";
+import type { Theme } from "./theme.js";
 
 /** Props for the Embed component */
 export interface EmbedProps {
@@ -10,6 +11,8 @@ export interface EmbedProps {
   maxHeight?: number;
   /** Options passed to framer-framer's embed() */
   options?: EmbedOptions;
+  /** Theme mode: 'light', 'dark', or 'auto' (default: 'auto') */
+  theme?: Theme;
 }
 
 /** Return type of the useEmbed composable */

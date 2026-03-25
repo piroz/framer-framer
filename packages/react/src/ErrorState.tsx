@@ -6,10 +6,10 @@ export interface ErrorStateProps {
 
 const style: CSSProperties = {
   padding: 16,
-  border: "1px solid #fca5a5",
+  border: "1px solid var(--framer-error-border, #fca5a5)",
   borderRadius: 8,
-  backgroundColor: "#fef2f2",
-  color: "#991b1b",
+  backgroundColor: "var(--framer-error-bg, #fef2f2)",
+  color: "var(--framer-error-text, #991b1b)",
   fontSize: 14,
 };
 
