@@ -49,6 +49,7 @@ jobs:
 
       - name: Publish to npm
         run: npm publish --access public
+        working-directory: packages/core
 
   publish-release:
     needs: [create-release, publish-npm]

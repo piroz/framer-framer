@@ -20,6 +20,6 @@
     "lineWidth": 100
   },
   "files": {
-    "includes": ["src/**", "test/**"]
+    "includes": ["packages/*/src/**", "packages/*/test/**"]
   }
 }

@@ -1,82 +1,20 @@
 {
-  "name": "framer-framer",
-  "version": "3.2.0",
-  "description": "Universal embed resolver and REST API server - extract embed HTML from any URL (YouTube, X/Twitter, TikTok, Facebook, Instagram, Vimeo, Spotify, SoundCloud, Hugging Face, Gradio, and more)",
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
-  "types": "dist/index.d.ts",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
-    },
-    "./server": {
-      "types": "./dist/server.d.ts",
-      "import": "./dist/server.mjs",
-      "require": "./dist/server.js"
-    }
-  },
-  "peerDependencies": {
-    "hono": "^4.0.0"
-  },
-  "peerDependenciesMeta": {
-    "hono": {
-      "optional": true
-    }
-  },
-  "files": [
-    "dist"
+  "private": true,
+  "workspaces": [
+    "packages/*"
   ],
   "engines": {
     "node": ">=22.0.0"
   },
   "scripts": {
-    "build": "tsup",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "typecheck": "tsc --noEmit",
-    "lint": "biome check src test",
-    "lint:fix": "biome check --write src test",
-    "format": "biome format src test",
-    "format:fix": "biome format --write src test",
-    "ci": "npm run lint && npm run typecheck && npm run test && npm run build",
-    "prepublishOnly": "npm run build"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "^2.4.4",
-    "hono": "^4.12.5",
-    "tsup": "^8.0.0",
-    "typescript": "^5.4.0",
-    "vitest": "^4.0.18"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:piroz/framer-framer.git"
-  },
-  "author": "piroz",
-  "license": "MIT",
-  "bugs": "https://github.com/piroz/framer-framer/issues",
-  "keywords": [
-    "oembed",
-    "embed",
-    "iframe",
-    "youtube",
-    "twitter",
-    "tiktok",
-    "facebook",
-    "instagram",
-    "vimeo",
-    "spotify",
-    "soundcloud",
-    "huggingface",
-    "gradio",
-    "ai",
-    "ogp",
-    "social-media",
-    "hono",
-    "rest",
-    "api",
-    "server"
-  ]
+    "build": "npm run build -w packages/core",
+    "test": "npm test -w packages/core",
+    "test:watch": "npm run test:watch -w packages/core",
+    "typecheck": "npm run typecheck -w packages/core",
+    "lint": "npm run lint -w packages/core",
+    "lint:fix": "npm run lint:fix -w packages/core",
+    "format": "npm run format -w packages/core",
+    "format:fix": "npm run format:fix -w packages/core",
+    "ci": "npm run ci -w packages/core"
+  }
 }

@@ -897,6 +897,25 @@ console.log(JSON.stringify(err));
 | `height`          | `number?` | Embed height                     |
 | `raw`             | `object?` | Raw oEmbed response              |
 
+## Project structure
+
+This project uses npm workspaces as a monorepo:
+
+```
+packages/
+  core/     # framer-framer (this library)
+```
+
+Root-level npm scripts delegate to the corresponding workspace:
+
+```bash
+npm run ci          # lint + typecheck + test + build (all workspaces)
+npm test            # run tests
+npm run build       # build
+npm run lint        # lint
+npm run typecheck   # type check
+```
+
 ## Development
 
 ### Render check
