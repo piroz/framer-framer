@@ -6,6 +6,8 @@ Universal embed resolver for Node.js — extract embed HTML from any URL using o
 
 Supports YouTube, X/Twitter, TikTok, Flickr, Facebook, Instagram, Threads, Vimeo, Spotify, SoundCloud, SlideShare, Speaker Deck, Pinterest, Reddit, Mastodon, Niconico, Hugging Face Spaces, Gradio, Bluesky, note out of the box, with oEmbed auto-discovery and OGP metadata fallback for any other URL. Zero runtime dependencies.
 
+**[Playground](https://framer-framer.velocitylabo.dev/)** — Try it in the browser
+
 ## Install
 
 ```bash
