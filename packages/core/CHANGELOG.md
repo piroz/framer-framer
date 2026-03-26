@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.3.0](https://github.com/piroz/framer-framer/compare/v3.2.0...v3.3.0) (2026-03-26)
+
+
+### Features
+
+* migrate to npm workspaces monorepo structure ([#101](https://github.com/piroz/framer-framer/issues/101)) ([cb96f6b](https://github.com/piroz/framer-framer/commit/cb96f6bc26103e1bf8673e49167a6228864c17b5))
+
 ## [3.2.0](https://github.com/piroz/framer-framer/compare/v3.1.1...v3.2.0) (2026-03-24)
 
 
