@@ -1,5 +1,19 @@
 # Changelog
 
+## [3.2.0](https://github.com/piroz/framer-framer/compare/v3.2.0...v3.2.0) (2026-03-26)
+
+
+### Features
+
+* migrate to npm workspaces monorepo structure ([#101](https://github.com/piroz/framer-framer/issues/101)) ([cb96f6b](https://github.com/piroz/framer-framer/commit/cb96f6bc26103e1bf8673e49167a6228864c17b5))
+
+
+### Bug Fixes
+
+* 3.1.1 release\n\nRelease-As: 3.1.1 ([20ff3e0](https://github.com/piroz/framer-framer/commit/20ff3e00e4d0f2081a193b04a5095179a2ec9eb3))
+* 3.2.0 release ([682e896](https://github.com/piroz/framer-framer/commit/682e896dc80e569376dd2e3875f0e43c31925c86))
+* trigger initial release-please PR ([cee3746](https://github.com/piroz/framer-framer/commit/cee3746b79c4e56aebeb161220b8f914ea5b8dd6))
+
 ## [3.2.0](https://github.com/piroz/framer-framer/compare/v3.1.1...v3.2.0) (2026-03-24)
 
 
