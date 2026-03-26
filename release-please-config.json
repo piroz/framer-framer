@@ -6,6 +6,18 @@
       "bump-minor-pre-major": true,
       "include-component-in-tag": false,
       "include-component-in-release": false
+    },
+    "packages/react": {
+      "release-type": "node",
+      "changelog-path": "CHANGELOG.md",
+      "component": "react",
+      "bump-minor-pre-major": true
+    },
+    "packages/vue": {
+      "release-type": "node",
+      "changelog-path": "CHANGELOG.md",
+      "component": "vue",
+      "bump-minor-pre-major": true
     }
   }
 }
