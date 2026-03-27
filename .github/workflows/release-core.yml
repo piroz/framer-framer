@@ -1,0 +1,17 @@
+name: "Release: core"
+
+on:
+  push:
+    tags:
+      - "v[0-9]*"
+
+concurrency:
+  group: release-core
+  cancel-in-progress: false
+
+jobs:
+  release:
+    uses: ./.github/workflows/release-publish.yml
+    with:
+      package-dir: packages/core
+    secrets: inherit
