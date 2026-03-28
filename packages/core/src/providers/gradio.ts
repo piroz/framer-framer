@@ -16,6 +16,7 @@ export class GradioProvider extends IframeProvider {
   name = "gradio";
   readonly defaultAspectRatio = "4:3";
   readonly embedType = "rich" as const;
+  override readonly brandColor = "#F97316";
 
   protected defaultWidth = 800;
   protected defaultHeight = 600;

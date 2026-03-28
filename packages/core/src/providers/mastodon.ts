@@ -15,6 +15,7 @@ const KNOWN_INSTANCES: Record<string, string> = {
 
 export class MastodonProvider extends OEmbedProvider {
   name = "mastodon";
+  override readonly brandColor = "#6364FF";
 
   protected endpoint = "";
 

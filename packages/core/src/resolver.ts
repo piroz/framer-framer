@@ -2,6 +2,7 @@ import type { CacheAdapter } from "./cache.js";
 import { buildKey } from "./cache.js";
 import { resolveWithDiscovery } from "./discovery.js";
 import { EmbedError } from "./errors.js";
+import { buildErrorFallback } from "./fallback/error.js";
 import { resolveWithOgp } from "./fallback/ogp.js";
 import { builtinProviders } from "./providers/index.js";
 import type {
@@ -92,17 +93,27 @@ function extractPatterns(provider: Provider): string[] {
 /** Extract optional metadata fields from a provider. */
 function extractMetadata(
   provider: Provider,
-): Pick<ProviderInfo, "defaultAspectRatio" | "embedType" | "supportsMaxWidth"> {
+): Pick<ProviderInfo, "defaultAspectRatio" | "embedType" | "supportsMaxWidth" | "brandColor"> {
   const p = provider as {
     defaultAspectRatio?: string;
     embedType?: ProviderInfo["embedType"];
     supportsMaxWidth?: boolean;
+    brandColor?: string;
   };
-  const result: Pick<ProviderInfo, "defaultAspectRatio" | "embedType" | "supportsMaxWidth"> = {};
+  const result: Pick<
+    ProviderInfo,
+    "defaultAspectRatio" | "embedType" | "supportsMaxWidth" | "brandColor"
+  > = {};
   if (p.defaultAspectRatio != null) result.defaultAspectRatio = p.defaultAspectRatio;
   if (p.embedType != null) result.embedType = p.embedType;
   if (p.supportsMaxWidth != null) result.supportsMaxWidth = p.supportsMaxWidth;
+  if (p.brandColor != null) result.brandColor = p.brandColor;
   return result;
+}
+
+/** Extract brand color from a provider instance. */
+function extractBrandColor(provider: Provider): string | undefined {
+  return (provider as { brandColor?: string }).brandColor;
 }
 
 /**
@@ -241,7 +252,14 @@ export async function resolve(url: string, options?: EmbedOptions): Promise<Embe
       cacheHit: false,
       errorCode,
     });
-    throw err;
+
+    if (context.options?.errorFallback && provider) {
+      const brandColor = extractBrandColor(provider);
+      result = buildErrorFallback({ url: context.url, provider: provider.name, brandColor });
+      resolveMethod = "error_fallback";
+    } else {
+      throw err;
+    }
   }
 
   // --- after hooks ---

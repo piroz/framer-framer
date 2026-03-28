@@ -17,6 +17,7 @@ export class HuggingFaceProvider extends IframeProvider {
   name = "huggingface";
   readonly defaultAspectRatio = "4:3";
   readonly embedType = "rich" as const;
+  override readonly brandColor = "#FFD21E";
 
   protected defaultWidth = 800;
   protected defaultHeight = 600;

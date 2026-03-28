@@ -18,6 +18,7 @@ export class NiconicoProvider extends IframeProvider {
   name = "niconico";
   readonly defaultAspectRatio = "16:9";
   readonly embedType = "video" as const;
+  override readonly brandColor = "#252525";
 
   protected defaultWidth = 640;
   protected defaultHeight = 360;

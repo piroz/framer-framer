@@ -72,6 +72,8 @@ export interface EmbedOptions {
   maxHeight?: number;
   /** Enable OGP fallback for unrecognized URLs (default: true) */
   fallback?: boolean;
+  /** Enable error fallback UI with provider branding when resolution fails (default: false) */
+  errorFallback?: boolean;
   /** Retry configuration for transient failures (network errors, 5xx, 429) */
   retry?: {
     /** Maximum number of retries (default: 2) */
@@ -211,6 +213,8 @@ export interface ProviderInfo {
   embedType?: EmbedType;
   /** Whether this provider supports the maxWidth parameter */
   supportsMaxWidth?: boolean;
+  /** Provider brand color in hex format (e.g. '#FF0000') */
+  brandColor?: string;
 }
 
 /** Schema for declarative provider definition */
@@ -227,6 +231,8 @@ export interface ProviderSchema {
   embedType?: EmbedType;
   /** Whether this provider supports the maxWidth parameter (default: true) */
   supportsMaxWidth?: boolean;
+  /** Provider brand color in hex format (e.g. '#FF0000') */
+  brandColor?: string;
   /** Optional configuration */
   options?: {
     /** Custom transform to convert raw oEmbed response to EmbedResult */

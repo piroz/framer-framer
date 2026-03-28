@@ -3,6 +3,7 @@ import { MetaProvider } from "./meta.js";
 export class FacebookProvider extends MetaProvider {
   name = "facebook";
   readonly embedType = "rich" as const;
+  override readonly brandColor = "#1877F2";
 
   protected endpoint = "https://graph.facebook.com/v22.0/oembed_post";
   private videoEndpoint = "https://graph.facebook.com/v22.0/oembed_video";

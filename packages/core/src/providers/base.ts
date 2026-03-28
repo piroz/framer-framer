@@ -23,6 +23,9 @@ export abstract class OEmbedProvider implements Provider {
   /** Whether this provider supports the maxWidth parameter (default: true for oEmbed providers) */
   readonly supportsMaxWidth: boolean = true;
 
+  /** Provider brand color in hex format (e.g. '#FF0000') */
+  readonly brandColor?: string;
+
   match(url: string): boolean {
     return this.patterns.some((pattern) => pattern.test(url));
   }

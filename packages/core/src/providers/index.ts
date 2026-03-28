@@ -28,6 +28,7 @@ export const youtubeProvider = defineProvider({
   ],
   defaultAspectRatio: "16:9",
   embedType: "video",
+  brandColor: "#FF0000",
 });
 
 export const twitterProvider = defineProvider({
@@ -38,6 +39,7 @@ export const twitterProvider = defineProvider({
     /^https?:\/\/(www\.)?x\.com\/\w+\/status\//,
   ],
   embedType: "rich",
+  brandColor: "#000000",
 });
 
 export const tiktokProvider = defineProvider({
@@ -50,6 +52,7 @@ export const tiktokProvider = defineProvider({
   ],
   defaultAspectRatio: "9:16",
   embedType: "video",
+  brandColor: "#000000",
 });
 
 export const flickrProvider = defineProvider({
@@ -60,6 +63,7 @@ export const flickrProvider = defineProvider({
     /^https?:\/\/flic\.kr\/p\/\w+/,
   ],
   embedType: "photo",
+  brandColor: "#FF0084",
 });
 
 export const vimeoProvider = defineProvider({
@@ -72,6 +76,7 @@ export const vimeoProvider = defineProvider({
   ],
   defaultAspectRatio: "16:9",
   embedType: "video",
+  brandColor: "#1AB7EA",
 });
 
 export const spotifyProvider = defineProvider({
@@ -79,6 +84,7 @@ export const spotifyProvider = defineProvider({
   endpoint: "https://open.spotify.com/oembed",
   urlPatterns: [/^https?:\/\/open\.spotify\.com\/(track|album|playlist|episode|show)\//],
   embedType: "rich",
+  brandColor: "#1DB954",
 });
 
 export const slideshareProvider = defineProvider({
@@ -87,6 +93,7 @@ export const slideshareProvider = defineProvider({
   urlPatterns: [SLIDESHARE_NEW_URL_PATTERN, /^https?:\/\/(www\.)?slideshare\.net\/[\w-]+\/[\w-]+/],
   defaultAspectRatio: "16:9",
   embedType: "rich",
+  brandColor: "#0077B5",
   options: {
     validate(url: string) {
       if (SLIDESHARE_NEW_URL_PATTERN.test(url)) {
@@ -107,6 +114,7 @@ export const soundcloudProvider = defineProvider({
     /^https?:\/\/(www\.)?soundcloud\.com\/(?!discover|settings|you|jobs|pages|charts|upload|logout|search|notifications|messages|stations)[\w-]+\/[\w-]+/,
   ],
   embedType: "rich",
+  brandColor: "#FF5500",
 });
 
 export const speakerdeckProvider = defineProvider({
@@ -115,6 +123,7 @@ export const speakerdeckProvider = defineProvider({
   urlPatterns: [/^https?:\/\/(www\.)?speakerdeck\.com\/[\w-]+\/[\w-]+/],
   defaultAspectRatio: "16:9",
   embedType: "rich",
+  brandColor: "#009287",
 });
 
 export const pinterestProvider = defineProvider({
@@ -122,6 +131,7 @@ export const pinterestProvider = defineProvider({
   endpoint: "https://www.pinterest.com/oembed.json",
   urlPatterns: [/^https?:\/\/(www\.)?pinterest\.(com|jp)\/pin\//],
   embedType: "rich",
+  brandColor: "#E60023",
   options: {
     normalizeUrl(url: string) {
       return url.replace(/^(https?:\/\/(www\.)?pinterest)\.jp\//, "$1.com/");
@@ -134,12 +144,14 @@ export const redditProvider = defineProvider({
   endpoint: "https://www.reddit.com/oembed",
   urlPatterns: [/^https?:\/\/(www\.)?reddit\.com\/r\/[\w]+\/comments\/[\w]+/],
   embedType: "rich",
+  brandColor: "#FF4500",
 });
 
 export const blueskyProvider = defineProvider({
   name: "bluesky",
   endpoint: "https://embed.bsky.app/oembed",
   urlPatterns: [/^https?:\/\/bsky\.app\/profile\/[^/]+\/post\/[^/]+/],
+  brandColor: "#0085FF",
 });
 
 export const noteProvider = defineProvider({
@@ -150,6 +162,7 @@ export const noteProvider = defineProvider({
     /^https?:\/\/(www\.)?note\.com\/[\w-]+\/m\/[\w-]+/,
   ],
   embedType: "rich",
+  brandColor: "#41C9B4",
 });
 
 // ---------------------------------------------------------------------------

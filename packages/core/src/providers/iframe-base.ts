@@ -26,6 +26,9 @@ export abstract class IframeProvider implements Provider {
   /** Whether this provider supports the maxWidth parameter (default: false for iframe providers) */
   readonly supportsMaxWidth: boolean = false;
 
+  /** Provider brand color in hex format (e.g. '#FF0000') */
+  readonly brandColor?: string;
+
   /** Default iframe width */
   protected defaultWidth = 800;
 

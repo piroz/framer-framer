@@ -148,6 +148,7 @@ await embed(url, {
   maxWidth: 640,              // Max embed width
   maxHeight: 480,             // Max embed height
   fallback: true,             // OGP fallback for unknown URLs (default: true)
+  errorFallback: false,       // Branded error fallback UI on provider failure (default: false)
   auth: {                     // Authentication configuration
     meta: {                   // Required for Facebook/Instagram/Threads
       accessToken: "APP_ID|CLIENT_TOKEN",
@@ -277,6 +278,19 @@ const result = await embed("https://example.com/article", { fallback: true });
 // Returns link card HTML built from og:title, og:description, og:image
 ```
 
+### Error fallback UI
+
+When a known provider fails (e.g. API error, timeout), you can get a branded fallback card instead of an exception. The card displays the provider's icon (initial letter) and brand color with a link to the original URL.
+
+```ts
+const result = await embed("https://www.youtube.com/watch?v=INVALID", {
+  errorFallback: true,
+});
+// Returns a styled HTML card with YouTube branding instead of throwing
+```
+
+Each built-in provider includes a `brandColor` in its metadata, accessible via `getProviders()`. Custom providers can also specify `brandColor` in their `ProviderSchema`.
+
 ### Logging
 
 Structured JSON logging for observability. Logs resolution success/failure, latency, provider, and cache hits.
@@ -327,7 +341,7 @@ Log entries include:
 | `url` | `string` | The URL being resolved |
 | `provider` | `string` | Provider name (e.g. `"youtube"`) |
 | `latencyMs` | `number` | Resolution time in milliseconds |
-| `status` | `string` | `"provider"` `"discovery"` `"ogp_fallback"` `"cache_hit"` `"hook_short_circuit"` |
+| `status` | `string` | `"provider"` `"discovery"` `"ogp_fallback"` `"error_fallback"` `"cache_hit"` `"hook_short_circuit"` |
 
 ### Caching
 
@@ -459,6 +473,7 @@ canEmbed("https://example.com/page");                      // false
 | `defaultAspectRatio` | `string?`  | Default aspect ratio hint (e.g. `"16:9"`, `"1:1"`) |
 | `embedType`          | `string?`  | oEmbed content type hint (`"rich"`, `"video"`, `"photo"`, `"link"`) |
 | `supportsMaxWidth`   | `boolean?` | Whether the provider supports the `maxWidth` parameter |
+| `brandColor`         | `string?`  | Provider brand color in hex format (e.g. `"#FF0000"`) |
 
 ### Custom providers
 

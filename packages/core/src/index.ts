@@ -7,6 +7,7 @@ export { wrapResponsive } from "./cms/responsive.js";
 export { discoverOEmbedUrl, resolveWithDiscovery } from "./discovery.js";
 export type { EmbedErrorCode } from "./errors.js";
 export { EmbedError } from "./errors.js";
+export { buildErrorFallback } from "./fallback/error.js";
 export { OEmbedProvider } from "./providers/base.js";
 export type {
   BlueskyProvider,

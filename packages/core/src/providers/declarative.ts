@@ -60,6 +60,7 @@ export function defineProvider(schema: ProviderSchema): Provider {
     override readonly defaultAspectRatio = schema.defaultAspectRatio;
     override readonly embedType = schema.embedType;
     override readonly supportsMaxWidth = schema.supportsMaxWidth ?? true;
+    override readonly brandColor = schema.brandColor;
 
     override async resolve(url: string, options?: EmbedOptions): Promise<EmbedResult> {
       if (validate) {

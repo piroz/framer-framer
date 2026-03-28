@@ -262,6 +262,51 @@ describe("resolve - oEmbed discovery integration", () => {
   });
 });
 
+describe("resolve - errorFallback option", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it("returns error fallback HTML instead of throwing when errorFallback is true", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: false,
+        status: 500,
+        statusText: "Internal Server Error",
+      }),
+    );
+
+    const result = await resolve("https://www.youtube.com/watch?v=test123", {
+      errorFallback: true,
+    });
+
+    expect(result.type).toBe("link");
+    expect(result.html).toContain("framer-framer-error");
+    expect(result.html).toContain("#FF0000"); // YouTube brand color
+    expect(result.html).toContain("Youtube");
+    expect(result.html).toContain("https://www.youtube.com/watch?v=test123");
+  });
+
+  it("still throws when errorFallback is false (default)", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: false,
+        status: 500,
+        statusText: "Internal Server Error",
+      }),
+    );
+
+    await expect(resolve("https://www.youtube.com/watch?v=test123")).rejects.toThrow(EmbedError);
+  });
+
+  it("still throws for non-provider errors even with errorFallback", async () => {
+    // URL validation errors should still throw
+    await expect(resolve("http://127.0.0.1", { errorFallback: true })).rejects.toThrow(EmbedError);
+  });
+});
+
 describe("getProviders", () => {
   it("returns all built-in providers with name and patterns", () => {
     const providers = getProviders();
@@ -337,6 +382,18 @@ describe("getProviders", () => {
       const provider = providers.find((p) => p.name === name);
       expect(provider?.defaultAspectRatio, `${name} should have defaultAspectRatio`).toBe("16:9");
     }
+  });
+
+  it("returns brandColor for built-in providers", () => {
+    const providers = getProviders();
+    const youtube = providers.find((p) => p.name === "youtube");
+    expect(youtube?.brandColor).toBe("#FF0000");
+
+    const vimeo = providers.find((p) => p.name === "vimeo");
+    expect(vimeo?.brandColor).toBe("#1AB7EA");
+
+    const niconico = providers.find((p) => p.name === "niconico");
+    expect(niconico?.brandColor).toBe("#252525");
   });
 });
 
