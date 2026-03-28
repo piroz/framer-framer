@@ -63,5 +63,8 @@ typings/
 # Build output
 dist/
 
+# Copied README for npm publish
+packages/core/README.md
+
 # Generated render-check page
 tools/.render-check.html

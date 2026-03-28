@@ -41,7 +41,7 @@
     "format": "biome format src test",
     "format:fix": "biome format --write src test",
     "ci": "npm run lint && npm run typecheck && npm run test && npm run build",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "cp ../../README.md . && npm run build"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.4",
