@@ -1,4 +1,4 @@
-import { type EmbedOptions, embed } from "framer-framer";
+import { type EmbedOptions, type EmbedResult, embed } from "framer-framer";
 import { useEffect, useState } from "react";
 import type { UseEmbedReturn } from "./types.js";
 
@@ -32,20 +32,29 @@ function parseOptions(
  * if (status === 'error') return <p>Error: {error.message}</p>;
  * return <div dangerouslySetInnerHTML={{ __html: data.html }} />;
  * ```
+ *
+ * @example SSR with pre-fetched data
+ * ```tsx
+ * // Pass initialData from a Server Component to skip client-side fetch
+ * const { data } = useEmbed(url, { initialData: serverFetchedResult });
+ * ```
  */
 export function useEmbed(
   url: string,
-  options?: EmbedOptions & { maxWidth?: number; maxHeight?: number },
+  options?: EmbedOptions & { maxWidth?: number; maxHeight?: number; initialData?: EmbedResult },
 ): UseEmbedReturn {
-  const [state, setState] = useState<UseEmbedReturn>({
-    status: "loading",
-    data: null,
-    error: null,
-  });
+  const initialData = options?.initialData;
+  const [state, setState] = useState<UseEmbedReturn>(
+    initialData
+      ? { status: "success", data: initialData, error: null }
+      : { status: "loading", data: null, error: null },
+  );
 
   const serializedOptions = serializeOptions(options);
 
   useEffect(() => {
+    if (initialData) return;
+
     let cancelled = false;
     const opts = parseOptions(serializedOptions);
 
@@ -67,7 +76,7 @@ export function useEmbed(
     return () => {
       cancelled = true;
     };
-  }, [url, serializedOptions]);
+  }, [url, serializedOptions, initialData]);
 
   return state;
 }

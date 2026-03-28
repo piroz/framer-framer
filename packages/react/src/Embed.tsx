@@ -21,6 +21,7 @@ export const Embed = forwardRef<HTMLDivElement, EmbedProps>(function Embed(
     maxWidth,
     maxHeight,
     embedOptions,
+    initialData,
     onLoad,
     onError,
     loadingFallback,
@@ -35,6 +36,7 @@ export const Embed = forwardRef<HTMLDivElement, EmbedProps>(function Embed(
     ...embedOptions,
     maxWidth,
     maxHeight,
+    initialData,
   });
 
   useEffect(() => {

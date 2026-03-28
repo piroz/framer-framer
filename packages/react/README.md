@@ -28,6 +28,7 @@ function App() {
 | `maxWidth` | `number` | Max embed width in pixels |
 | `maxHeight` | `number` | Max embed height in pixels |
 | `embedOptions` | `EmbedOptions` | Options passed to `embed()` |
+| `initialData` | `EmbedResult` | Pre-fetched embed data (skips client-side fetch) |
 | `onLoad` | `(result: EmbedResult) => void` | Called on successful resolution |
 | `onError` | `(error: Error) => void` | Called on resolution failure |
 | `loadingFallback` | `ReactNode` | Custom loading component |
@@ -60,7 +61,61 @@ import { Skeleton, ErrorState } from '@framer-framer/react';
 
 ## SSR / React Server Components
 
-This package uses the `"use client"` directive and is designed as a Client Component. During SSR, it renders the skeleton placeholder. The embed is resolved client-side after hydration via `useEffect`.
+### Server Component (`EmbedServer`)
+
+Use `EmbedServer` from the `/server` export to fetch embed data entirely on the server — no client-side JavaScript required:
+
+```tsx
+// app/page.tsx (Next.js App Router - Server Component)
+import { EmbedServer } from '@framer-framer/react/server';
+
+export default async function Page() {
+  return <EmbedServer url="https://www.youtube.com/watch?v=dQw4w9WgXcQ" />;
+}
+```
+
+`EmbedServer` is an async component that calls `embed()` on the server and renders the resulting HTML directly. It does not include `"use client"` and ships zero client-side JavaScript.
+
+| Prop | Type | Description |
+|---|---|---|
+| `url` | `string` | **(required)** URL to embed |
+| `maxWidth` | `number` | Max embed width in pixels |
+| `maxHeight` | `number` | Max embed height in pixels |
+| `embedOptions` | `EmbedOptions` | Options passed to `embed()` |
+| `errorFallback` | `ReactNode \| (error: Error) => ReactNode` | Custom error component |
+| `className` | `string` | CSS class for the container |
+| `style` | `CSSProperties` | Inline styles for the container |
+| `theme` | `'light' \| 'dark' \| 'auto'` | Theme mode (default: `'auto'`) |
+
+### Server-fetched data with Client Component (`initialData`)
+
+Fetch data on the server and pass it to the client `<Embed />` via `initialData` to avoid a loading flash while retaining client-side interactivity (callbacks, ref, etc.):
+
+```tsx
+// app/page.tsx (Server Component)
+import { embed } from 'framer-framer';
+import { EmbedSection } from './EmbedSection';
+
+export default async function Page() {
+  const data = await embed('https://www.youtube.com/watch?v=dQw4w9WgXcQ');
+  return <EmbedSection url="https://www.youtube.com/watch?v=dQw4w9WgXcQ" initialData={data} />;
+}
+```
+
+```tsx
+// app/EmbedSection.tsx (Client Component)
+'use client';
+import { Embed } from '@framer-framer/react';
+import type { EmbedResult } from 'framer-framer';
+
+export function EmbedSection({ url, initialData }: { url: string; initialData: EmbedResult }) {
+  return <Embed url={url} initialData={initialData} onLoad={(r) => console.log(r.title)} />;
+}
+```
+
+### Client-only (default)
+
+The main export uses the `"use client"` directive. During SSR it renders the skeleton placeholder; the embed resolves client-side after hydration via `useEffect`.
 
 ## Examples
 
@@ -84,24 +139,14 @@ This package uses the `"use client"` directive and is designed as a Client Compo
 />
 ```
 
-### Next.js Integration
+### Next.js App Router
 
 ```tsx
-// app/page.tsx (Server Component)
-import { EmbedSection } from './EmbedSection';
+// app/page.tsx — fully server-rendered, zero client JS
+import { EmbedServer } from '@framer-framer/react/server';
 
-export default function Page() {
-  return <EmbedSection url="https://www.youtube.com/watch?v=dQw4w9WgXcQ" />;
-}
-```
-
-```tsx
-// app/EmbedSection.tsx (Client Component)
-'use client';
-import { Embed } from '@framer-framer/react';
-
-export function EmbedSection({ url }: { url: string }) {
-  return <Embed url={url} maxWidth={800} />;
+export default async function Page() {
+  return <EmbedServer url="https://www.youtube.com/watch?v=dQw4w9WgXcQ" maxWidth={800} />;
 }
 ```
 

@@ -192,4 +192,21 @@ describe("Embed", () => {
       expect(container.getAttribute("data-framer-theme")).toBe("dark");
     });
   });
+
+  it("renders immediately with initialData without fetching", () => {
+    render(<Embed url="https://example.com" initialData={mockResult} />);
+
+    const container = screen.getByTestId("framer-framer-embed");
+    expect(container.innerHTML).toContain("iframe");
+    expect(mockEmbed).not.toHaveBeenCalled();
+  });
+
+  it("calls onLoad with initialData", async () => {
+    const onLoad = vi.fn();
+    render(<Embed url="https://example.com" initialData={mockResult} onLoad={onLoad} />);
+
+    await waitFor(() => {
+      expect(onLoad).toHaveBeenCalledWith(mockResult);
+    });
+  });
 });

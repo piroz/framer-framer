@@ -14,6 +14,8 @@ export interface EmbedProps {
   maxHeight?: number;
   /** Options passed to the framer-framer embed() function */
   embedOptions?: EmbedOptions;
+  /** Pre-fetched embed data (e.g. from a Server Component). Skips client-side fetch when provided. */
+  initialData?: EmbedResult;
   /** Called when embed resolves successfully */
   onLoad?: (result: EmbedResult) => void;
   /** Called when embed resolution fails */

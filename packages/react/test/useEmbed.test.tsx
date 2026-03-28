@@ -90,4 +90,27 @@ describe("useEmbed", () => {
 
     expect(result.current.error?.message).toBe("string error");
   });
+
+  it("uses initialData and skips fetch", () => {
+    const { result } = renderHook(() =>
+      useEmbed("https://example.com", { initialData: mockResult }),
+    );
+
+    expect(result.current.status).toBe("success");
+    expect(result.current.data).toEqual(mockResult);
+    expect(result.current.error).toBeNull();
+    expect(mockEmbed).not.toHaveBeenCalled();
+  });
+
+  it("does not re-fetch when initialData is provided", async () => {
+    const { result } = renderHook(() =>
+      useEmbed("https://example.com", { initialData: mockResult }),
+    );
+
+    // Wait a tick to ensure no async fetch is triggered
+    await new Promise((r) => setTimeout(r, 50));
+
+    expect(result.current.status).toBe("success");
+    expect(mockEmbed).not.toHaveBeenCalled();
+  });
 });
