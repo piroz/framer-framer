@@ -1,0 +1,17 @@
+name: "Release: react"
+
+on:
+  push:
+    tags:
+      - "react-v[0-9]*"
+
+concurrency:
+  group: release-react
+  cancel-in-progress: false
+
+jobs:
+  release:
+    uses: ./.github/workflows/release-publish.yml
+    with:
+      package-dir: packages/react
+    secrets: inherit
