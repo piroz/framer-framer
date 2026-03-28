@@ -1,0 +1,67 @@
+{
+  "name": "@framer-framer/astro",
+  "version": "3.2.1",
+  "description": "Astro integration for framer-framer - build-time embed resolution with <Embed /> component",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./Embed.astro": "./components/Embed.astro"
+  },
+  "files": [
+    "dist",
+    "components"
+  ],
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "lint": "biome check src test",
+    "lint:fix": "biome check --write src test",
+    "format": "biome format src test",
+    "format:fix": "biome format --write src test",
+    "ci": "npm run lint && npm run typecheck && npm run test && npm run build",
+    "prepublishOnly": "npm run build"
+  },
+  "peerDependencies": {
+    "astro": "^4.0.0 || ^5.0.0",
+    "framer-framer": "^3.2.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.4.4",
+    "framer-framer": "^3.2.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.4.0",
+    "vitest": "^4.0.18"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:piroz/framer-framer.git",
+    "directory": "packages/astro"
+  },
+  "author": "piroz",
+  "license": "MIT",
+  "bugs": "https://github.com/piroz/framer-framer/issues",
+  "keywords": [
+    "astro",
+    "embed",
+    "oembed",
+    "component",
+    "youtube",
+    "twitter",
+    "tiktok",
+    "iframe",
+    "framer-framer",
+    "ssg",
+    "ssr"
+  ]
+}

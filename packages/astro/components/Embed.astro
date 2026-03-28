@@ -1,0 +1,82 @@
+---
+import type { EmbedOptions } from "framer-framer";
+import { embed } from "framer-framer";
+
+interface Props {
+  /** URL to resolve */
+  url: string;
+  /** Max embed width */
+  maxWidth?: number;
+  /** Max embed height */
+  maxHeight?: number;
+  /** Options passed to framer-framer's embed() */
+  options?: EmbedOptions;
+  /** Theme mode: 'light', 'dark', or 'auto' (default: 'auto') */
+  theme?: "light" | "dark" | "auto";
+  /** CSS class for the container element */
+  class?: string;
+}
+
+const { url, maxWidth, maxHeight, options, theme = "auto", class: className } = Astro.props;
+
+let html: string | null = null;
+let error: string | null = null;
+
+try {
+  const result = await embed(url, {
+    ...options,
+    maxWidth,
+    maxHeight,
+  });
+  html = result.html;
+} catch (e) {
+  error = e instanceof Error ? e.message : String(e);
+}
+---
+
+<style is:global>
+  [data-framer-theme="light"] {
+    --framer-bg: #ffffff;
+    --framer-border: #e5e7eb;
+    --framer-skeleton-bg: #e5e7eb;
+    --framer-error-bg: #fef2f2;
+    --framer-error-border: #fca5a5;
+    --framer-error-text: #991b1b;
+  }
+  [data-framer-theme="dark"] {
+    --framer-bg: #1f2937;
+    --framer-border: #374151;
+    --framer-skeleton-bg: #374151;
+    --framer-error-bg: #451a1a;
+    --framer-error-border: #991b1b;
+    --framer-error-text: #fca5a5;
+  }
+  [data-framer-theme="auto"] {
+    --framer-bg: #ffffff;
+    --framer-border: #e5e7eb;
+    --framer-skeleton-bg: #e5e7eb;
+    --framer-error-bg: #fef2f2;
+    --framer-error-border: #fca5a5;
+    --framer-error-text: #991b1b;
+  }
+  @media (prefers-color-scheme: dark) {
+    [data-framer-theme="auto"] {
+      --framer-bg: #1f2937;
+      --framer-border: #374151;
+      --framer-skeleton-bg: #374151;
+      --framer-error-bg: #451a1a;
+      --framer-error-border: #991b1b;
+      --framer-error-text: #fca5a5;
+    }
+  }
+</style>
+
+{html ? (
+  <div data-framer-theme={theme} class={className}>
+    <div class="framer-framer-embed" set:html={html} />
+  </div>
+) : error ? (
+  <div data-framer-theme={theme} class={className}>
+    <div class="framer-framer-error">{error}</div>
+  </div>
+) : null}

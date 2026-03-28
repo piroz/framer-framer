@@ -7,14 +7,14 @@
     "node": ">=22.0.0"
   },
   "scripts": {
-    "build": "npm run build -w packages/core && npm run build -w packages/react && npm run build -w packages/vue",
-    "test": "npm test -w packages/core && npm run build -w packages/core && npm test -w packages/react && npm test -w packages/vue",
+    "build": "npm run build -w packages/core && npm run build -w packages/react && npm run build -w packages/vue && npm run build -w packages/astro",
+    "test": "npm test -w packages/core && npm run build -w packages/core && npm test -w packages/react && npm test -w packages/vue && npm test -w packages/astro",
     "test:watch": "npm run test:watch -w packages/core",
-    "typecheck": "npm run typecheck -w packages/core && npm run build -w packages/core && npm run typecheck -w packages/react && npm run typecheck -w packages/vue",
-    "lint": "npm run lint -w packages/core && npm run lint -w packages/react && npm run lint -w packages/vue",
-    "lint:fix": "npm run lint:fix -w packages/core && npm run lint:fix -w packages/react && npm run lint:fix -w packages/vue",
-    "format": "npm run format -w packages/core && npm run format -w packages/react && npm run format -w packages/vue",
-    "format:fix": "npm run format:fix -w packages/core && npm run format:fix -w packages/react && npm run format:fix -w packages/vue",
-    "ci": "npm run ci -w packages/core && npm run ci -w packages/react && npm run ci -w packages/vue"
+    "typecheck": "npm run typecheck -w packages/core && npm run build -w packages/core && npm run typecheck -w packages/react && npm run typecheck -w packages/vue && npm run typecheck -w packages/astro",
+    "lint": "npm run lint -w packages/core && npm run lint -w packages/react && npm run lint -w packages/vue && npm run lint -w packages/astro",
+    "lint:fix": "npm run lint:fix -w packages/core && npm run lint:fix -w packages/react && npm run lint:fix -w packages/vue && npm run lint:fix -w packages/astro",
+    "format": "npm run format -w packages/core && npm run format -w packages/react && npm run format -w packages/vue && npm run format -w packages/astro",
+    "format:fix": "npm run format:fix -w packages/core && npm run format:fix -w packages/react && npm run format:fix -w packages/vue && npm run format:fix -w packages/astro",
+    "ci": "npm run ci -w packages/core && npm run ci -w packages/react && npm run ci -w packages/vue && npm run ci -w packages/astro"
   }
 }

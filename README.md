@@ -858,6 +858,72 @@ const app = createApp();
 app.use("*", cors({ origin: "https://example.com" }));
 ```
 
+## Framework integration
+
+### Astro
+
+```bash
+npm install @framer-framer/astro
+```
+
+Use the `Embed` component for build-time resolution:
+
+```astro
+---
+import Embed from '@framer-framer/astro/Embed.astro';
+---
+<Embed url="https://www.youtube.com/watch?v=dQw4w9WgXcQ" />
+```
+
+Or use the helper functions in frontmatter for full control:
+
+```astro
+---
+import { getEmbed } from '@framer-framer/astro';
+const { data, error } = await getEmbed('https://www.youtube.com/watch?v=dQw4w9WgXcQ');
+---
+{data && <div set:html={data.html} />}
+{error && <p>Failed to load embed: {error.message}</p>}
+```
+
+Batch resolution with concurrency control:
+
+```astro
+---
+import { getEmbedBatch } from '@framer-framer/astro';
+const results = await getEmbedBatch([
+  'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+  'https://vimeo.com/1084537',
+], { concurrency: 3 });
+---
+{results.map(r => r.data && <div set:html={r.data.html} />)}
+```
+
+For dynamic URLs that need client-side resolution, use `@framer-framer/react` with Astro's `client:load` directive:
+
+```astro
+---
+import { Embed } from '@framer-framer/react';
+---
+<Embed client:load url={dynamicUrl} />
+```
+
+### React
+
+```bash
+npm install @framer-framer/react
+```
+
+See [`packages/react`](./packages/react) for details.
+
+### Vue
+
+```bash
+npm install @framer-framer/vue
+```
+
+See [`packages/vue`](./packages/vue) for details.
+
 ## Migration from v2.x
 
 ### `meta` → `auth.meta`
@@ -954,6 +1020,9 @@ This project uses npm workspaces as a monorepo:
 ```
 packages/
   core/     # framer-framer (this library)
+  react/    # @framer-framer/react
+  vue/      # @framer-framer/vue
+  astro/    # @framer-framer/astro
 ```
 
 Root-level npm scripts delegate to the corresponding workspace:
