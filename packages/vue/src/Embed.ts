@@ -27,6 +27,10 @@ export const Embed = defineComponent({
       type: String as PropType<Theme>,
       default: "auto",
     },
+    ariaLabel: {
+      type: String,
+      default: undefined,
+    },
   },
   emits: {
     load: (_result: EmbedResult) => true,
@@ -55,7 +59,10 @@ export const Embed = defineComponent({
         const loadingContent = slots.loading
           ? slots.loading()
           : h("div", { class: "framer-framer-loading" });
-        return h("div", { "data-framer-theme": themeAttr }, [themeStyle, loadingContent]);
+        return h("div", { "data-framer-theme": themeAttr, "aria-busy": "true" }, [
+          themeStyle,
+          loadingContent,
+        ]);
       }
 
       if (error.value) {
@@ -74,19 +81,27 @@ export const Embed = defineComponent({
           lastEmittedUrl = result.value.url;
           emit("load", result.value);
         }
+        const effectiveAriaLabel =
+          props.ariaLabel ??
+          `${result.value.provider}${result.value.title ? `: ${result.value.title}` : ""}`;
         if (slots.default) {
-          return h("div", { "data-framer-theme": themeAttr }, [
-            themeStyle,
-            slots.default({ result: result.value }),
-          ]);
+          return h(
+            "div",
+            { "data-framer-theme": themeAttr, role: "region", "aria-label": effectiveAriaLabel },
+            [themeStyle, slots.default({ result: result.value })],
+          );
         }
-        return h("div", { "data-framer-theme": themeAttr }, [
-          themeStyle,
-          h("div", {
-            class: "framer-framer-embed",
-            innerHTML: result.value.html,
-          }),
-        ]);
+        return h(
+          "div",
+          { "data-framer-theme": themeAttr, role: "region", "aria-label": effectiveAriaLabel },
+          [
+            themeStyle,
+            h("div", {
+              class: "framer-framer-embed",
+              innerHTML: result.value.html,
+            }),
+          ],
+        );
       }
 
       return null;

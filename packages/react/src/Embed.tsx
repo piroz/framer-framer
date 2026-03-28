@@ -29,6 +29,7 @@ export const Embed = forwardRef<HTMLDivElement, EmbedProps>(function Embed(
     className,
     style,
     theme = "auto",
+    ariaLabel,
   },
   ref,
 ) {
@@ -54,6 +55,9 @@ export const Embed = forwardRef<HTMLDivElement, EmbedProps>(function Embed(
     ...style,
   };
 
+  const effectiveAriaLabel =
+    ariaLabel ?? (data ? `${data.provider}${data.title ? `: ${data.title}` : ""}` : undefined);
+
   if (status === "loading") {
     return (
       <div
@@ -62,6 +66,7 @@ export const Embed = forwardRef<HTMLDivElement, EmbedProps>(function Embed(
         style={containerStyle}
         data-testid="framer-framer-embed"
         data-framer-theme={theme}
+        aria-busy="true"
       >
         <style id={themeStyleId}>{themeCSS}</style>
         {loadingFallback ?? <Skeleton maxWidth={maxWidth} />}
@@ -87,16 +92,17 @@ export const Embed = forwardRef<HTMLDivElement, EmbedProps>(function Embed(
   }
 
   return (
-    <div
+    <section
       ref={ref}
       className={className}
       style={containerStyle}
       data-testid="framer-framer-embed"
       data-framer-theme={theme}
+      aria-label={effectiveAriaLabel}
     >
       <style id={themeStyleId}>{themeCSS}</style>
       {/* biome-ignore lint/security/noDangerouslySetInnerHtml: oEmbed HTML is sanitized by framer-framer core */}
       <div dangerouslySetInnerHTML={{ __html: data?.html ?? "" }} />
-    </div>
+    </section>
   );
 });

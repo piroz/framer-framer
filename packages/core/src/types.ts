@@ -31,6 +31,16 @@ export interface EmbedResult {
   raw?: Record<string, unknown>;
 }
 
+/** Accessibility options for embed HTML */
+export interface AccessibilityOptions {
+  /** Custom aria-label for the embed element (overrides auto-generated label) */
+  ariaLabel?: string;
+  /** Custom role attribute (default: none — browser default for iframe/blockquote applies) */
+  role?: string;
+  /** tabindex for keyboard navigation (default: 0) */
+  tabIndex?: number;
+}
+
 /** Options for embed resolution */
 export interface EmbedOptions {
   /**
@@ -87,6 +97,13 @@ export interface EmbedOptions {
    * a `Logger` object for custom logging, or `false`/omit to disable.
    */
   logger?: import("./utils/logger.js").Logger | boolean;
+  /**
+   * Accessibility options for the embed HTML output.
+   * When enabled (default: `true`), adds `title`, `aria-label`, and `tabindex`
+   * attributes to iframe/embed elements.
+   * Pass `false` to disable, `true` for defaults, or an object to customize.
+   */
+  accessibility?: AccessibilityOptions | boolean;
 }
 
 /** Provider interface - implement this to add a new platform */

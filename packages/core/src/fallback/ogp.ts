@@ -64,9 +64,15 @@ export async function resolveWithOgp(url: string, options?: EmbedOptions): Promi
     embedType = "video";
     const safeVideoUrl = escapeHtml(videoUrl);
     const safeTitle = escapeHtml(title ?? "");
+    const safeAriaLabel = escapeHtml(
+      title
+        ? `${siteName ?? new URL(url).hostname}: ${title}`
+        : (siteName ?? new URL(url).hostname),
+    );
     embedHtml =
       `<iframe src="${safeVideoUrl}" width="480" height="270" ` +
-      `frameborder="0" allowfullscreen title="${safeTitle}"></iframe>`;
+      `frameborder="0" allowfullscreen title="${safeTitle}" ` +
+      `aria-label="${safeAriaLabel}" tabindex="0"></iframe>`;
   } else {
     // Rich link card
     embedType = "link";

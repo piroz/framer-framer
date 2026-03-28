@@ -125,7 +125,8 @@ describe("hooks", () => {
       await resolve("https://www.youtube.com/watch?v=abc123");
 
       expect(results).toHaveLength(1);
-      expect(results[0].html).toBe("<iframe>yt</iframe>");
+      expect(results[0].html).toContain("<iframe");
+      expect(results[0].html).toContain(">yt</iframe>");
     });
 
     it("replaces the result when returning an EmbedResult", async () => {
@@ -145,7 +146,9 @@ describe("hooks", () => {
       const { resolve } = await import("../src/resolver.js");
       const result = await resolve("https://www.youtube.com/watch?v=abc123");
 
-      expect(result.html).toBe('<div class="wrapper"><iframe></iframe></div>');
+      expect(result.html).toContain('<div class="wrapper">');
+      expect(result.html).toContain("<iframe");
+      expect(result.html).toContain("</iframe></div>");
     });
 
     it("chains multiple after hooks", async () => {
@@ -169,9 +172,9 @@ describe("hooks", () => {
       const { resolve } = await import("../src/resolver.js");
       const result = await resolve("https://www.youtube.com/watch?v=abc");
 
-      expect(result.html).toBe(
-        '<div class="outermost"><div class="outer"><iframe></iframe></div></div>',
-      );
+      expect(result.html).toContain('<div class="outermost"><div class="outer">');
+      expect(result.html).toContain("<iframe");
+      expect(result.html).toContain("</iframe></div></div>");
     });
 
     it("also runs on short-circuited results from before hooks", async () => {
@@ -209,7 +212,8 @@ describe("hooks", () => {
       const { resolve } = await import("../src/resolver.js");
       const result = await resolve("https://www.youtube.com/watch?v=abc");
 
-      expect(result.html).toBe("<iframe>from-api</iframe>");
+      expect(result.html).toContain("<iframe");
+      expect(result.html).toContain(">from-api</iframe>");
     });
 
     it("onAfterResolve returns a function that removes the hook", async () => {
@@ -231,7 +235,8 @@ describe("hooks", () => {
       const { resolve } = await import("../src/resolver.js");
       const result = await resolve("https://www.youtube.com/watch?v=abc");
 
-      expect(result.html).toBe("<iframe>from-api</iframe>");
+      expect(result.html).toContain("<iframe");
+      expect(result.html).toContain(">from-api</iframe>");
     });
 
     it("only removes the specific hook, not others", async () => {
@@ -276,7 +281,8 @@ describe("hooks", () => {
       const result = await resolve("https://www.youtube.com/watch?v=abc");
 
       // Neither hook should have run
-      expect(result.html).toBe("<iframe>from-api</iframe>");
+      expect(result.html).toContain("<iframe");
+      expect(result.html).toContain(">from-api</iframe>");
     });
   });
 });

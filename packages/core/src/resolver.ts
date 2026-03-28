@@ -15,6 +15,7 @@ import type {
   Provider,
   ProviderInfo,
 } from "./types.js";
+import { enhanceAccessibility } from "./utils/accessibility.js";
 import type { Logger } from "./utils/logger.js";
 import { resolveLogger } from "./utils/logger.js";
 import { getMetricsCallbacks } from "./utils/metrics.js";
@@ -231,6 +232,11 @@ export async function resolve(url: string, options?: EmbedOptions): Promise<Embe
 
   // --- after hooks ---
   const final = await runAfterHooks(context, result);
+
+  // --- accessibility enhancement ---
+  if (options?.accessibility !== false) {
+    final.html = enhanceAccessibility(final.html, final, options?.accessibility);
+  }
 
   // --- cache store ---
   if (cache) await cache.set(cacheKey, final);

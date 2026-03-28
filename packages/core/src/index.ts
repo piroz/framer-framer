@@ -45,6 +45,7 @@ export {
   registerProvider,
 } from "./resolver.js";
 export type {
+  AccessibilityOptions,
   AfterResolveHook,
   BatchEmbedOptions,
   BeforeResolveHook,
@@ -60,6 +61,7 @@ export type {
   ProviderSchema,
   RateLimitOptions,
 } from "./types.js";
+export { enhanceAccessibility } from "./utils/accessibility.js";
 export type { LogEntry, Logger, LogLevel } from "./utils/logger.js";
 export { createLogger } from "./utils/logger.js";
 export { clearMetrics, onMetrics } from "./utils/metrics.js";

@@ -95,12 +95,15 @@ export abstract class IframeProvider implements Provider {
     const safeSandbox = escapeHtml(this.sandboxFlags.join(" "));
     const safeReferrerPolicy = escapeHtml(this.referrerPolicy);
 
+    const ariaLabel = title ? `${this.name}: ${title}` : this.name;
+    const safeAriaLabel = escapeHtml(ariaLabel);
+
     const html =
       `<iframe src="${safeEmbedUrl}" width="${width}" height="${height}" ` +
       `frameborder="0" allow="encrypted-media" ` +
       `allowfullscreen sandbox="${safeSandbox}" ` +
       `referrerpolicy="${safeReferrerPolicy}" ` +
-      `title="${safeTitle}"></iframe>`;
+      `title="${safeTitle}" aria-label="${safeAriaLabel}" tabindex="0"></iframe>`;
 
     return {
       type: "rich",

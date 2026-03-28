@@ -28,6 +28,8 @@ export interface EmbedProps {
   className?: string;
   /** Additional inline styles for the container */
   style?: React.CSSProperties;
+  /** Custom aria-label for the embed container (defaults to provider + title) */
+  ariaLabel?: string;
 }
 
 /** State of the useEmbed hook */

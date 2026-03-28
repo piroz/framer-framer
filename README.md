@@ -162,6 +162,7 @@ await embed(url, {
   discovery: true,            // oEmbed auto-discovery for unknown URLs (default: true)
   cache: myCache,             // EmbedCache instance (see Caching section)
   logger: true,               // Enable built-in JSON logger (see Logging section)
+  accessibility: true,        // Add ARIA attributes to embeds (default: true) — see Accessibility section
 });
 ```
 
@@ -185,6 +186,38 @@ const safe = sanitizeHtml('<iframe src="https://example.com"></iframe><script>al
 ```
 
 Allowed tags: `iframe`, `blockquote`, `img`, `a`, `p`, `div`, `span`, `script` (trusted domains only), `br`, `strong`, `em`.
+
+### Accessibility
+
+Embed HTML is automatically enhanced with ARIA attributes for screen readers and keyboard navigation (enabled by default).
+
+Attributes added to `<iframe>` and `<blockquote>` elements:
+- `title` — from the oEmbed response title (if not already present)
+- `aria-label` — format: `"provider: title"` (e.g. `"youtube: My Video"`)
+- `tabindex="0"` — enables keyboard focus
+
+Customize or disable per-call:
+
+```ts
+// Custom aria-label
+await embed(url, { accessibility: { ariaLabel: "Custom label" } });
+
+// Custom tabIndex and role
+await embed(url, { accessibility: { tabIndex: -1, role: "document" } });
+
+// Disable accessibility enhancement
+await embed(url, { accessibility: false });
+```
+
+The `enhanceAccessibility()` utility is also exported for standalone use:
+
+```ts
+import { enhanceAccessibility } from "framer-framer";
+
+const html = enhanceAccessibility('<iframe src="..."></iframe>', result);
+```
+
+React and Vue components add `role="region"` and `aria-label` to the container element, and `aria-busy="true"` during loading.
 
 ### URL validation
 

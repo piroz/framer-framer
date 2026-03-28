@@ -13,6 +13,8 @@ export interface EmbedProps {
   options?: EmbedOptions;
   /** Theme mode: 'light', 'dark', or 'auto' (default: 'auto') */
   theme?: Theme;
+  /** Custom aria-label for the embed container (defaults to provider + title) */
+  ariaLabel?: string;
 }
 
 /** Return type of the useEmbed composable */
