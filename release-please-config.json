@@ -1,4 +1,11 @@
 {
+  "plugins": [
+    {
+      "type": "linked-versions",
+      "groupName": "framer-framer",
+      "components": ["framer-framer", "react", "vue"]
+    }
+  ],
   "packages": {
     "packages/core": {
       "release-type": "node",
