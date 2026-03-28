@@ -36,5 +36,5 @@ jobs:
         run: npm run build -w packages/core
 
       - name: Publish to npm
-        run: npm publish --access public
+        run: npm publish --access public --provenance
         working-directory: ${{ inputs.package-dir }}
