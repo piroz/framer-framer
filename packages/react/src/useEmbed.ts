@@ -1,5 +1,5 @@
-import { type EmbedOptions, type EmbedResult, embed } from "framer-framer";
-import { useEffect, useState } from "react";
+import { type EmbedOptions, type EmbedResult, embed, getProviderInfo } from "framer-framer";
+import { useEffect, useMemo, useState } from "react";
 import type { UseEmbedReturn } from "./types.js";
 
 function serializeOptions(
@@ -44,11 +44,15 @@ export function useEmbed(
   options?: EmbedOptions & { maxWidth?: number; maxHeight?: number; initialData?: EmbedResult },
 ): UseEmbedReturn {
   const initialData = options?.initialData;
-  const [state, setState] = useState<UseEmbedReturn>(
+  const [state, setState] = useState<Omit<UseEmbedReturn, "providerAspectRatio">>(
     initialData
       ? { status: "success", data: initialData, error: null }
       : { status: "loading", data: null, error: null },
   );
+
+  const providerAspectRatio = useMemo(() => {
+    return getProviderInfo(url)?.defaultAspectRatio ?? undefined;
+  }, [url]);
 
   const serializedOptions = serializeOptions(options);
 
@@ -78,5 +82,5 @@ export function useEmbed(
     };
   }, [url, serializedOptions, initialData]);
 
-  return state;
+  return { ...state, providerAspectRatio };
 }

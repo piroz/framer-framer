@@ -35,7 +35,7 @@ export function Skeleton({ aspectRatio, maxWidth }: SkeletonProps) {
   const style: CSSProperties = {
     ...containerStyle,
     ...(maxWidth ? { maxWidth } : {}),
-    ...(ratio ? { paddingBottom: `${ratio * 100}%` } : { height: 200 }),
+    ...(ratio ? { aspectRatio: `${1 / ratio}` } : { height: 200 }),
   };
 
   return (

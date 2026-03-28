@@ -1,5 +1,6 @@
 import type { EmbedOptions, EmbedResult } from "framer-framer";
 import { defineComponent, h, type PropType, type SlotsType } from "vue";
+import { Skeleton } from "./Skeleton.js";
 import type { Theme } from "./theme.js";
 import { themeCSS, themeStyleId } from "./theme.js";
 import { useEmbed } from "./useEmbed.js";
@@ -42,7 +43,7 @@ export const Embed = defineComponent({
     error?: { error: Error };
   }>,
   setup(props, { emit, slots }) {
-    const { result, loading, error } = useEmbed(() => props.url, {
+    const { result, loading, error, providerAspectRatio } = useEmbed(() => props.url, {
       maxWidth: props.maxWidth,
       maxHeight: props.maxHeight,
       embedOptions: props.options,
@@ -58,7 +59,7 @@ export const Embed = defineComponent({
       if (loading.value) {
         const loadingContent = slots.loading
           ? slots.loading()
-          : h("div", { class: "framer-framer-loading" });
+          : h(Skeleton, { aspectRatio: providerAspectRatio.value, maxWidth: props.maxWidth });
         return h("div", { "data-framer-theme": themeAttr, "aria-busy": "true" }, [
           themeStyle,
           loadingContent,

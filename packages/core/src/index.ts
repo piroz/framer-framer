@@ -39,6 +39,7 @@ export {
 export {
   canEmbed,
   clearHooks,
+  getProviderInfo,
   getProviders,
   onAfterResolve,
   onBeforeResolve,

@@ -33,7 +33,7 @@ export const Embed = forwardRef<HTMLDivElement, EmbedProps>(function Embed(
   },
   ref,
 ) {
-  const { status, data, error } = useEmbed(url, {
+  const { status, data, error, providerAspectRatio } = useEmbed(url, {
     ...embedOptions,
     maxWidth,
     maxHeight,
@@ -69,7 +69,7 @@ export const Embed = forwardRef<HTMLDivElement, EmbedProps>(function Embed(
         aria-busy="true"
       >
         <style id={themeStyleId}>{themeCSS}</style>
-        {loadingFallback ?? <Skeleton maxWidth={maxWidth} />}
+        {loadingFallback ?? <Skeleton aspectRatio={providerAspectRatio} maxWidth={maxWidth} />}
       </div>
     );
   }

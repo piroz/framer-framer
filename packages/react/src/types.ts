@@ -43,4 +43,6 @@ export interface UseEmbedReturn {
   data: EmbedResult | null;
   /** Error (available when status is 'error') */
   error: Error | null;
+  /** Default aspect ratio from the matched provider (e.g. '16:9') */
+  providerAspectRatio?: string;
 }

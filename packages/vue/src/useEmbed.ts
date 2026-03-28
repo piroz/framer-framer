@@ -1,6 +1,6 @@
 import type { EmbedOptions, EmbedResult } from "framer-framer";
-import { embed } from "framer-framer";
-import { type MaybeRefOrGetter, type Ref, ref, toValue, watch } from "vue";
+import { embed, getProviderInfo } from "framer-framer";
+import { computed, type MaybeRefOrGetter, type Ref, ref, toValue, watch } from "vue";
 
 export interface UseEmbedOptions {
   /** Max embed width */
@@ -15,6 +15,8 @@ export interface UseEmbedReturn {
   result: Ref<EmbedResult | null>;
   loading: Ref<boolean>;
   error: Ref<Error | null>;
+  /** Default aspect ratio from the matched provider (e.g. '16:9') */
+  providerAspectRatio: Ref<string | undefined>;
 }
 
 /**
@@ -29,6 +31,7 @@ export function useEmbed(url: MaybeRefOrGetter<string>, options?: UseEmbedOption
   const result = ref<EmbedResult | null>(null) as Ref<EmbedResult | null>;
   const loading = ref(true);
   const error = ref<Error | null>(null) as Ref<Error | null>;
+  const providerAspectRatio = computed(() => getProviderInfo(toValue(url))?.defaultAspectRatio);
 
   async function resolve(targetUrl: string) {
     if (!targetUrl) {
@@ -64,5 +67,5 @@ export function useEmbed(url: MaybeRefOrGetter<string>, options?: UseEmbedOption
     { immediate: true },
   );
 
-  return { result, loading, error };
+  return { result, loading, error, providerAspectRatio };
 }

@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { EmbedError } from "../src/errors.js";
-import { canEmbed, findProvider, getProviders, resolve } from "../src/resolver.js";
+import { canEmbed, findProvider, getProviderInfo, getProviders, resolve } from "../src/resolver.js";
 
 describe("findProvider - URL auto-detection", () => {
   // YouTube
@@ -350,5 +350,26 @@ describe("canEmbed", () => {
   it("returns false for an unknown URL", () => {
     expect(canEmbed("https://example.com/page")).toBe(false);
     expect(canEmbed("https://github.com/piroz/repo")).toBe(false);
+  });
+});
+
+describe("getProviderInfo", () => {
+  it("returns provider info with defaultAspectRatio for YouTube", () => {
+    const info = getProviderInfo("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
+    expect(info).toBeDefined();
+    expect(info?.name).toBe("youtube");
+    expect(info?.defaultAspectRatio).toBe("16:9");
+  });
+
+  it("returns provider info for TikTok with 9:16 aspect ratio", () => {
+    const info = getProviderInfo("https://www.tiktok.com/@user/video/1234567890");
+    expect(info).toBeDefined();
+    expect(info?.name).toBe("tiktok");
+    expect(info?.defaultAspectRatio).toBe("9:16");
+  });
+
+  it("returns undefined for unknown URL", () => {
+    const info = getProviderInfo("https://example.com/page");
+    expect(info).toBeUndefined();
   });
 });

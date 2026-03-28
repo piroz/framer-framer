@@ -4,8 +4,11 @@ import { createRef } from "react";
 import { vi } from "vitest";
 import { Embed } from "../src/Embed.js";
 
+const mockGetProviderInfo = vi.fn();
+
 vi.mock("framer-framer", () => ({
   embed: vi.fn(),
+  getProviderInfo: (...args: unknown[]) => mockGetProviderInfo(...args),
 }));
 
 const mockEmbed = vi.mocked(embed);
@@ -208,5 +211,27 @@ describe("Embed", () => {
     await waitFor(() => {
       expect(onLoad).toHaveBeenCalledWith(mockResult);
     });
+  });
+
+  it("passes provider aspect ratio to skeleton while loading", () => {
+    mockEmbed.mockReturnValue(new Promise(() => {}));
+    mockGetProviderInfo.mockReturnValue({
+      name: "youtube",
+      patterns: [],
+      defaultAspectRatio: "16:9",
+    });
+    render(<Embed url="https://www.youtube.com/watch?v=dQw4w9WgXcQ" />);
+
+    const skeleton = screen.getByTestId("framer-framer-skeleton");
+    expect(skeleton.style.aspectRatio).toBeTruthy();
+  });
+
+  it("renders skeleton with default height when no provider matches", () => {
+    mockEmbed.mockReturnValue(new Promise(() => {}));
+    mockGetProviderInfo.mockReturnValue(undefined);
+    render(<Embed url="https://unknown.example.com" />);
+
+    const skeleton = screen.getByTestId("framer-framer-skeleton");
+    expect(skeleton.style.height).toBe("200px");
   });
 });

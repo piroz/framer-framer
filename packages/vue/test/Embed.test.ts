@@ -5,8 +5,11 @@ import { Embed } from "../src/Embed.js";
 
 const mockEmbed = vi.fn();
 
+const mockGetProviderInfo = vi.fn();
+
 vi.mock("framer-framer", () => ({
   embed: (...args: unknown[]) => mockEmbed(...args),
+  getProviderInfo: (...args: unknown[]) => mockGetProviderInfo(...args),
 }));
 
 const mockResult = {
@@ -22,13 +25,13 @@ describe("Embed component", () => {
     vi.clearAllMocks();
   });
 
-  it("renders loading state initially", () => {
+  it("renders skeleton in loading state initially", () => {
     mockEmbed.mockReturnValue(new Promise(() => {})); // never resolves
     const wrapper = mount(Embed, {
       props: { url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ" },
     });
 
-    expect(wrapper.find(".framer-framer-loading").exists()).toBe(true);
+    expect(wrapper.find("[data-testid='framer-framer-skeleton']").exists()).toBe(true);
   });
 
   it("renders embed HTML on success", async () => {
@@ -201,6 +204,22 @@ describe("Embed component", () => {
     await flushPromises();
 
     expect(wrapper.find("[data-framer-theme='dark']").exists()).toBe(true);
+  });
+
+  it("renders skeleton with provider aspect ratio", () => {
+    mockEmbed.mockReturnValue(new Promise(() => {}));
+    mockGetProviderInfo.mockReturnValue({
+      name: "youtube",
+      patterns: [],
+      defaultAspectRatio: "16:9",
+    });
+    const wrapper = mount(Embed, {
+      props: { url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ" },
+    });
+
+    const skeleton = wrapper.find("[data-testid='framer-framer-skeleton']");
+    expect(skeleton.exists()).toBe(true);
+    expect((skeleton.element as HTMLElement).style.aspectRatio).toBeTruthy();
   });
 
   it("re-renders when url prop changes", async () => {

@@ -66,6 +66,20 @@ export function canEmbed(url: string): boolean {
   return providers.some((p) => p.match(url));
 }
 
+/**
+ * Return provider information for the given URL, or `undefined` if no
+ * registered provider matches.
+ */
+export function getProviderInfo(url: string): ProviderInfo | undefined {
+  const provider = findProvider(url);
+  if (!provider) return undefined;
+  return {
+    name: provider.name,
+    patterns: extractPatterns(provider),
+    ...extractMetadata(provider),
+  };
+}
+
 /** Extract URL patterns from a provider as string representations. */
 function extractPatterns(provider: Provider): string[] {
   const p = provider as { patterns?: RegExp[] };

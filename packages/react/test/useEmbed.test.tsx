@@ -3,8 +3,11 @@ import { type EmbedResult, embed } from "framer-framer";
 import { vi } from "vitest";
 import { useEmbed } from "../src/useEmbed.js";
 
+const mockGetProviderInfo = vi.fn();
+
 vi.mock("framer-framer", () => ({
   embed: vi.fn(),
+  getProviderInfo: (...args: unknown[]) => mockGetProviderInfo(...args),
 }));
 
 const mockEmbed = vi.mocked(embed);
@@ -112,5 +115,25 @@ describe("useEmbed", () => {
 
     expect(result.current.status).toBe("success");
     expect(mockEmbed).not.toHaveBeenCalled();
+  });
+
+  it("returns providerAspectRatio from matched provider", () => {
+    mockEmbed.mockReturnValue(new Promise(() => {}));
+    mockGetProviderInfo.mockReturnValue({
+      name: "youtube",
+      patterns: [],
+      defaultAspectRatio: "16:9",
+    });
+    const { result } = renderHook(() => useEmbed("https://www.youtube.com/watch?v=dQw4w9WgXcQ"));
+
+    expect(result.current.providerAspectRatio).toBe("16:9");
+  });
+
+  it("returns undefined providerAspectRatio for unknown URL", () => {
+    mockEmbed.mockReturnValue(new Promise(() => {}));
+    mockGetProviderInfo.mockReturnValue(undefined);
+    const { result } = renderHook(() => useEmbed("https://unknown.example.com"));
+
+    expect(result.current.providerAspectRatio).toBeUndefined();
   });
 });
