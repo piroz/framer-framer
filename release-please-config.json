@@ -19,15 +19,13 @@
       "release-type": "node",
       "changelog-path": "CHANGELOG.md",
       "component": "react",
-      "bump-minor-pre-major": true,
-      "release-as": "3.4.0"
+      "bump-minor-pre-major": true
     },
     "packages/vue": {
       "release-type": "node",
       "changelog-path": "CHANGELOG.md",
       "component": "vue",
-      "bump-minor-pre-major": true,
-      "release-as": "3.4.0"
+      "bump-minor-pre-major": true
     }
   }
 }
