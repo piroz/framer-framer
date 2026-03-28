@@ -108,7 +108,57 @@ const { result, loading, error } = useEmbed(url);
 
 ## Nuxt Integration
 
-`@framer-framer/vue` works with Nuxt 3 out of the box. Since `embed()` calls fetch external oEmbed APIs, use the component in client-only mode to avoid SSR issues:
+### SSR with `useNuxtEmbed()` (Recommended)
+
+The `useNuxtEmbed()` composable resolves embeds on the server and hydrates the result on the client — no loading flash, instant rendering.
+
+```vue
+<script setup>
+import { useNuxtEmbed } from '@framer-framer/vue/nuxt';
+
+const { data, status, error, refresh } = useNuxtEmbed(
+  'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+  { maxWidth: 640 }
+);
+</script>
+
+<template>
+  <div v-if="status === 'pending'">Loading...</div>
+  <div v-else-if="error">Error: {{ error.message }}</div>
+  <div v-else-if="data" v-html="data.html" />
+</template>
+```
+
+#### Reactive URL
+
+```vue
+<script setup>
+import { ref } from 'vue';
+import { useNuxtEmbed } from '@framer-framer/vue/nuxt';
+
+const url = ref('https://www.youtube.com/watch?v=dQw4w9WgXcQ');
+const { data, status } = useNuxtEmbed(url);
+</script>
+```
+
+#### Lazy Loading
+
+Use `lazy: true` to skip server-side resolution and resolve client-side only:
+
+```vue
+<script setup>
+import { useNuxtEmbed } from '@framer-framer/vue/nuxt';
+
+const { data, status } = useNuxtEmbed(
+  'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+  { lazy: true }
+);
+</script>
+```
+
+### Client-Only Mode
+
+For the `<Embed>` component, use `<ClientOnly>` to avoid SSR issues:
 
 ```vue
 <template>
@@ -119,22 +169,6 @@ const { result, loading, error } = useEmbed(url);
     </template>
   </ClientOnly>
 </template>
-```
-
-For server-side resolution, use the `useEmbed()` composable inside `onMounted`:
-
-```vue
-<script setup>
-import { ref, onMounted } from 'vue';
-import { embed } from 'framer-framer';
-
-const html = ref('');
-
-onMounted(async () => {
-  const result = await embed('https://www.youtube.com/watch?v=dQw4w9WgXcQ');
-  html.value = result.html;
-});
-</script>
 ```
 
 ## License
