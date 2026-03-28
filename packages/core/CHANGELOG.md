@@ -1,5 +1,14 @@
 # Changelog
 
+## [3.4.0](https://github.com/piroz/framer-framer/compare/v3.3.1...v3.4.0) (2026-03-28)
+
+
+### Features
+
+* add accessibility enhancement for embed HTML ([#111](https://github.com/piroz/framer-framer/issues/111)) ([f0ca5a0](https://github.com/piroz/framer-framer/commit/f0ca5a07831016d375da38c1483b86f156316079))
+* add error fallback UI with provider branding ([#113](https://github.com/piroz/framer-framer/issues/113)) ([130d2d2](https://github.com/piroz/framer-framer/commit/130d2d226de6d3deadcc39019a04c21f466cd11c))
+* skeleton aspect ratio based on provider metadata ([#112](https://github.com/piroz/framer-framer/issues/112)) ([812f26b](https://github.com/piroz/framer-framer/commit/812f26bf72955fc93b34faacf7bc110335554cf9))
+
 ## [3.3.0](https://github.com/piroz/framer-framer/compare/v3.2.0...v3.3.0) (2026-03-26)
 
 

@@ -1,5 +1,20 @@
 # Changelog
 
+## [3.4.0](https://github.com/piroz/framer-framer/compare/react-v3.2.1...react-v3.4.0) (2026-03-28)
+
+
+### Features
+
+* add accessibility enhancement for embed HTML ([#111](https://github.com/piroz/framer-framer/issues/111)) ([f0ca5a0](https://github.com/piroz/framer-framer/commit/f0ca5a07831016d375da38c1483b86f156316079))
+* **react:** add SSR/RSC support with EmbedServer and initialData ([#110](https://github.com/piroz/framer-framer/issues/110)) ([89b3489](https://github.com/piroz/framer-framer/commit/89b348971ec54b204ca190841286ebf45c894c19))
+* skeleton aspect ratio based on provider metadata ([#112](https://github.com/piroz/framer-framer/issues/112)) ([812f26b](https://github.com/piroz/framer-framer/commit/812f26bf72955fc93b34faacf7bc110335554cf9))
+
+
+### Bug Fixes
+
+* align react and vue package versions to 3.3.1 to match core ([#111](https://github.com/piroz/framer-framer/issues/111)) ([0f0e3d1](https://github.com/piroz/framer-framer/commit/0f0e3d14234fbd08420535b5dd6c0c5d8804fff9))
+* revert react/vue versions to 3.2.1 matching actual git tags ([#112](https://github.com/piroz/framer-framer/issues/112)) ([28c98c4](https://github.com/piroz/framer-framer/commit/28c98c438dc3e4f57ea9411068fac9c69fe8d869))
+
 ## [3.2.0](https://github.com/piroz/framer-framer/compare/react-v0.1.0...react-v3.2.0) (2026-03-26)
 
 

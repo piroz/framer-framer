@@ -1,6 +1,6 @@
 {
   "name": "@framer-framer/react",
-  "version": "3.2.1",
+  "version": "3.4.0",
   "description": "React component for framer-framer - embed any URL with <Embed url=\"...\" />",
   "main": "dist/index.js",
   "module": "dist/index.mjs",

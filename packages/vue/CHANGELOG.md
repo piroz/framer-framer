@@ -1,5 +1,20 @@
 # Changelog
 
+## [3.4.0](https://github.com/piroz/framer-framer/compare/vue-v3.2.1...vue-v3.4.0) (2026-03-28)
+
+
+### Features
+
+* add accessibility enhancement for embed HTML ([#111](https://github.com/piroz/framer-framer/issues/111)) ([f0ca5a0](https://github.com/piroz/framer-framer/commit/f0ca5a07831016d375da38c1483b86f156316079))
+* skeleton aspect ratio based on provider metadata ([#112](https://github.com/piroz/framer-framer/issues/112)) ([812f26b](https://github.com/piroz/framer-framer/commit/812f26bf72955fc93b34faacf7bc110335554cf9))
+* **vue:** add useNuxtEmbed composable for Nuxt SSR support ([#114](https://github.com/piroz/framer-framer/issues/114)) ([94dcf1c](https://github.com/piroz/framer-framer/commit/94dcf1c5984e2f0bc91de89f656a1d46bf368349))
+
+
+### Bug Fixes
+
+* align react and vue package versions to 3.3.1 to match core ([#111](https://github.com/piroz/framer-framer/issues/111)) ([0f0e3d1](https://github.com/piroz/framer-framer/commit/0f0e3d14234fbd08420535b5dd6c0c5d8804fff9))
+* revert react/vue versions to 3.2.1 matching actual git tags ([#112](https://github.com/piroz/framer-framer/issues/112)) ([28c98c4](https://github.com/piroz/framer-framer/commit/28c98c438dc3e4f57ea9411068fac9c69fe8d869))
+
 ## [3.2.0](https://github.com/piroz/framer-framer/compare/vue-v0.1.0...vue-v3.2.0) (2026-03-26)
 
 
