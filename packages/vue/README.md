@@ -90,6 +90,7 @@ const { result, loading, error } = useEmbed(url);
 | `maxWidth` | `number` | No | Max embed width |
 | `maxHeight` | `number` | No | Max embed height |
 | `options` | `EmbedOptions` | No | Options passed to framer-framer's `embed()` |
+| `theme` | `"light" \| "dark" \| "auto"` | No | Theme mode (default: `"auto"`) |
 
 ## Events
 

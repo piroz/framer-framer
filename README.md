@@ -924,6 +924,16 @@ npm install @framer-framer/vue
 
 See [`packages/vue`](./packages/vue) for details.
 
+### Framework Guides
+
+Detailed integration guides for popular frameworks:
+
+- **[Next.js](docs/guides/nextjs.md)** — App Router, SSR, Route Handlers, caching strategies
+- **[Nuxt 3](docs/guides/nuxt.md)** — ClientOnly, Nitro API routes, server-side caching
+- **[Astro](docs/guides/astro.md)** — Build-time resolution, content collections, client islands
+
+See also: [`@framer-framer/react`](packages/react/README.md) and [`@framer-framer/vue`](packages/vue/README.md) for component API details.
+
 ## Migration from v2.x
 
 ### `meta` → `auth.meta`
