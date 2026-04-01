@@ -343,6 +343,8 @@ Log entries include:
 | `latencyMs` | `number` | Resolution time in milliseconds |
 | `status` | `string` | `"provider"` `"discovery"` `"ogp_fallback"` `"error_fallback"` `"cache_hit"` `"hook_short_circuit"` |
 
+> **External logger integration**: For detailed examples of integrating with pino, winston, and Edge runtimes (Cloudflare Workers, Deno), see the [Logging Guide](docs/guides/logging.md).
+
 ### Caching
 
 Built-in LRU cache eliminates redundant network calls for repeated URLs.

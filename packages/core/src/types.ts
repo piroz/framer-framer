@@ -89,6 +89,8 @@ export interface EmbedOptions {
    * Structured logger for embed resolution.
    * Pass `true` to enable the built-in JSON logger (writes to stderr),
    * a `Logger` object for custom logging, or `false`/omit to disable.
+   *
+   * @see {@link https://github.com/piroz/framer-framer/blob/master/docs/guides/logging.md | Logging Guide} for pino/winston integration examples
    */
   logger?: import("./utils/logger.js").Logger | boolean;
   /**
