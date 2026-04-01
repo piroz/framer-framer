@@ -410,6 +410,30 @@ const cache = new RedisCacheAdapter(redisClient);
 await embed(url, { cache });
 ```
 
+#### Cloudflare KV adapter
+
+A built-in adapter for [Cloudflare Workers KV](https://developers.cloudflare.com/kv/) is available:
+
+```ts
+import { embed, CloudflareKVCacheAdapter } from "framer-framer";
+
+export default {
+  async fetch(request, env) {
+    const cache = new CloudflareKVCacheAdapter({ namespace: env.EMBED_KV });
+    const result = await embed("https://youtube.com/watch?v=abc", { cache });
+    return Response.json(result);
+  },
+};
+```
+
+`CloudflareKVCacheAdapter` options:
+
+| Option       | Type             | Default     | Description                       |
+| ------------ | ---------------- | ----------- | --------------------------------- |
+| `namespace`  | `KVNamespace`    | _(required)_| Cloudflare Workers KV binding     |
+| `keyPrefix`  | `string`         | `"framer:"` | Key prefix to avoid collisions    |
+| `defaultTtl` | `number`         | `300`       | Time-to-live in seconds           |
+
 ### Responsive wrapper
 
 Wrap embed HTML in a responsive container that maintains aspect ratio using the CSS padding-bottom technique.

@@ -1,3 +1,8 @@
+export type {
+  CloudflareKVCacheOptions,
+  KVNamespaceLike,
+} from "./adapters/cloudflare-kv.js";
+export { CloudflareKVCacheAdapter } from "./adapters/cloudflare-kv.js";
 export type { CacheAdapter, CacheOptions } from "./cache.js";
 export { buildKey, MemoryCacheAdapter } from "./cache.js";
 export type { ExpandOptions } from "./cms/auto-expand.js";

@@ -45,6 +45,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.4",
+    "@cloudflare/workers-types": "^4.20260329.1",
     "hono": "^4.12.5",
     "tsup": "^8.0.0",
     "typescript": "^5.4.0",
