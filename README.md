@@ -882,6 +882,59 @@ const app = createApp();
 app.use("*", cors({ origin: "https://example.com" }));
 ```
 
+## Edge runtime support
+
+framer-framer's core library uses only Web standard APIs (`fetch`, `URL`, `AbortController`, `setTimeout`) with zero Node.js-specific dependencies. This means it runs natively on Cloudflare Workers, Deno, and Bun without any polyfills or adapters.
+
+### Cloudflare Workers
+
+```ts
+import { createApp } from "framer-framer/server";
+
+const app = createApp();
+
+export default app;
+```
+
+See [`examples/cloudflare-worker/`](./examples/cloudflare-worker/) for a complete example with `wrangler.toml`.
+
+> **Constraints:** CPU time limits (10ms free / 50ms paid) apply only to compute — subrequest wait time is excluded. The `setInterval`-based rate limiter cleanup runs within the isolate lifecycle and state is not shared across isolates.
+
+### Deno
+
+```ts
+import { createApp } from "npm:framer-framer/server";
+
+const app = createApp();
+
+Deno.serve({ port: 3000 }, app.fetch);
+```
+
+See [`examples/deno/`](./examples/deno/) for a complete example.
+
+### Bun
+
+```ts
+import { createApp } from "framer-framer/server";
+
+const app = createApp();
+
+export default { port: 3000, fetch: app.fetch };
+```
+
+See [`examples/bun/`](./examples/bun/) for a complete example.
+
+### Library usage (without server)
+
+All runtimes can also use the core library directly:
+
+```ts
+import { embed } from "framer-framer"; // or "npm:framer-framer" for Deno
+
+const result = await embed("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
+console.log(result.html);
+```
+
 ## Framework integration
 
 ### Astro
