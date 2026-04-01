@@ -34,7 +34,7 @@ describe("FacebookProvider", () => {
 
   it("resolves with access token", async () => {
     const result = await provider.resolve("https://www.facebook.com/user/posts/123456", {
-      meta: { accessToken: "APP_ID|CLIENT_TOKEN" },
+      auth: { meta: { accessToken: "APP_ID|CLIENT_TOKEN" } },
     });
 
     expect(result.provider).toBe("facebook");
@@ -48,7 +48,7 @@ describe("FacebookProvider", () => {
 
   it("uses video endpoint for video URLs", async () => {
     await provider.resolve("https://fb.watch/abc123/", {
-      meta: { accessToken: "APP_ID|CLIENT_TOKEN" },
+      auth: { meta: { accessToken: "APP_ID|CLIENT_TOKEN" } },
     });
 
     const fetchCall = vi.mocked(fetch).mock.calls[0][0] as string;
@@ -57,7 +57,7 @@ describe("FacebookProvider", () => {
 
   it("uses post endpoint for post URLs", async () => {
     await provider.resolve("https://www.facebook.com/user/posts/123", {
-      meta: { accessToken: "APP_ID|CLIENT_TOKEN" },
+      auth: { meta: { accessToken: "APP_ID|CLIENT_TOKEN" } },
     });
 
     const fetchCall = vi.mocked(fetch).mock.calls[0][0] as string;

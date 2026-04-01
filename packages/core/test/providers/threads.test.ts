@@ -57,15 +57,4 @@ describe("ThreadsProvider", () => {
     expect(fetchCall).toContain("access_token=APP_ID%7CCLIENT_TOKEN");
     expect(fetchCall).toContain("threads_oembed");
   });
-
-  it("resolves with deprecated meta option", async () => {
-    const result = await provider.resolve("https://www.threads.net/t/abc123", {
-      meta: { accessToken: "APP_ID|CLIENT_TOKEN" },
-    });
-
-    expect(result.provider).toBe("threads");
-
-    const fetchCall = vi.mocked(fetch).mock.calls[0][0] as string;
-    expect(fetchCall).toContain("access_token=APP_ID%7CCLIENT_TOKEN");
-  });
 });

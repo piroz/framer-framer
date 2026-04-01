@@ -556,7 +556,7 @@ registerProvider(new DailymotionProvider());
 
 ### Hooks
 
-Hooks let you intercept every `resolve()` call — useful for caching, analytics, HTML wrapping, and more. All resolution paths (`embed()`, `youtube()`, etc.) go through hooks. Hooks run once per resolution (outside the retry loop) — `onBeforeResolve` fires before the first attempt, and `onAfterResolve` fires after the final result.
+Hooks let you intercept every `embed()` call — useful for caching, analytics, HTML wrapping, and more. All resolution paths (`embed()`, `youtube()`, etc.) go through hooks. Hooks run once per resolution (outside the retry loop) — `onBeforeResolve` fires before the first attempt, and `onAfterResolve` fires after the final result.
 
 ```ts
 import { onBeforeResolve, onAfterResolve, clearHooks } from "framer-framer";
@@ -936,28 +936,28 @@ See also: [`@framer-framer/react`](packages/react/README.md) and [`@framer-frame
 
 ## Migration from v2.x
 
-### `meta` → `auth.meta`
+### `meta` → `auth.meta` (removed in v4)
 
-The `meta` option has moved under a new `auth` namespace:
+The deprecated `meta` option has been removed. Use `auth.meta` instead:
 
 ```ts
-// Before (v2.x) — still works but deprecated
+// Before (v2.x–v3.x)
 await embed(url, { meta: { accessToken: "APP_ID|CLIENT_TOKEN" } });
 
-// After (v3.x)
+// After (v4.x)
 await embed(url, { auth: { meta: { accessToken: "APP_ID|CLIENT_TOKEN" } } });
 ```
 
-### `resolve()` → `embed()`
+### `resolve()` removed in v4
 
-> **Deprecated**: `resolve()` is deprecated and will be removed in **v4.0.0**. Use `embed()` instead — both functions are identical.
+The `resolve()` function has been removed. Use `embed()` instead:
 
 ```ts
-// Before (v2.x)
+// Before (v2.x–v3.x)
 import { resolve } from "framer-framer";
 const result = await resolve(url);
 
-// After (v3.x)
+// After (v4.x)
 import { embed } from "framer-framer";
 const result = await embed(url);
 ```

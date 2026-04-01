@@ -31,7 +31,7 @@ describe("InstagramProvider", () => {
 
   it("resolves with access token", async () => {
     const result = await provider.resolve("https://www.instagram.com/p/abc123/", {
-      meta: { accessToken: "APP_ID|CLIENT_TOKEN" },
+      auth: { meta: { accessToken: "APP_ID|CLIENT_TOKEN" } },
     });
 
     expect(result.provider).toBe("instagram");

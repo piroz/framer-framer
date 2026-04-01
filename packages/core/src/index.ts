@@ -90,15 +90,6 @@ export async function embed(url: string, options?: EmbedOptions): Promise<EmbedR
 }
 
 /**
- * Resolve any URL to embed data.
- *
- * @deprecated Use {@link embed} instead. `resolve()` will be removed in v4.0.0.
- */
-export async function resolve(url: string, options?: EmbedOptions): Promise<EmbedResult> {
-  return internalResolve(url, options);
-}
-
-/**
  * Resolve multiple URLs to embed data in parallel.
  * Individual failures are returned as `EmbedError` instances in the result array
  * rather than throwing, so partial success is always possible.

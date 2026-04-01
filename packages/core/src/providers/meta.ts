@@ -5,7 +5,7 @@ import { OEmbedProvider } from "./base.js";
 /** Base class for Meta (Facebook/Instagram) oEmbed providers that require authentication */
 export abstract class MetaProvider extends OEmbedProvider {
   protected buildOEmbedUrl(url: string, options?: EmbedOptions): string {
-    const accessToken = options?.auth?.meta?.accessToken ?? options?.meta?.accessToken;
+    const accessToken = options?.auth?.meta?.accessToken;
     if (!accessToken) {
       throw new EmbedError(
         "VALIDATION_ERROR",
