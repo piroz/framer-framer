@@ -1013,33 +1013,10 @@ Detailed integration guides for popular frameworks:
 
 See also: [`@framer-framer/react`](packages/react/README.md) and [`@framer-framer/vue`](packages/vue/README.md) for component API details.
 
-## Migration from v2.x
+## Migration
 
-### `meta` → `auth.meta` (removed in v4)
-
-The deprecated `meta` option has been removed. Use `auth.meta` instead:
-
-```ts
-// Before (v2.x–v3.x)
-await embed(url, { meta: { accessToken: "APP_ID|CLIENT_TOKEN" } });
-
-// After (v4.x)
-await embed(url, { auth: { meta: { accessToken: "APP_ID|CLIENT_TOKEN" } } });
-```
-
-### `resolve()` removed in v4
-
-The `resolve()` function has been removed. Use `embed()` instead:
-
-```ts
-// Before (v2.x–v3.x)
-import { resolve } from "framer-framer";
-const result = await resolve(url);
-
-// After (v4.x)
-import { embed } from "framer-framer";
-const result = await embed(url);
-```
+- **[v3.x → v4.x](docs/migration-v4.md)** — `EmbedCache` removal, `resolve()` removal, `auth.meta` migration, new adapters
+- **[v1.x/v2.x → v3.x](docs/migration-v3.md)** — `resolve()` → `embed()`, `meta` → `auth.meta`, sanitization defaults
 
 ## Known limitations
 
