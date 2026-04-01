@@ -98,9 +98,9 @@ Sanitization is enabled by default. See [Step 3](#step-3-review-html-sanitizatio
 An optional built-in LRU cache is available. No action required — caching is opt-in:
 
 ```ts
-import { embed, createCache } from "framer-framer";
+import { embed, MemoryCacheAdapter } from "framer-framer";
 
-const cache = createCache({ max: 100, ttl: 60_000 });
+const cache = new MemoryCacheAdapter({ max: 100, ttl: 60_000 });
 const result = await embed(url, { cache });
 ```
 

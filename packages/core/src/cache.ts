@@ -63,14 +63,14 @@ export function buildKey(url: string, options?: EmbedOptions): string {
 }
 
 /**
- * In-memory LRU cache for embed results.
+ * In-memory LRU cache adapter for embed results.
  *
  * Implements the `CacheAdapter` interface with synchronous-resolve Promises.
  * Uses a `Map` whose insertion order tracks recency — accessing an entry
  * moves it to the end (most-recently used), and eviction removes the first
  * entry (least-recently used).
  */
-export class EmbedCache implements CacheAdapter {
+export class MemoryCacheAdapter implements CacheAdapter {
   private readonly map = new Map<string, CacheEntry>();
   private readonly maxSize: number;
   private readonly defaultTtl: number;
@@ -125,19 +125,4 @@ export class EmbedCache implements CacheAdapter {
   get size(): number {
     return this.map.size;
   }
-}
-
-/**
- * Create a new embed cache instance.
- *
- * @example
- * ```ts
- * import { createCache, embed } from 'framer-framer';
- *
- * const cache = createCache({ maxSize: 200, ttl: 60_000 });
- * const result = await embed('https://youtube.com/watch?v=abc', { cache });
- * ```
- */
-export function createCache(options?: CacheOptions): EmbedCache {
-  return new EmbedCache(options);
 }

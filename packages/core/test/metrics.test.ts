@@ -77,9 +77,9 @@ describe("metrics", () => {
       }),
     );
 
-    const { createCache } = await import("../src/cache.js");
+    const { MemoryCacheAdapter } = await import("../src/cache.js");
     const { resolve } = await import("../src/resolver.js");
-    const cache = createCache();
+    const cache = new MemoryCacheAdapter();
 
     // First call: populates cache
     await resolve("https://www.youtube.com/watch?v=abc123", { cache });

@@ -163,9 +163,9 @@ Use the built-in LRU cache for applications running on a single server instance:
 
 ```tsx
 // lib/embed-cache.ts
-import { createCache } from 'framer-framer';
+import { MemoryCacheAdapter } from 'framer-framer';
 
-export const embedCache = createCache({ maxSize: 200, ttl: 300_000 }); // 5 min TTL
+export const embedCache = new MemoryCacheAdapter({ maxSize: 200, ttl: 300_000 }); // 5 min TTL
 ```
 
 ```ts

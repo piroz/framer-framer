@@ -261,9 +261,9 @@ For SSR mode, use the built-in LRU cache:
 
 ```ts
 // src/lib/embed-cache.ts
-import { createCache } from 'framer-framer';
+import { MemoryCacheAdapter } from 'framer-framer';
 
-export const embedCache = createCache({ maxSize: 200, ttl: 300_000 });
+export const embedCache = new MemoryCacheAdapter({ maxSize: 200, ttl: 300_000 });
 ```
 
 ```astro

@@ -49,8 +49,8 @@ describe("resolve - structured logging", () => {
   });
 
   it("logs cache hit", async () => {
-    const { createCache } = await import("../src/cache.js");
-    const cache = createCache();
+    const { MemoryCacheAdapter } = await import("../src/cache.js");
+    const cache = new MemoryCacheAdapter();
 
     vi.stubGlobal(
       "fetch",

@@ -174,13 +174,13 @@ Use the built-in LRU cache for client-side resolution:
 
 ```ts
 // composables/useEmbedCache.ts
-import { createCache } from 'framer-framer';
+import { MemoryCacheAdapter } from 'framer-framer';
 
-let cache: ReturnType<typeof createCache> | undefined;
+let cache: MemoryCacheAdapter | undefined;
 
 export function useEmbedCache() {
   if (!cache) {
-    cache = createCache({ maxSize: 100, ttl: 300_000 });
+    cache = new MemoryCacheAdapter({ maxSize: 100, ttl: 300_000 });
   }
   return cache;
 }

@@ -161,7 +161,7 @@ await embed(url, {
   timeout: 5000,              // Per-request timeout in ms (default: 10000) — applies to oEmbed, OGP fallback, and discovery
   sanitize: true,             // Sanitize oEmbed HTML to prevent XSS (default: true)
   discovery: true,            // oEmbed auto-discovery for unknown URLs (default: true)
-  cache: myCache,             // EmbedCache instance (see Caching section)
+  cache: myCache,             // MemoryCacheAdapter instance (see Caching section)
   logger: true,               // Enable built-in JSON logger (see Logging section)
   accessibility: true,        // Add ARIA attributes to embeds (default: true) — see Accessibility section
 });
@@ -348,16 +348,16 @@ Log entries include:
 Built-in LRU cache eliminates redundant network calls for repeated URLs.
 
 ```ts
-import { createCache, embed } from "framer-framer";
+import { MemoryCacheAdapter, embed } from "framer-framer";
 
-const cache = createCache({ maxSize: 200, ttl: 60_000 }); // 200 entries, 1 min TTL
+const cache = new MemoryCacheAdapter({ maxSize: 200, ttl: 60_000 }); // 200 entries, 1 min TTL
 
 const result = await embed("https://www.youtube.com/watch?v=abc", { cache });
 // Second call returns instantly from cache — no network request
 await embed("https://www.youtube.com/watch?v=abc", { cache });
 ```
 
-`createCache()` options:
+`MemoryCacheAdapter` options:
 
 | Option    | Type     | Default  | Description                      |
 | --------- | -------- | -------- | -------------------------------- |
@@ -788,9 +788,9 @@ createApp({
 ```ts
 import { serve } from "@hono/node-server";
 import { createApp } from "framer-framer/server";
-import { createCache, createLogger } from "framer-framer";
+import { MemoryCacheAdapter, createLogger } from "framer-framer";
 
-const cache = createCache({ maxSize: 500, ttl: 300_000 });
+const cache = new MemoryCacheAdapter({ maxSize: 500, ttl: 300_000 });
 const logger = createLogger();
 
 const app = createApp({

@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { EmbedCache } from "../src/cache.js";
+import { MemoryCacheAdapter } from "../src/cache.js";
 import { expandUrls } from "../src/cms/auto-expand.js";
 import { EmbedError } from "../src/errors.js";
 import { youtubeProvider } from "../src/providers/index.js";
@@ -212,7 +212,7 @@ describe("Cache boundary conditions", () => {
   });
 
   it("returns entry at exact TTL boundary (not yet expired)", async () => {
-    const cache = new EmbedCache({ ttl: 1000 });
+    const cache = new MemoryCacheAdapter({ ttl: 1000 });
     await cache.set("https://a.com", fakeResult());
 
     vi.advanceTimersByTime(1000);
@@ -222,7 +222,7 @@ describe("Cache boundary conditions", () => {
   });
 
   it("evicts entry 1ms after TTL", async () => {
-    const cache = new EmbedCache({ ttl: 1000 });
+    const cache = new MemoryCacheAdapter({ ttl: 1000 });
     await cache.set("https://a.com", fakeResult());
 
     vi.advanceTimersByTime(1001);
@@ -231,7 +231,7 @@ describe("Cache boundary conditions", () => {
   });
 
   it("works correctly with maxSize of 1", async () => {
-    const cache = new EmbedCache({ maxSize: 1 });
+    const cache = new MemoryCacheAdapter({ maxSize: 1 });
 
     await cache.set("https://a.com", fakeResult({ url: "https://a.com" }));
     expect(await cache.get("https://a.com")).toBeDefined();
@@ -244,7 +244,7 @@ describe("Cache boundary conditions", () => {
   });
 
   it("re-inserting after TTL expiry creates a fresh entry", async () => {
-    const cache = new EmbedCache({ ttl: 100 });
+    const cache = new MemoryCacheAdapter({ ttl: 100 });
     await cache.set("https://a.com", fakeResult({ html: "<old/>" }));
 
     vi.advanceTimersByTime(101);
@@ -255,7 +255,7 @@ describe("Cache boundary conditions", () => {
   });
 
   it("evicts multiple entries when filling to capacity from empty", async () => {
-    const cache = new EmbedCache({ maxSize: 3 });
+    const cache = new MemoryCacheAdapter({ maxSize: 3 });
 
     for (let i = 0; i < 5; i++) {
       await cache.set(`https://${i}.com`, fakeResult({ url: `https://${i}.com` }));
@@ -272,7 +272,7 @@ describe("Cache boundary conditions", () => {
   });
 
   it("expired entries do not count toward size after lazy eviction", async () => {
-    const cache = new EmbedCache({ maxSize: 3, ttl: 100 });
+    const cache = new MemoryCacheAdapter({ maxSize: 3, ttl: 100 });
 
     await cache.set("https://a.com", fakeResult());
     await cache.set("https://b.com", fakeResult());

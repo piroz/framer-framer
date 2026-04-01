@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { CacheAdapter } from "../src/cache.js";
-import { buildKey, createCache, EmbedCache } from "../src/cache.js";
+import { buildKey, MemoryCacheAdapter } from "../src/cache.js";
 import { clearHooks, onBeforeResolve } from "../src/resolver.js";
 import type { EmbedResult } from "../src/types.js";
 
@@ -14,7 +14,7 @@ function fakeResult(overrides?: Partial<EmbedResult>): EmbedResult {
   };
 }
 
-describe("EmbedCache", () => {
+describe("MemoryCacheAdapter", () => {
   beforeEach(() => {
     vi.useFakeTimers();
   });
@@ -24,7 +24,7 @@ describe("EmbedCache", () => {
   });
 
   it("implements CacheAdapter interface", () => {
-    const cache: CacheAdapter = new EmbedCache();
+    const cache: CacheAdapter = new MemoryCacheAdapter();
     expect(cache.get).toBeDefined();
     expect(cache.set).toBeDefined();
     expect(cache.delete).toBeDefined();
@@ -32,19 +32,19 @@ describe("EmbedCache", () => {
   });
 
   it("stores and retrieves results", async () => {
-    const cache = new EmbedCache();
+    const cache = new MemoryCacheAdapter();
     const result = fakeResult();
     await cache.set("https://example.com", result);
     expect(await cache.get("https://example.com")).toEqual(result);
   });
 
   it("returns undefined on cache miss", async () => {
-    const cache = new EmbedCache();
+    const cache = new MemoryCacheAdapter();
     expect(await cache.get("https://example.com")).toBeUndefined();
   });
 
   it("differentiates by cache key (sanitize option)", async () => {
-    const cache = new EmbedCache();
+    const cache = new MemoryCacheAdapter();
     const r1 = fakeResult({ html: "<iframe>sanitized</iframe>" });
     const r2 = fakeResult({ html: "<iframe>raw</iframe>" });
 
@@ -59,7 +59,7 @@ describe("EmbedCache", () => {
   });
 
   it("differentiates by cache key (maxWidth/maxHeight)", async () => {
-    const cache = new EmbedCache();
+    const cache = new MemoryCacheAdapter();
     const r1 = fakeResult({ html: "<iframe w=400>" });
     const r2 = fakeResult({ html: "<iframe w=800>" });
 
@@ -74,7 +74,7 @@ describe("EmbedCache", () => {
   });
 
   it("evicts expired entries on get", async () => {
-    const cache = new EmbedCache({ ttl: 1000 });
+    const cache = new MemoryCacheAdapter({ ttl: 1000 });
     await cache.set("https://example.com", fakeResult());
 
     vi.advanceTimersByTime(1001);
@@ -84,7 +84,7 @@ describe("EmbedCache", () => {
   });
 
   it("returns entry before TTL expires", async () => {
-    const cache = new EmbedCache({ ttl: 1000 });
+    const cache = new MemoryCacheAdapter({ ttl: 1000 });
     await cache.set("https://example.com", fakeResult());
 
     vi.advanceTimersByTime(999);
@@ -93,7 +93,7 @@ describe("EmbedCache", () => {
   });
 
   it("supports per-entry TTL override", async () => {
-    const cache = new EmbedCache({ ttl: 10_000 });
+    const cache = new MemoryCacheAdapter({ ttl: 10_000 });
     await cache.set("https://example.com", fakeResult(), 500);
 
     vi.advanceTimersByTime(501);
@@ -102,7 +102,7 @@ describe("EmbedCache", () => {
   });
 
   it("evicts LRU entry when maxSize is reached", async () => {
-    const cache = new EmbedCache({ maxSize: 2 });
+    const cache = new MemoryCacheAdapter({ maxSize: 2 });
     await cache.set("https://a.com", fakeResult({ url: "https://a.com" }));
     await cache.set("https://b.com", fakeResult({ url: "https://b.com" }));
     await cache.set("https://c.com", fakeResult({ url: "https://c.com" }));
@@ -114,7 +114,7 @@ describe("EmbedCache", () => {
   });
 
   it("promotes accessed entries (LRU ordering)", async () => {
-    const cache = new EmbedCache({ maxSize: 2 });
+    const cache = new MemoryCacheAdapter({ maxSize: 2 });
     await cache.set("https://a.com", fakeResult({ url: "https://a.com" }));
     await cache.set("https://b.com", fakeResult({ url: "https://b.com" }));
 
@@ -130,7 +130,7 @@ describe("EmbedCache", () => {
   });
 
   it("clear() removes all entries", async () => {
-    const cache = new EmbedCache();
+    const cache = new MemoryCacheAdapter();
     await cache.set("https://a.com", fakeResult());
     await cache.set("https://b.com", fakeResult());
     expect(cache.size).toBe(2);
@@ -142,7 +142,7 @@ describe("EmbedCache", () => {
   });
 
   it("size returns current entry count", async () => {
-    const cache = new EmbedCache();
+    const cache = new MemoryCacheAdapter();
     expect(cache.size).toBe(0);
 
     await cache.set("https://a.com", fakeResult());
@@ -153,7 +153,7 @@ describe("EmbedCache", () => {
   });
 
   it("delete() removes a specific entry and returns true", async () => {
-    const cache = new EmbedCache();
+    const cache = new MemoryCacheAdapter();
     await cache.set("https://a.com", fakeResult());
     await cache.set("https://b.com", fakeResult());
 
@@ -164,12 +164,12 @@ describe("EmbedCache", () => {
   });
 
   it("delete() returns false when entry does not exist", async () => {
-    const cache = new EmbedCache();
+    const cache = new MemoryCacheAdapter();
     expect(await cache.delete("https://nonexistent.com")).toBe(false);
   });
 
   it("overwrites existing entry for same key", async () => {
-    const cache = new EmbedCache();
+    const cache = new MemoryCacheAdapter();
     await cache.set("https://a.com", fakeResult({ html: "<old/>" }));
     await cache.set("https://a.com", fakeResult({ html: "<new/>" }));
 
@@ -199,18 +199,6 @@ describe("buildKey", () => {
     expect(
       buildKey("https://example.com", { maxWidth: 400, maxHeight: 300, sanitize: false }),
     ).toBe("https://example.com|w=400|h=300|s=0");
-  });
-});
-
-describe("createCache", () => {
-  it("returns an EmbedCache instance", () => {
-    const cache = createCache();
-    expect(cache).toBeInstanceOf(EmbedCache);
-  });
-
-  it("accepts custom options", () => {
-    const cache = createCache({ maxSize: 50, ttl: 10_000 });
-    expect(cache).toBeInstanceOf(EmbedCache);
   });
 });
 
@@ -264,7 +252,7 @@ describe("cache integration with resolve()", () => {
     });
     vi.stubGlobal("fetch", fetchMock);
 
-    const cache = createCache();
+    const cache = new MemoryCacheAdapter();
     const { resolve } = await import("../src/resolver.js");
 
     const result1 = await resolve("https://www.youtube.com/watch?v=abc", { cache });
@@ -311,7 +299,7 @@ describe("cache integration with resolve()", () => {
 
     vi.stubGlobal("fetch", vi.fn());
 
-    const cache = createCache();
+    const cache = new MemoryCacheAdapter();
     const { resolve } = await import("../src/resolver.js");
 
     await resolve("https://www.youtube.com/watch?v=abc", { cache });
@@ -333,7 +321,7 @@ describe("cache integration with resolve()", () => {
       });
     vi.stubGlobal("fetch", fetchMock);
 
-    const cache = createCache();
+    const cache = new MemoryCacheAdapter();
     const { resolve } = await import("../src/resolver.js");
 
     await expect(resolve("https://www.youtube.com/watch?v=abc", { cache })).rejects.toThrow();
@@ -357,7 +345,7 @@ describe("cache integration with resolve()", () => {
     });
     vi.stubGlobal("fetch", fetchMock);
 
-    const cache = createCache();
+    const cache = new MemoryCacheAdapter();
     const { resolve } = await import("../src/resolver.js");
 
     const r1 = await resolve("https://www.youtube.com/watch?v=abc", { cache, maxWidth: 400 });

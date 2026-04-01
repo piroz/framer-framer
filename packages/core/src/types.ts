@@ -89,7 +89,7 @@ export interface EmbedOptions {
   sanitize?: boolean;
   /**
    * Cache for embed results.
-   * Pass a `CacheAdapter` implementation (e.g. `EmbedCache`) to enable caching,
+   * Pass a `CacheAdapter` implementation (e.g. `MemoryCacheAdapter`) to enable caching,
    * or `false` to explicitly disable. When omitted, no caching is performed.
    */
   cache?: import("./cache.js").CacheAdapter | false;
