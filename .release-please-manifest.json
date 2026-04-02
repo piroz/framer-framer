@@ -1,5 +1,5 @@
 {
-  "packages/core": "3.4.0",
+  "packages/core": "4.0.0",
   "packages/react": "3.4.0",
   "packages/vue": "3.4.0"
 }
