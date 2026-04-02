@@ -1,5 +1,20 @@
 # Changelog
 
+## [4.0.0](https://github.com/piroz/framer-framer/compare/v3.4.0...v4.0.0) (2026-04-02)
+
+
+### ⚠ BREAKING CHANGES
+
+* remove deprecated resolve() and EmbedOptions.meta ([#129](https://github.com/piroz/framer-framer/issues/129))
+* `EmbedCache` class and `createCache()` factory function have been removed. Use `MemoryCacheAdapter` instead:
+
+### Features
+
+* add CloudflareKVCacheAdapter for Cloudflare Workers KV ([#131](https://github.com/piroz/framer-framer/issues/131)) ([13d1a62](https://github.com/piroz/framer-framer/commit/13d1a623b717ba353981ad245547efd52b1991b0))
+* add edge runtime compatibility verification and examples ([#132](https://github.com/piroz/framer-framer/issues/132)) ([ca6dc78](https://github.com/piroz/framer-framer/commit/ca6dc783c2efbd99709172f63a01bf65a16365bf))
+* remove deprecated resolve() and EmbedOptions.meta ([#129](https://github.com/piroz/framer-framer/issues/129)) ([844d408](https://github.com/piroz/framer-framer/commit/844d4084eb92d86a02702424674bdf1cc163c06c))
+* remove EmbedCache class and createCache(), migrate to MemoryCacheAdapter ([#128](https://github.com/piroz/framer-framer/issues/128)) ([34687e4](https://github.com/piroz/framer-framer/commit/34687e4d007fe9090a619fa102173e50f13820a5))
+
 ## [3.4.0](https://github.com/piroz/framer-framer/compare/v3.3.1...v3.4.0) (2026-03-28)
 
 
